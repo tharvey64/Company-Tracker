@@ -1,0 +1,25 @@
+{% extends "stockgraph/base.html" %}
+   
+
+{% block content %}
+    <div>
+        <form id="stockForm" name="stockLookup" action="/stockgraph/lookup/" method="POST">
+            <h2>Please enter a company you'd like to view</h2>
+            {% csrf_token %}
+            <input type="text" name="company">
+            <input id="companyButton" type="submit" value="Enter">
+        </form>
+    </div>
+
+    <div class='posted' id="results"></div>
+
+    {%verbatim%}
+        <script id="companyTemplate" type="x-tmpl-mustache">
+            {{#data}} 
+                <ul>
+                    <li>Last Price: {{info}}</li>
+                </ul>
+            {{/data}}
+        </script>
+    {%endverbatim%}
+{% endblock %}

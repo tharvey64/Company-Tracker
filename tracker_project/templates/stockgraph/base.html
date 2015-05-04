@@ -1,0 +1,37 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Graphed Stocks</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <script src="{%static "stockgraph/base.js"%}"></script>
+        <link rel="stylesheet" href="{% static 'stockgraph/base.css' %}">
+    </head>
+    <body>
+        <div class ="container-fluid">
+
+            <header>
+                <nav class='navbar navbar-default navbar-static-top'>
+                {% block header %}                   
+                {% endblock %}
+                </nav>
+            </header>
+
+            <div class ="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <footer>
+                {% block footer %}
+                {% endblock %}
+            </footer>
+
+            {% block scripts %}
+            {% endblock %}
+
+        </div>
+    </body>
+</html>
