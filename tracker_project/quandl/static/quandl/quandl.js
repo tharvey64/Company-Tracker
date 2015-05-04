@@ -1,5 +1,6 @@
 $(document).ready(function(){
     // get dataset with a getJSON
+
     var dataset;
     $.getJSON("/quandl/stock_history/",function(data){
         if (data["errors"]){
@@ -62,7 +63,7 @@ $(document).ready(function(){
             })
             .attr("cy", function(d){
                 return yScale(d[1]);
-            }).attr("r", 1)
+            }).attr("r", 3)
             .attr("class", function(d){
                 return d[0]
             }).style("fill","blue");

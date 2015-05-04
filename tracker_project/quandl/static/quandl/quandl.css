@@ -13,5 +13,11 @@
 
 .axis text {
     font-family: sans-serif;
-    font-size: 0.25em;
+    font-size: 0.5em;
+}
+svg > div{
+    display: inline-block;
+    width: 20px;
+    height: 75px; 
+    background-color: yellow;
 }

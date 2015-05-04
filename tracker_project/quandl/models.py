@@ -19,7 +19,7 @@ class Quandl:
             close_prices = []
             for day in json['data']:
                 close_prices.append([day[0],day[11]])
-            return {'close': close_prices[:2600]}
+            return {'close': close_prices[:50]}
         return {'error':'request failed'}
 
     # @classmethod    
