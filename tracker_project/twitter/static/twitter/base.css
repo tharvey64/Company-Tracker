@@ -1,0 +1,46 @@
+#status {
+	width: 40em; 
+}
+
+.posted{
+	width: 30%;
+	display: inline-block;
+}
+
+#postedSearch{
+	float: left;
+}
+
+#heading {
+	text-align: center;
+}
+
+#postedHashes {
+	float: right;
+}
+
+#search{
+	width: 15em;
+}
+
+.twitterSearch{
+  margin: 10em 0 5em 0 ;
+}
+
+#searchButton:focus{
+	outline: 0;
+}
+
+/*#searchTwitter:hover:after{
+    background: #333;
+    background: rgba(0,0,0,.8);
+    border-radius: 5px;
+    bottom: 26px;
+    color: #fff;
+    content: attr(title);
+    left: 20%;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 220px;
+}*/
