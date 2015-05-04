@@ -1,0 +1,17 @@
+.container {
+    height: 20em;
+    width: 40em;
+    overflow-x: scroll;
+    border: dashed 0.5em;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 0.25em;
+}
