@@ -3,6 +3,31 @@ import requests
 
 # Create your models here.
 
+# Necessary?
+class Date(models.Model):
+    year = models.PositiveIntegerField()
+    month = models.PositiveIntegerField()
+    day = models.PositiveIntegerField()
+    hour = models.PositiveIntegerField()
+    minute = models.PositiveIntegerField()
+    seconds = models.PositiveIntegerField()
+
+class Company(models.Model):
+    name = models.CharField(max_length=40)
+    ticker = models.CharField(max_length=30)
+    exchange = models.CharField(max_length=30)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class StockPrice(models.Model):
+    open_price = models.DecimalField(decimal_places=2, max_digits=8)
+    close_price = models.DecimalField(decimal_places=2, max_digits=8)
+    high_price = models.DecimalField(decimal_places=2, max_digits=8) 
+    low_price = models.DecimalField(decimal_places=2, max_digits=8)
+    volume = models.DecimalField(decimal_places=2, max_digits=10)
+    company = models.ForeignKey(Company)
+    date = models.ForeignKey(Date)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class Quandl:
     api_key = 'b_oZyk5jexSc2fcb9xuj'
     data_set = 'https://www.quandl.com/api/v1/datasets/'
@@ -19,7 +44,7 @@ class Quandl:
             close_prices = []
             for day in json['data']:
                 close_prices.append([day[0],day[11]])
-            return {'close': close_prices[:2600]}
+            return {'close': close_prices[:500]}
         return {'error':'request failed'}
 
     # @classmethod    
