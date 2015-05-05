@@ -7,8 +7,6 @@ from collections import Counter
 from alchemyapi import AlchemyAPI
 
 # Create your views here.
-APP_KEY = 'p3TDtNbRXilAdnFb2JmEBl4Jy'
-APP_SECRET = 'np7hp0fWf4wV9QYfNQx01ltqUf7SBHigbCwRYzPd7VPUMcbI6x'
 # class IndexView(View):
 #     twitter = Twython(APP_KEY, APP_SECRET)
 #     auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
