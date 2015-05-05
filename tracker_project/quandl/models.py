@@ -33,6 +33,7 @@ class Quandl:
     database_code = 'WIKI'
     table_code = 'AAPL'
     format =  'json'
+
     
     @classmethod
     def get_dataset(cls):

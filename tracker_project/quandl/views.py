@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.generic.base import View
 from quandl.models import Quandl
 from quandl.aapl import aapl_history
+from tracker_project.settings import quandl_api_key
 # Create your views here.
 
 class IndexView(View):
