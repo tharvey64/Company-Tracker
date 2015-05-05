@@ -8,7 +8,6 @@ from alchemyapi import AlchemyAPI
 from tracker_project.settings import TWITTER_KEY
 from tracker_project.settings import TWITTER_SECRET
 
-# Create your views here.
 # class IndexView(View):
 #     twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
 #     auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
@@ -58,12 +57,8 @@ class SearchView(View):
         positive = 0
         negative = 0
         actual_words = []
-<<<<<<< HEAD
         tweets = []
-        twitter = Twython(TWITTER_APP_KEY, TWITTER_APP_SECRET)
-=======
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
->>>>>>> master
         # request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
         result = twitter.search(q=request.POST['search'], count=200, result_type=request.POST['type'], lang='en-us')
         start_point = result['statuses']
