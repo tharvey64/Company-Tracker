@@ -22,14 +22,10 @@
 }
 .arrow {
   width: 70px;
-  /*ARROW VERTICAL POSITION*/
   height: 16px;
   overflow: hidden;
   position: absolute;
-  /*ARROW HORIZONTAL POSITION WITH PRICE*/
-  /*left: 38.5%;*/
-  /*ARROW HORIZONTAL POSITION WITH DATE*/
-  left: 35%;
+  left: 34.5%;
   margin-left: -35px;
   bottom: -16px;
 }

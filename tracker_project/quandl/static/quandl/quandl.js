@@ -75,6 +75,8 @@ $(document).ready(function(){
             .attr("transform", "translate(" + padding +",0)")
             .call(yAxis);
 
+
+            // tooltips are initially misplaced
             $("svg > circle").tooltips();
         }
     });

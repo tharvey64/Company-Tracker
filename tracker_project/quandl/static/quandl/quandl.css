@@ -2,12 +2,12 @@ body{
     overflow: hidden;
 }
 #graph {
-    height: 40%;
-    width: 50%;
+    height: 60%;
+    width: 45%;
     overflow-x: scroll;
-    border: dashed 0.5em;
+    border: dashed 0.2em;
     display: inline-block;
-    float:left
+    float:left;
 
 }
 .axis path,
