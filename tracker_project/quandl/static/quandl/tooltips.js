@@ -13,8 +13,9 @@
 
       $el = $(el).attr("data-tooltip", i);
       // $el.attr('class')
+      // el.__data__[1]
       // Make DIV and append to page 
-      var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">$' + el.__data__[1] + '<div class="arrow"></div></div>').appendTo("body");
+      var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">$' + $el.attr('class') + '<div class="arrow"></div></div>').appendTo("body");
 
       // Position right away, so first appearance is smooth
       var linkPosition = $el.position();
