@@ -25,7 +25,7 @@
   height: 16px;
   overflow: hidden;
   position: absolute;
-  left: 50%;
+  left: 34%;
   margin-left: -35px;
   bottom: -16px;
 }
@@ -49,7 +49,7 @@
 }
 .tooltip.active {
   opacity: 1;
-  margin-top: 5px;
+  margin-top: 2px;
   -webkit-transition: all 0.2s ease;
   -moz-transition:    all 0.2s ease;
   -ms-transition:     all 0.2s ease;
