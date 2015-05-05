@@ -1,6 +1,6 @@
 from django.db import models
 import requests
-import settings.QUANDL_KEY as api_key
+import tracker_project.settings.QUANDL_KEY as api_key
 # Create your models here.
 
 # Necessary?
