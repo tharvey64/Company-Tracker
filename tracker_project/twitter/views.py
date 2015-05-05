@@ -5,10 +5,8 @@ from twython import Twython
 from pprint import pprint
 from collections import Counter
 from alchemyapi import AlchemyAPI
-
-# Create your views here.
-APP_KEY = 'p3TDtNbRXilAdnFb2JmEBl4Jy'
-APP_SECRET = 'np7hp0fWf4wV9QYfNQx01ltqUf7SBHigbCwRYzPd7VPUMcbI6x'
+import os
+from tracker_project.settings import TWITTER_APP_KEY, TWITTER_APP_SECRET
 # class IndexView(View):
 #     twitter = Twython(APP_KEY, APP_SECRET)
 #     auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
@@ -58,11 +56,14 @@ class SearchView(View):
         positive = 0
         negative = 0
         actual_words = []
-        twitter = Twython(APP_KEY, APP_SECRET)
+        tweets = []
+        twitter = Twython(TWITTER_APP_KEY, TWITTER_APP_SECRET)
         # request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
-        result = twitter.search(q=request.POST['search'], count=100, result_type=request.POST['type'], lang='en')
+        result = twitter.search(q=request.POST['search'], count=200, result_type=request.POST['type'], lang='en-us')
         start_point = result['statuses']
-        tweets = [tweet['text'] for tweet in start_point if tweet['user']['followers_count'] > 5000]
+        for tweet in start_point:
+            if tweet['user']['followers_count'] > 5000:
+                tweets.append(tweet['text'])
         words = [word.split(' ') for word in tweets]
         broken_down = [line['entities'] for line in start_point]
         almost_there = [block['hashtags'] for block in broken_down]
@@ -77,15 +78,13 @@ class SearchView(View):
                 positive += 1
             elif word.lower() in self.negativo:
                 negative += 1
-        response = self.alchemyapi.sentiment("text", [tweet for tweet in tweets])
+        response = self.alchemyapi.sentiment("text", ('').join(actual_words))
         feeling = response.get("docSentiment")
         if feeling == None:
             return JsonResponse({'result' : 'There was a problem searching for ' + request.POST['search'] + '. Please try a different filter.'})
-        feeling = feeling["type"]
-        response = ['positive' if positive > negative else 'negative']                
         return JsonResponse({'result': 'Your query returned ' + str(positive) +
                                 ' positive keywords, and ' + str(negative) + ' negative keywords' +
-                                ' People feel ' + feeling + ' about this topic.',
+                                ' People feel ' + feeling['type'] + ' about this topic.',
                             'hash': [{'name': hashe['text']} for hashe in start_point],
                             'hashes': [{'name': hashe[0]} for hashe in top_hashes]})
 

@@ -8,10 +8,10 @@ $(document).ready(function(){
         else{
             dataset = data["close"];
             var parseDate = d3.time.format("%Y-%m-%d").parse
-            var h = parseInt($(".container").css('height'));
+            var h = parseInt($("#graph").css('height'));
             // Width needs to be related to the dataset length
             var w; 
-            var containerWidth = parseInt($(".container").css('width'));
+            var containerWidth = parseInt($("#graph").css('width'));
 
             if ((dataset.length/2) > (containerWidth*2)){
                 w = dataset.length/2;
@@ -20,7 +20,7 @@ $(document).ready(function(){
                 w = containerWidth * 2;
             }
             
-            d3.select(".container")
+            d3.select("#graph")
             .append("svg")
             .attr("width",w)
             .attr("height",h);
@@ -79,11 +79,11 @@ $(document).ready(function(){
         }
     });
 
-    $(".container").on("mouseenter","circle", function(){
+    $("#graph").on("mouseenter","circle", function(){
         console.log($(this).attr("class"));
     });
 
-    $(".container").on("mouseleave","circle", function(){
+    $("#graph").on("mouseleave","circle", function(){
         console.log($(this).attr("class")+"Leave");
     });
 });
