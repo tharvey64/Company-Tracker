@@ -6,6 +6,9 @@
     display: inline-block;
 
 }
+#graph > svg {
+    height: 100%;
+}
 .axis path,
 .axis line {
     fill: none;
@@ -15,17 +18,10 @@
 
 .axis text {
     font-family: sans-serif;
-    font-size: 0.25em;
-}
-
-#stories{
-	width: 45%;
-	height: 30em;
-    display: inline-block;    
+    font-size: 0.75em;
 }
 
 .container{
     width: 100%;
     margin: 0 1.5em 0 1.5em;
-    font-size: 0.5em;
 }

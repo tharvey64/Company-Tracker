@@ -12,13 +12,13 @@ $(document).ready(function(){
             var h = parseInt($("#graph").css('height'));
             // Width needs to be related to the dataset length
             var w; 
-            var containerWidth = parseInt($("#graph").css('width'));
+            var graphWidth = parseInt($("#graph").css('width'));
 
-            if ((dataset.length/2) > (containerWidth*2)){
+            if ((dataset.length/2) > (graphWidth*2)){
                 w = dataset.length/2;
             }
             else{
-                w = containerWidth * 2;
+                w = graphWidth * 2;
             }
             
             d3.select("#graph")
@@ -46,9 +46,14 @@ $(document).ready(function(){
             yAxis.ticks(verticalTicks)
 
             var xScale = d3.time.scale().range([padding, w-padding]);
-            xScale.domain(d3.extent(dataset,function(d){ 
+
+            var input = d3.extent(dataset,function(d){ 
                 return parseDate(d[0]);
-            }));
+            });
+
+            input[0].setDate(input[0].getDate()-1);
+            input[1].setDate(input[1].getDate()+1);
+            xScale.domain(input);
 
             var xAxis = d3.svg.axis();
             xAxis.scale(xScale).orient("bottom");

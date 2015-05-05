@@ -14,10 +14,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Sentiment',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('result', models.CharField(max_length=8)),
-                ('score', models.DecimalField(max_digits=11, decimal_places=10)),
-                ('company', models.ForeignKey(to='quandl.Date')),
+                ('score', models.DecimalField(decimal_places=10, max_digits=11)),
+                ('company', models.ForeignKey(to='quandl.Company')),
+                ('date', models.ForeignKey(to='quandl.Date')),
             ],
         ),
     ]
