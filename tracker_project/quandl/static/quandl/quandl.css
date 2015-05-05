@@ -1,6 +1,6 @@
 #graph {
-    height: 30em;
-    width: 45%;
+    height: 50%;
+    width: 40%;
     overflow-x: scroll;
     border: dashed 0.5em;
     display: inline-block;
@@ -27,4 +27,5 @@
 .container{
     width: 100%;
     margin: 0 1.5em 0 1.5em;
+    font-size: 0.5em;
 }

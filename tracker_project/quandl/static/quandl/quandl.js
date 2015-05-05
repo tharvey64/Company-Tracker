@@ -1,5 +1,6 @@
 $(document).ready(function(){
     // get dataset with a getJSON
+
     var dataset;
     $.getJSON("/quandl/stock_history/",function(data){
         if (data["errors"]){
@@ -62,7 +63,7 @@ $(document).ready(function(){
             })
             .attr("cy", function(d){
                 return yScale(d[1]);
-            }).attr("r", 1)
+            }).attr("r", 3)
             .attr("class", function(d){
                 return d[0]
             }).style("fill","blue");
@@ -76,14 +77,16 @@ $(document).ready(function(){
             .attr("class", "axis")
             .attr("transform", "translate(" + padding +",0)")
             .call(yAxis);
+
+            $("svg > circle").tooltips();
         }
     });
 
-    $("#graph").on("mouseenter","circle", function(){
-        console.log($(this).attr("class"));
-    });
+    // $("#graph").on("mouseenter","circle", function(){
+    //     console.log($(this).attr("class"));
+    // });
 
-    $("#graph").on("mouseleave","circle", function(){
-        console.log($(this).attr("class")+"Leave");
-    });
+    // $("#graph").on("mouseleave","circle", function(){
+    //     console.log($(this).attr("class")+"Leave");
+    // });
 });

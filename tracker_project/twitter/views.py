@@ -5,10 +5,12 @@ from twython import Twython
 from pprint import pprint
 from collections import Counter
 from alchemyapi import AlchemyAPI
-import os
-from tracker_project.settings import TWITTER_APP_KEY, TWITTER_APP_SECRET
+from tracker_project.settings import TWITTER_KEY
+from tracker_project.settings import TWITTER_SECRET
+
+# Create your views here.
 # class IndexView(View):
-#     twitter = Twython(APP_KEY, APP_SECRET)
+#     twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
 #     auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
 
 #     def get(self, request):
@@ -20,7 +22,7 @@ from tracker_project.settings import TWITTER_APP_KEY, TWITTER_APP_SECRET
 
 #     def get(self, request):
 #         oauth_verifier = request.GET['oauth_verifier']
-#         twitter = Twython(APP_KEY, APP_SECRET,
+#         twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
 #         request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
 #         final_step = twitter.get_authorized_tokens(oauth_verifier)
 #         request.session['OAUTH_TOKEN'] = final_step['oauth_token']
@@ -35,7 +37,7 @@ from tracker_project.settings import TWITTER_APP_KEY, TWITTER_APP_SECRET
 
 # class StatusView(View):
 #     def post(self, request):
-#         twitter = Twython(APP_KEY, APP_SECRET,
+#         twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
 #         request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
 #         twitter.update_status(status=request.POST['status'])
 #         return JsonResponse({'status': 'Updated!'})
@@ -56,8 +58,12 @@ class SearchView(View):
         positive = 0
         negative = 0
         actual_words = []
+<<<<<<< HEAD
         tweets = []
         twitter = Twython(TWITTER_APP_KEY, TWITTER_APP_SECRET)
+=======
+        twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
+>>>>>>> master
         # request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
         result = twitter.search(q=request.POST['search'], count=200, result_type=request.POST['type'], lang='en-us')
         start_point = result['statuses']
