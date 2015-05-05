@@ -1,5 +1,8 @@
 #stories{
-    width: 45%;
-    height: 30em;
+    width: 40%;
+    height: 40%;
     display: inline-block;    
+    overflow-x: scroll;
+    overflow-y: scroll;
+
 }

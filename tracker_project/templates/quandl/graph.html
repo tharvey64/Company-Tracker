@@ -22,7 +22,9 @@
 	{%verbatim%}
 		<script id="storyTemplate" type="x-tmpl-mustache">
 			<ol>{{#result}} 
-					<li>{{title}}</li>
+					<li><a href={{link}}><STRONG>{{title}}</STRONG></a></li>
+					{{date}}
+					</ul>
 	   		{{/result}}</ol>
 	  	</script>
 	{%endverbatim%}  
