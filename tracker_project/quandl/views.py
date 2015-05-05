@@ -15,5 +15,5 @@ class StockHistory(View):
 
     def get(self,request):
         # data = Quandl.get_dataset()
-        data = {'close': aapl_history[:200]}
+        data = {'close': aapl_history[:50]}
         return JsonResponse(data)
