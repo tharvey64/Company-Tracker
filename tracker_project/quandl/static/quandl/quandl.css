@@ -2,7 +2,7 @@ body{
     overflow: hidden;
 }
 #graph {
-    height: 80%;
+    height: 25em;
     width: 40%;
     overflow-x: scroll;
     border: dashed 0.5em;
