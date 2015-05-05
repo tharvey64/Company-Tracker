@@ -1,6 +1,7 @@
 from django.db import models
 import requests
 # Create your models here.
+
 class Markit:
     company_search_url = 'http://dev.markitondemand.com/Api/v2/Lookup/json?input='
     quote_url = 'http://dev.markitondemand.com/Api/v2/Quote/json?symbol='

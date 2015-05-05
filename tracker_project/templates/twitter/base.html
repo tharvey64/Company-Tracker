@@ -1,0 +1,34 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Twindle</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{% static 'twitter/base.css' %}">
+        <script src="{%static "twitter/base.js"%}"></script>        
+    </head>
+    <body>
+        <div class ="container-fluid">
+            <header>
+                <nav class='navbar navbar-default navbar-static-top'>
+                {% block header %}
+                <h1 id='heading'>Twindle</h1>                  
+                {% endblock %}
+                </nav>
+            </header>
+            <div class ="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <footer>
+                {% block footer %}
+                {% endblock %}
+            </footer>
+            {% block scripts %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

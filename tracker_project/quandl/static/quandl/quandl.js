@@ -81,7 +81,7 @@ $(document).ready(function(){
     });
 
     $(".container").on("mouseenter","circle", function(){
-        console.log($(this).attr("class"));
+        console.log($(this).attr("class")+"Leave");
     });
 
     $(".container").on("mouseleave","circle", function(){

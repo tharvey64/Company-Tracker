@@ -1,5 +1,5 @@
 """
-WSGI config for tracker project.
+WSGI config for tracker_project project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
