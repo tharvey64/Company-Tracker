@@ -5,7 +5,8 @@ from twython import Twython
 from pprint import pprint
 from collections import Counter
 from alchemyapi import AlchemyAPI
-
+import settings.TWITTER_KEY as APP_KEY
+import settings.TWITTER_SECRET as APP_SECRET
 # Create your views here.
 # class IndexView(View):
 #     twitter = Twython(APP_KEY, APP_SECRET)
