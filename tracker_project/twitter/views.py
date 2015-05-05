@@ -5,10 +5,10 @@ from twython import Twython
 from pprint import pprint
 from collections import Counter
 from alchemyapi import AlchemyAPI
+import settings.TWITTER_KEY as APP_KEY
+import settings.TWITTER_SECRET as APP_SECRET
 
 # Create your views here.
-APP_KEY = 
-APP_SECRET = 
 # class IndexView(View):
 #     twitter = Twython(APP_KEY, APP_SECRET)
 #     auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')

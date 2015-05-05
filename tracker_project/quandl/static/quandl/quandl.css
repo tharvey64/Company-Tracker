@@ -1,6 +1,10 @@
 .container {
-    height: 20em;
-    width: 40em;
+    height: 60em;
+    width: 100%;
+}
+#graph {
+    height: 50%;
+    width: 40%;
     overflow-x: scroll;
     border: dashed 0.5em;
 }
@@ -13,5 +17,5 @@
 
 .axis text {
     font-family: sans-serif;
-    font-size: 0.25em;
+    font-size: 0.5em;
 }
