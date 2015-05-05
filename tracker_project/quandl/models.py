@@ -1,7 +1,6 @@
 from django.db import models
 import requests
 from tracker_project.settings import QUANDL_KEY
-# Create your models here.
 
 # Necessary?
 class Date(models.Model):
