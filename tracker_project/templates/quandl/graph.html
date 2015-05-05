@@ -8,15 +8,23 @@
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script type="text/javascript" src='{% static "quandl/tooltips.js" %}'></script>
 <script type="text/javascript" src='{% static "quandl/quandl.js" %}'></script>
+<script type="text/javascript" src='{% static "marketstories/story.js" %}'></script>
 <link rel="stylesheet" type="text/css" href='{% static "quandl/quandl.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "quandl/tooltips.css" %}'/>
 </header>
 <body>
     <h1>QUANDL</h1>
 <div class="container">
-    <div id="graph"></div> 
-    <div id="stock"></div> 
-</div>    
-</body>
+	<div id='graph'></div>   
+	<div id='stories'></div>
+</div>	
+	{%verbatim%}
+		<script id="storyTemplate" type="x-tmpl-mustache">
+			<ol>{{#result}} 
+					<li>{{title}}</li>
+	   		{{/result}}</ol>
+	  	</script>
+	{%endverbatim%}  
+</body>	
 
 </html>

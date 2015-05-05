@@ -1,12 +1,10 @@
-.container {
-    height: 60em;
-    width: 100%;
-}
 #graph {
     height: 50%;
     width: 40%;
     overflow-x: scroll;
     border: dashed 0.5em;
+    display: inline-block;
+
 }
 .axis path,
 .axis line {
@@ -17,5 +15,17 @@
 
 .axis text {
     font-family: sans-serif;
+    font-size: 0.25em;
+}
+
+#stories{
+	width: 45%;
+	height: 30em;
+    display: inline-block;    
+}
+
+.container{
+    width: 100%;
+    margin: 0 1.5em 0 1.5em;
     font-size: 0.5em;
 }
