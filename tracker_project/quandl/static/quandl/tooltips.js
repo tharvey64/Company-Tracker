@@ -12,17 +12,20 @@
     return this.each(function(i, el) {
 
       $el = $(el).attr("data-tooltip", i);
-
+      // $el.attr('class')
+      // el.__data__[1]
       // Make DIV and append to page 
       var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">' + $el.attr('class') + '<div class="arrow"></div></div>').appendTo("body");
 
       // Position right away, so first appearance is smooth
-      var linkPosition = $el.position();
+      // The above statement is False 
+      
+      // var linkPosition = $el.position();
 
-      $tooltip.css({
-        top: linkPosition.top - $tooltip.outerHeight() - 13,
-        left: linkPosition.left - ($tooltip.width()/2)
-      });
+      // $tooltip.css({
+      //   top: linkPosition.top - $tooltip.outerHeight() - 13,
+      //   left: linkPosition.left - ($tooltip.width()/2)
+      // });
 
       $el
       // Get rid of yellow box popup
@@ -35,7 +38,7 @@
 
         $tooltip = $('div[data-tooltip=' + $el.data('tooltip') + ']');
 
-        // Reposition tooltip, in case of page movement e.g. screen resize                        
+        // Reposition tooltip, in case of page movement e.g. screen resize                 
         var linkPosition = $el.position();
 
         $tooltip.css({

@@ -1,14 +1,14 @@
-#graph {
-    height: 40%;
-    width: 50%;
-    overflow-x: scroll;
-    border: dashed 0.5em;
-    display: inline-block;
-    float:left
-
+body{
+    overflow: hidden;
 }
-#graph > svg {
-    height: 100%;
+#graph {
+    height: 60%;
+    width: 45%;
+    overflow-x: scroll;
+    border: dashed 0.2em;
+    display: inline-block;
+    float:left;
+
 }
 .axis path,
 .axis line {
