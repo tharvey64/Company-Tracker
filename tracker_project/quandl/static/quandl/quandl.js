@@ -10,17 +10,9 @@ $(document).ready(function(){
             dataset = data["close"];
             var parseDate = d3.time.format("%Y-%m-%d").parse
             var h = parseInt($("#graph").css('height'));
-            // Width needs to be related to the dataset length
-            var w; 
             var graphWidth = parseInt($("#graph").css('width'));
+            var w = dataset.length/5 * graphWidth;
 
-            if ((dataset.length/2) > (graphWidth*2)){
-                w = dataset.length/2;
-            }
-            else{
-                w = graphWidth * 2;
-            }
-            
             d3.select("#graph")
             .append("svg")
             .attr("width",w)
@@ -88,7 +80,7 @@ $(document).ready(function(){
     });
 
     // $("#graph").on("mouseenter","circle", function(){
-    //     console.log($(this).attr("class"));
+    //     console.log($(this)[0].__data__[1])
     // });
 
     // $("#graph").on("mouseleave","circle", function(){

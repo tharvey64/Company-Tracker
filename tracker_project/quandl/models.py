@@ -2,15 +2,6 @@ from django.db import models
 import requests
 from tracker_project.settings import QUANDL_KEY
 
-# Necessary?
-class Date(models.Model):
-    year = models.PositiveIntegerField()
-    month = models.PositiveIntegerField()
-    day = models.PositiveIntegerField()
-    hour = models.PositiveIntegerField()
-    minute = models.PositiveIntegerField()
-    seconds = models.PositiveIntegerField()
-
 class Company(models.Model):
     name = models.CharField(max_length=40)
     ticker = models.CharField(max_length=30)
@@ -24,7 +15,6 @@ class StockPrice(models.Model):
     low_price = models.DecimalField(decimal_places=2, max_digits=8)
     volume = models.DecimalField(decimal_places=2, max_digits=10)
     company = models.ForeignKey(Company)
-    date = models.ForeignKey(Date)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Quandl:

@@ -1,13 +1,13 @@
+body{
+    overflow: hidden;
+}
 #graph {
-    height: 50%;
+    height: 80%;
     width: 40%;
     overflow-x: scroll;
     border: dashed 0.5em;
     display: inline-block;
 
-}
-#graph > svg {
-    height: 100%;
 }
 .axis path,
 .axis line {
