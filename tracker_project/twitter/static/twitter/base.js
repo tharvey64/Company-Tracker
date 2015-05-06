@@ -49,7 +49,7 @@ $(document).ready(function(){
                     return yScale(d[1])
                 })
                 .attr("r", function(d) {
-                    return 5;
+                    return d[1] / 1000;
                 })
                 .attr("fill", function(d) {
                     return d3.rgb((d[2] * -255),(d[2] * 255),0);
