@@ -69,7 +69,7 @@ function drawGraph(dataset){
 }
 
 $(document).ready(function(){
-    // get dataset with a getJSON
+    // get dataset with a getJSON 
     $("#stockForm").on("submit", function(event){
         event.preventDefault();
         var symbol = $("input[name='company']").val();
@@ -94,3 +94,4 @@ $(document).ready(function(){
     //     console.log($(this).attr("class")+"Leave");
     // });
 });
+
