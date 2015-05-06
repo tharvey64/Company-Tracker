@@ -30,9 +30,6 @@ class Quandl:
         response = requests.get(url)
         if response.status_code == 200:
             json = response.json()
-            # close_prices = []
-            # for day in json['data']:
-            #     close_prices.append(day[:1],day[11])
             return {'data': json['data']}
         return {'error':'request failed'}
 

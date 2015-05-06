@@ -1,5 +1,6 @@
 #stories{
     height: 60%;
+    min-height: 30em;
     width: 45%;
     border: dashed 0.2em;
     display: inline-block;    
