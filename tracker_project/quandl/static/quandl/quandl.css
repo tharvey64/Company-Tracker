@@ -1,8 +1,13 @@
 body{
     overflow: hidden;
 }
+div#formDiv {
+    height:30%;
+    width:45%;
+}
 #graph {
     height: 60%;
+    min-height: 30em;
     width: 45%;
     overflow-x: scroll;
     border: dashed 0.2em;

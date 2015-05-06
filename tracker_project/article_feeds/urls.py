@@ -3,5 +3,5 @@ from django.contrib import admin
 import article_feeds.views as view
 
 urlpatterns = [
-    url(r'^yahoo/$', view.YahooArticleListView.as_view(), name ='search'),   
+    url(r'^yahoo/(?P<symbol>[a-zA-Z]+)/$', view.YahooArticleListView.as_view(), name ='search'),   
 ]
