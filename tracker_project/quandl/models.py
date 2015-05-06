@@ -13,28 +13,27 @@ class StockPrice(models.Model):
     close_price = models.DecimalField(decimal_places=2, max_digits=8)
     high_price = models.DecimalField(decimal_places=2, max_digits=8) 
     low_price = models.DecimalField(decimal_places=2, max_digits=8)
-    volume = models.DecimalField(decimal_places=2, max_digits=10)
+    volume = models.DecimalField(decimal_places=2, max_digits=12)
     company = models.ForeignKey(Company)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField()
 
 class Quandl:
     api_key = QUANDL_KEY
     data_set = 'https://www.quandl.com/api/v1/datasets/'
-    database_code = 'WIKI'
-    table_code = 'AAPL'
+    code = 'WIKI/AAPL'
     format =  'json'
 
     
     @classmethod
-    def get_dataset(cls):
-        url = 'https://www.quandl.com/api/v1/datasets/'
-        response = requests.get(url + '{}/{}.{}?auth_token={}'.format(cls.database_code,cls.table_code,cls.format,cls.api_key))
+    def get_dataset(cls, code):
+        url = 'https://www.quandl.com/api/v1/datasets/{}.{}?auth_token={}'.format(code,cls.format,cls.api_key)
+        response = requests.get(url)
         if response.status_code == 200:
             json = response.json()
-            close_prices = []
-            for day in json['data']:
-                close_prices.append([day[0],day[11]])
-            return {'close': close_prices[:50]}
+            # close_prices = []
+            # for day in json['data']:
+            #     close_prices.append(day[:1],day[11])
+            return {'data': json['data']}
         return {'error':'request failed'}
 
     # @classmethod    
