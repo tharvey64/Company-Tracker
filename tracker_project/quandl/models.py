@@ -3,8 +3,8 @@ import requests
 from tracker_project.settings import QUANDL_KEY
 
 class Company(models.Model):
-    name = models.CharField(max_length=40)
-    ticker = models.CharField(max_length=30)
+    name = models.CharField(max_length=60)
+    symbol = models.CharField(max_length=15,unique=True)
     exchange = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
 
