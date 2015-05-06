@@ -9,8 +9,7 @@ class YahooArticleListView(View):
     # site = 'http://feeds.marketwatch.com/marketwatch/realtimeheadlines/'
     site = "http://finance.yahoo.com/rss/headline?s="
 
-    def get(self, request):
-        company = "AAPL"
-        feed_response = feedparser.parse(self.site + company)
+    def get(self, request, symbol):
+        feed_response = feedparser.parse(self.site + symbol)
         entries = feed_response['entries']
         return JsonResponse({'articles': entries})

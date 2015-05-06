@@ -1,8 +1,14 @@
 $(document).ready(function(){
-	$.getJSON("/article_feeds/yahoo/",function(data){
-	    var template = $('#storyTemplate').html();
-	    Mustache.parse(template);
-        var info = Mustache.render(template, data);
-        $('#stories').html(info); 	    
-	})
+    $("#stockForm").on("submit", function(event){
+        event.preventDefault();
+
+        var symbol = $("input[name='company']").val();
+        $.getJSON("/article_feeds/yahoo/" + symbol + "/", function(data){
+            var template = $('#storyTemplate').html();
+            Mustache.parse(template);
+            var info = Mustache.render(template, data);
+            $('#stories').html(info);       
+        });
+
+    });
 });
