@@ -38,6 +38,7 @@
     border: dashed 0.2em;
     display: inline-block;
     float:left;
+    margin: 0 0 5em 0;
 }
 /*#searchTwitter:hover:after{
     background: #333;
