@@ -78,10 +78,7 @@ class SearchView(View):
             elif word.lower() in self.negativo:
                 negative += 1
         response = self.alchemyapi.sentiment("text", ('').join(actual_words))
-        feeling = response.get("docSentiment")
-        dates = [this['created_at'] for this in start_point]
-        feelings = [self.alchemyapi.sentiment("text", block) for block in tweets]
-        favorites = [that['favorite_count'] for that in start_point]           
+        feeling = response.get("docSentiment")           
         if feeling == None:
             return JsonResponse({'result' : 'There was a problem searching for ' + request.POST['search'] + '. Please try a different filter.'})
         # return JsonResponse({'result': 'Your query returned ' + str(positive) +
@@ -89,8 +86,8 @@ class SearchView(View):
         #                         ' People feel ' + feeling['type'] + ' about this topic.',
         #                     'hash': [{'name': hashe['text']} for hashe in start_point],
         #                     'hashes': [{'name': hashe[0]} for hashe in top_hashes]})
-        return JsonResponse({'result' : [{'dates' : date['created_at']} for date in start_point] + 
-                                        [{'feelings' : self.alchemyapi.sentiment("text", block)} for block in tweets] + 
-                                        [{'favorites' : favorite['favorite_count']} for favorite in start_point]})
+        return JsonResponse({'dates' : [{'date' : date['created_at']} for date in start_point], 
+                            'feelings' : [{'feeling' : self.alchemyapi.sentiment("text", block)} for block in tweets], 
+                            'favorites' : [{'favorite' : favorite['favorite_count']} for favorite in start_point]})
 
 
