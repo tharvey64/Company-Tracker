@@ -16,7 +16,24 @@ $(document).ready(function(){
                         continue
                     }
                 }   
-                console.log(dataset)
+            var parseDate = d3.time.format("%Y-%m-%d-%H-%M-S").parse                
+            var h = parseInt($("#graph").css('height'));
+            var graphWidth = parseInt($("#graph").css('width'));
+            var w = dataset.length/5 * graphWidth;                
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("heigh", h)  
+            svg.selectAll("circle")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    return parseDate(d[0]);
+                })
+                .attr("cy", function(d){
+                    return d[1]
+                })
         //         var template = $('#sentimentTemplate').html();
         //         Mustache.parse(template);
         //         var info = Mustache.render(template, data);
