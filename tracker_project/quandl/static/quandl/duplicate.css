@@ -1,0 +1,12 @@
+body{
+    background-image: url("background_images/1.jpg");
+    opacity: 0.8;
+}
+
+body h1 {
+    text-align: center;
+}
+
+#formDiv{
+    margin: auto;
+}

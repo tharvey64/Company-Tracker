@@ -10,7 +10,7 @@ div#formDiv {
     min-height: 30em;
     width: 45%;
     overflow-x: scroll;
-    border: dashed 0.2em;
+    border: groove 0.2em;
     display: inline-block;
     float:left;
 }
