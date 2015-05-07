@@ -51,7 +51,7 @@ function drawGraph(dataset){
     }).attr("r", 3)
     .attr("class", function(d){
         return d[0]
-    }).style("fill","blue");
+    }).style("fill","gold");
     
     svg.append("g")
     .attr("class", "axis")

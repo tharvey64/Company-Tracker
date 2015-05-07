@@ -1,7 +1,8 @@
 .tabs {
-    height: 100%;
+    height: 80%;
     width: 100%;
     display: inline-block;
+    padding: .5em;
 }
 .tab-links:after {
     display: block;
@@ -12,14 +13,15 @@
     margin: 0.2em;
 }
 .tab-links li {
-    margin: 0 0.5em;
+    margin: 0;
     float: left;
     list-style: none;
 }
+
 .tab-links a {
     padding: 0.5em 1em;
     display: inline-block;
-    border-radius: 0.3em 0.3em 0 0;
+    border-radius: 0.5em 0.5em 0 0;
     background: #7FB5DA;
     font-size: 1em;
     font-weight: 600;
@@ -36,9 +38,10 @@ li.active a, li.active a:hover {
 }
 .tab-content {
     padding: 0.5em;
-    border-radius: 0.3em;
     box-shadow: -0.1em 0.1em 0.1em rgba(0,0,0,0.15);
-    background: #FFF;
+    background: white;
+    border-radius: 3em;
+    width: 45em;
 }
 .tab{
     display: none;

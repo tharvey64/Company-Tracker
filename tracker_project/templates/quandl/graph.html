@@ -10,14 +10,19 @@
 <script type="text/javascript" src='{% static "quandl/quandl.js" %}'></script>
 <script type="text/javascript" src='{% static "quandl/tabs.js" %}'></script>
 <script type="text/javascript" src='{% static "markit/markit.js" %}'></script>
+<script type="text/javascript" src='{% static "quandl/query.js" %}'></script>
 <script type="text/javascript" src='{% static "article_feeds/story.js" %}'></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">  
 <link rel="stylesheet" type="text/css" href='{% static "quandl/quandl.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "article_feeds/story.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "quandl/tooltips.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "quandl/tabs.css" %}'/>
+<link href='http://fonts.googleapis.com/css?family=Permanent+Marker|News+Cycle' rel='stylesheet' type='text/css'>
+<nav class='navbar navbar-default navbar-static-top'></nav>
 </header>
 <body>
-    <h1>QUANDL</h1>
+    <h1 id='slideBlock'>What will you search for?</h1>
+    <h1 id='title'>QUANDL</h1>
 <div class="container">
 
 	<div id="forms">
@@ -36,11 +41,12 @@
             </div>
             
         </div>
-
     </div> 
 
-	<div id="graph"></div>   
-	<div id="stories"></div>
+    <div id='loading'><img  src='http://www.ajaxload.info/images/exemples/9.gif'/></div>
+    <div class='mainInfo'></div>
+	<div class='returned' id="graph"></div>   
+	<div class='returned' id="stories"></div>
 </div>	
     {% include "markit/search_form.html" %}
     {% include "quandl/date_form.html" %}
