@@ -2,6 +2,7 @@ from django.db import models
 import requests
 from tracker_project.settings import QUANDL_KEY
 
+# Move Company to Markit
 class Company(models.Model):
     name = models.CharField(max_length=60)
     symbol = models.CharField(max_length=15,unique=True)
@@ -20,9 +21,16 @@ class StockPrice(models.Model):
 class Quandl:
     api_key = QUANDL_KEY
     data_set = 'https://www.quandl.com/api/v1/datasets/'
-    code = 'WIKI/AAPL'
     format =  'json'
-
+    # ----------------------------------------------------#
+    #           DB        |         DB          |    DB   #
+    # --------------------|---------------------|---------#
+    #         YAHOO/      |        GOOG/        |  WIKI/  #
+    # --------------------|---------------------|---------#
+    #         Table       |        Table        |  Table  #
+    # --------------------|---------------------|---------#
+    # {EXCHANGE}_{TICKER} | {EXCHANGE}_{TICKER} | {TICKER}#
+    # ----------------------------------------------------#
     
     @classmethod
     def get_dataset(cls, code):
@@ -32,10 +40,3 @@ class Quandl:
             json = response.json()
             return {'data': json['data']}
         return {'error':'request failed'}
-
-    # @classmethod    
-    # def get_database_code(cls):
-
-
-    # @classmethod    
-    # def get_table_code(cls):

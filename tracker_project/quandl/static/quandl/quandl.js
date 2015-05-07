@@ -63,24 +63,25 @@ function drawGraph(dataset){
     .attr("transform", "translate(" + padding +",0)")
     .call(yAxis);
 
-
-    // tooltips are initially misplaced
     $("svg > circle").tooltips();
 }
 
 $(document).ready(function(){
-    // get dataset with a getJSON 
+    var stockPrices = [];
     $("#stockForm").on("submit", function(event){
         event.preventDefault();
-        var symbol = $("input[name='company']").val();
-        $.getJSON("/quandl/stock_history/" + symbol + "/", function(data){
+        var symbol = $("input[name='company']").val(),
+        date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
+
+        $.getJSON("/quandl/stock_history/" + symbol + "/" + date + "/",function(data){
             if (data["errors"]){
                 console.log("Error");
             }
             else{
                 $("#graph").empty();
                 $(".tooltips").remove();
-                drawGraph(data["close"]);
+                stockPrices = data["close"];
+                drawGraph(stockPrices);
             }
         });
     });

@@ -12,6 +12,12 @@ class IndexView(View):
 
 class LiveStock(View):
 
-    def get(self, request):
-        data = Markit.find_quote("AAPL")
+    def get(self, request, symbol):
+        data = Markit.find_quote(symbol)
+        return JsonResponse(data)
+
+class CompanySearch(View):
+
+    def get(self, request, input_string):
+        data = Markit.find_company(input_string)
         return JsonResponse(data)
