@@ -7,7 +7,7 @@ $(document).ready(function(){
 			$('.mainInfo').css("display", "block");			
 			$('.returned').css("display", "inline-block");			
 			$("#slideBlock").slideUp(1500); 
-			$("#title").animate({'margin-top': '1em'}, {'duration':1500});
+			$("#title").animate({'margin-top': '.5em'}, {'duration':1500});
 		}, 4000)		
 	})
 });
