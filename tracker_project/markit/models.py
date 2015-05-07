@@ -10,18 +10,18 @@ class Markit:
     def find_company(cls, name):
         if not isinstance(name, str):
             return [{'Error':'Error Invalid Input Type'}]
-        r = requests.get(cls.company_search_url + name)
-        if r.status_code == 200:
-            return r.json()
+        response = requests.get(cls.company_search_url + name)
+        if response.status_code == 200:
+            return response.json()
         return {'Error':'Request Error'}
 
     @classmethod
     def find_quote(cls, symbol):
         if not isinstance(symbol, str):
             return {'Error':'Error Invalid Input Type'}
-        r = requests.get(cls.quote_url + symbol)
-        if r.status_code == 200:
-            return r.json()
+        response = requests.get(cls.quote_url + symbol)
+        if response.status_code == 200:
+            return response.json()
         return {'Error':'Request Error'}
 
     # http://finance.yahoo.com/q?s=APPL&ql=1
