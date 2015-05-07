@@ -17,6 +17,7 @@ h1 {
     height: 25%;
     width: 50%;
     margin: auto;
+    overflow: hidden;
 }
 #graph {
     height: 60%;
