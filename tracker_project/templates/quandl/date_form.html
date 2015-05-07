@@ -1,27 +1,26 @@
 <form id="stockForm" method="GET">
     {% csrf_token %}
     <fieldset class="date">
-            
         <legend>Stock Look Up</legend>
         <label for="symbol">Symbol</label>
         <input type="text" name="company">
         <label for="month_start">Month</label>
-        <select id="month_start" name="month_start"/>
-            <option>January<option/>
-            <option>February<option/>
-            <option>March<option/>
-            <option>April<option/>
-            <option>May<option/>
-            <option>June<option/>
-            <option>July<option/>
-            <option>August<option/>
-            <option>September<option/>
-            <option>October<option/>
-            <option>November<option/>
-            <option>December<option/>
-        <select/> - 
+        <select id="month_start" name="month_start">
+            <option>January</option>
+            <option>February</option>
+            <option>March</option>
+            <option>April</option>
+            <option>May</option>
+            <option>June</option>
+            <option>July</option>
+            <option>August</option>
+            <option>September</option>
+            <option>October</option>
+            <option>November</option>
+            <option>December</option>
+        </select> - 
         <label for="day_start">Day</label>
-        <select id="day_start" name="day_start"/>
+        <select id="day_start" name="day_start">
             <option>1</option>       
             <option>2</option>       
             <option>3</option>       
@@ -53,22 +52,22 @@
             <option>29</option>       
             <option>30</option>       
             <option>31</option> 
-        <select/> - 
+        </select> - 
 
         <label for="year_start">Year</label>
-        <select id="year_start" name="year_start"/>
-            <option>2005<option/>
-            <option>2006<option/>
-            <option>2007<option/>
-            <option>2008<option/>
-            <option>2009<option/>
-            <option>2010<option/>
-            <option>2011<option/>
-            <option>2012<option/>
-            <option>2013<option/>
-            <option>2014<option/>
-            <option>2015<option/>
-        <select/>
+        <select id="year_start" name="year_start">
+            <option>2005</option>
+            <option>2006</option>
+            <option>2007</option>
+            <option>2008</option>
+            <option>2009</option>
+            <option>2010</option>
+            <option>2011</option>
+            <option>2012</option>
+            <option>2013</option>
+            <option>2014</option>
+            <option>2015</option>
+        </select>
         <input id="companyButton" type="submit" value="Enter">
     </fieldset>
 </form>
