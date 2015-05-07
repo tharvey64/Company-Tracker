@@ -18,7 +18,7 @@ class SearchView(View):
     def post(self, request):
         tweets = []
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-        result = twitter.search(q=request.POST['search'], count=2, result_type=request.POST['type'], lang='en') #everything
+        result = twitter.search(q=request.POST['search'], count=200, result_type=request.POST['type'], lang='en') #everything
         start_point = result['statuses'] #one level into result... shouldnt have to use result again
         for tweet in start_point:
             if tweet['user']['followers_count'] > 5000:
@@ -27,9 +27,10 @@ class SearchView(View):
         almost_there = [block['hashtags'] for block in broken_down] #hashtags 2
         hashtags = [last[0]['text'].lower() for last in almost_there if len(last) > 0] #hashtags final
         hash_dict = Counter(hashtags)
-        top_hashes = hash_dict.most_common(5)        
+        top_hashes = hash_dict.most_common(5)      
+        print (tweets)  
         return JsonResponse({'dates' : [{'date' : date['created_at']} for date in start_point], 
-                            'feelings' : [{'feeling' : self.alchemyapi.sentiment("text", block)} for block in tweets], 
+                            # 'feelings' : [{'feeling' : self.alchemyapi.sentiment("text", block)} for block in tweets], 
                             'favorites' : [{'favorite' : favorite['favorite_count']} for favorite in start_point],
                              'hashes': [{'name': hashe[0]} for hashe in top_hashes],
                              'tweets' : [{'content' : line} for line in tweets]})

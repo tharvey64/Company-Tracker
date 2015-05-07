@@ -15,7 +15,7 @@
       // $el.attr('class')
       // el.__data__[1]
       // Make DIV and append to page 
-      var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">' + el.__data__[0] + '<div class="arrow"></div></div>').appendTo("body");
+      var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '"><p>' + el.__data__[3] + '</p><div class="arrow"></div></div>').appendTo("body");
 
       // Position right away, so first appearance is smooth
       // The above statement is False 

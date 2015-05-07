@@ -9,10 +9,10 @@ $(document).ready(function(){
                 var dates = data['dates'] 
                 var favorites = data['favorites']
                 var tweets = data['tweets']
-                var feelings = data['feelings']
+                // var feelings = data['feelings']
                 for (i=0; i < dates.length; i++) {
-                    if (feelings[i]['feeling']['docSentiment'] != undefined){
-                        dataset.push([dates[i]['date'], favorites[i]['favorite'], tweets[i]['content'], feelings[i]['feeling']['docSentiment']['score']])
+                    if (tweets[i] != undefined){
+                        dataset.push([dates[i]['date'], favorites[i]['favorite'], Math.random(1), tweets[i]['content']]) //feelings[i]['feeling']['docSentiment']['score']])
                     }
                     else{
                         continue
@@ -29,7 +29,7 @@ $(document).ready(function(){
             var horizontalTicks = w/100;                            
 
             var yScale = d3.scale.linear()
-                .domain([0, d3.max(dataset,function(d){return d[1]})])
+                .domain([0, d3.max(dataset,function(d){return d[2]})])
                 .range([h - padding, padding]);    
 
             var xScale = d3.time.scale()
@@ -58,10 +58,10 @@ $(document).ready(function(){
                     return xScale(parseDate(d[0]));
                 })
                 .attr("cy", function(d){
-                    return yScale(d[3])
+                    return yScale(d[2])
                 })
                 .attr("r", function(d) {
-                    return 10;
+                    return Math.sqrt(d[1] / 25);
                 })
                 .attr("fill", "gold")
                 // .attr("fill", function(d) {

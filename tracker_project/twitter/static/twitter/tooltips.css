@@ -20,6 +20,7 @@
   text-transform: uppercase;
   box-shadow: 0 0 7px black;
 }
+
 .arrow {
   width: 70px;
   height: 16px;
@@ -50,6 +51,7 @@
 .tooltip.active {
   opacity: 1;
   margin-top: 2px;
+  width: 600px;
   -webkit-transition: all 0.2s ease;
   -moz-transition:    all 0.2s ease;
   -ms-transition:     all 0.2s ease;
