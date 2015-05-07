@@ -1,0 +1,17 @@
+{% verbatim %}
+<script id="search-result" type="x-tmpl-mustache">
+    <ul class="company-list">
+        {{#result}}
+        <li>
+        <button id="{{Exchange}}_{{Symbol}}" type="button">
+            <ul class="company-info">
+                <li><strong>Name: </strong>{{Name}}</li>
+                <li><strong>Symbol: </strong>{{Symbol}}</li>
+                <li><strong>Exchange: </strong>{{Exchange}}</li>
+            </ul>
+        </button>
+        </li>
+        {{/result}}
+    </ul>
+</script>
+{% endverbatim %}

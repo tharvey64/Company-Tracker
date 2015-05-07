@@ -66,11 +66,26 @@ function drawGraph(dataset){
     $("svg > circle").tooltips();
 }
 
+function renderForms(){
+    var dateTemplate = $("#date-form").html();
+    Mustache.parse(dateTemplate);
+    var info = Mustache.render(dateTemplate);
+    $("#tab1").html(info);
+
+    var searchTemplate = $("#search-form").html();
+    Mustache.parse(searchTemplate);
+    var info = Mustache.render(searchTemplate);
+    $("#tab2").html(info);
+}
+
 $(document).ready(function(){
     var stockPrices = [];
-    $("#stockForm").on("submit", function(event){
+
+    renderForms()
+
+    $("#tab1").on("submit", "#stockForm",function(event){
         event.preventDefault();
-        var symbol = $("input[name='company']").val(),
+        var symbol = $("input[name='company_symbol']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
 
         $.getJSON("/quandl/stock_history/" + symbol + "/" + date + "/",function(data){

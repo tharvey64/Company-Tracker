@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic.base import View
 from quandl.models import Quandl, Company, StockPrice
+from markit.models import Markit
 
 from quandl.aapl import aapl_history
 
@@ -16,6 +17,8 @@ class StockHistory(View):
 
     def get(self,request,symbol,date_string):
         # need to validate the date somewhere
+        if not Company.objects.filter(symbol=symbol): 
+            return JsonResponse({'error':'company not found'})
         start_date = datetime.strptime(date_string, "%B-%d-%Y")
         stock_history = StockPrice.objects.filter(company__symbol=symbol).filter(created_at__gte=start_date)
         if stock_history:
@@ -24,15 +27,25 @@ class StockHistory(View):
             data = {'error': 'Stock Data Not Found'}
         return JsonResponse(data)
 
-class QuandlData(View):
-
-    def get(self, request, code):
-        return JsonResponse(Quandl.get_dataset(code))
+class CreateCompany(View):
 
     def post(self, request):
-        pass
-        # EDIT >>> Call this to initially insert the stock data
-        # Only update Stock Data When that Stock Is Requested
-        
-        # Take the New Stock Prices and store them in the db
-        #### This Will be A Bulk Create Method
+        request.POST.get(symbol)
+
+
+class CompanyView(View):
+
+    def get(self, request):
+        company = Company.objects.filter(symbol=request.GET.get('symbol',False))
+        if company:
+            return JsonResponse({'company': dict(name=company[0].name,symbol=company[0].symbol,exchange=company[0].exchange)})
+        return JsonResponse({'error':'Company Not Found.'})
+
+# class QuandlData(View):
+
+#     def get(self, request, code):
+#         # send date to quandl
+#         return JsonResponse(Quandl.get_dataset(code))
+
+#     def post(self, request):
+#         pass

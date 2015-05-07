@@ -2,7 +2,7 @@ $(document).ready(function(){
     $("#stockForm").on("submit", function(event){
         event.preventDefault();
 
-        var symbol = $("input[name='company']").val();
+        var symbol = $("input[name='company_name']").val();
         $.getJSON("/article_feeds/yahoo/" + symbol + "/", function(data){
             var template = $('#storyTemplate').html();
             Mustache.parse(template);
