@@ -1,7 +1,8 @@
 .tabs {
-    height: 100%;
+    height: 80%;
     width: 100%;
     display: inline-block;
+    padding: .5em;
 }
 .tab-links:after {
     display: block;
@@ -13,6 +14,7 @@
     float: left;
     list-style: none;
 }
+
 .tab-links a {
     padding: 0.5em 1em;
     display: inline-block;
@@ -33,9 +35,9 @@ li.active a, li.active a:hover {
 }
 .tab-content {
     padding: 0.5em;
-    border-radius: 0.3em;
     box-shadow: -0.1em 0.1em 0.1em rgba(0,0,0,0.15);
-    background: #FFF;
+    background: none;
+    border-radius: 3em;
 }
 .tab{
     display: none;

@@ -1,23 +1,30 @@
 body{
     overflow-x: hidden;
+    background-image: url("background_images/1.jpg");
+    opacity: 0.8;    
 }
 h1 {
     margin-bottom: 0.1em;
+    text-align: center;
+    font-family: 'Permanent Marker', cursive;
+}
+
+#title{
+    margin-top: 4em;
+
 }
 #forms {
-    height: 35%;
-    max-height: 10em;
+    height: 25%;
     width: 50%;
-    border: dashed 0.2em;
+    margin: auto;
 }
 #graph {
     height: 60%;
     min-height: 20em;
     width: 45%;
     overflow-x: scroll;
-    border: groove 0.2em;
-    display: inline-block;
-    float:left;
+/*    border: groove 0.2em ;
+*/    float:left;
 }
 .axis path,
 .axis line {
@@ -34,4 +41,36 @@ h1 {
 .container{
     width: 100%;
     margin: 0 1.5em 0 1.5em;
+}
+
+.returned{
+    display: none;
+    margin: 2em 1em 0 1em;
+}
+
+legend {
+    text-align: center;
+}
+
+a{
+    color: black;
+}
+
+#loading{
+    text-align: center;
+    margin: auto;
+    display: none;    
+}
+
+p{
+    font-family: 'News Cycle', sans-serif;
+}
+
+img {
+    height: 2em;
+}
+
+.mainInfo{
+    display: none;
+    border-top: groove 0.2em;
 }

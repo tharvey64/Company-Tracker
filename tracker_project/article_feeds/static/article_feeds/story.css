@@ -2,8 +2,9 @@
     height: 60%;
     min-height: 20em;
     width: 45%;
-    border: groove 0.2em;
-    display: inline-block;    
+    border-left: groove 0.2em;
+    display: none;    
     overflow-x: scroll;
     overflow-y: scroll;
+    padding: .25em;
 }
