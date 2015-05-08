@@ -16,6 +16,7 @@ h1 {
 #forms {
     height: 25%;
     width: 50%;
+    /*max-height: 8em;*/
     margin: auto;
     overflow: hidden;
 }
@@ -23,8 +24,10 @@ h1 {
     height: 60%;
     width: 45%;
     overflow-x: scroll;
-/*    border: groove 0.2em ;
-*/    float:left;
+    /*border: groove 0.2em ;
+    min-height: 20em;
+    display: inline-block;*/
+    float:left;
 }
 .axis path,
 .axis line {
@@ -78,4 +81,16 @@ img {
 .navbar {
     background: black;
     opacity: .75;
+}
+/*markit search_result.html*/
+.company-list {
+    list-style: none;
+}
+ul.company-info {
+    font-size: 1.5em;
+    padding-left: 0.2em;
+    list-style: none;
+}
+button {
+    text-align: left;
 }
