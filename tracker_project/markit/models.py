@@ -9,7 +9,7 @@ class Markit:
     @classmethod
     def find_company(cls, name):
         if not isinstance(name, str):
-            return [{'Error':'Error Invalid Input Type'}]
+            return {'Error':'Error Invalid Input Type'}
         response = requests.get(cls.company_search_url + name)
         if response.status_code == 200:
             return response.json()

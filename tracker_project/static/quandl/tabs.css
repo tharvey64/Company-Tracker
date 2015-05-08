@@ -9,6 +9,9 @@
     clear: both;
     content: '';
 }
+.tab-links {
+    margin: 0.2em;
+}
 .tab-links li {
     margin: 0;
     float: left;
