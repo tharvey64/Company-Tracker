@@ -9,6 +9,7 @@
 <script type="text/javascript" src='{% static "quandl/tooltips.js" %}'></script>
 <script type="text/javascript" src='{% static "quandl/quandl.js" %}'></script>
 <script type="text/javascript" src='{% static "quandl/tabs.js" %}'></script>
+<script type="text/javascript" src='{% static "markit/markit.js" %}'></script>
 <script type="text/javascript" src='{% static "quandl/query.js" %}'></script>
 <script type="text/javascript" src='{% static "article_feeds/story.js" %}'></script>
 <script src="{%static "twitter/base.js"%}"></script>        
@@ -35,22 +36,16 @@
         <div class="tabs">
             <ul class="tab-links">
                 <li class="active"><a href="#tab1">Quote</a></li>
-                <li><a href="#tab2">Company Search</a></li>
+                <li><a href="#tab2">Find Company</a></li>
                 <li><a href="#tab3">Twitter Search</a></li>
             </ul>
 
             <div class="tab-content">
-
-                <div id="tab1" class="tab active">
-                    {% include "quandl/date_form.html" %}
-                </div>
-                <div id="tab2" class="tab">
-                    <p>Empty</p>
-                </div>
-                <div id="tab3" class="tab">
-                    {% include "twitter/twitterForm.html" %}                    
-                </div>
+                <div id="tab1" class="tab active"></div>
+                <div id="tab2" class="tab"></div>
+                <div id="tab3" class="tab"></div>
             </div>
+            
         </div>
     </div> 
 
@@ -64,16 +59,12 @@
     </div>
 </div>	
 
-	{%verbatim%}
-		<script id="storyTemplate" type="x-tmpl-mustache">
-			<ul>{{#articles}} 
-					<li>
-					<p><a target='_new' href={{link}}><STRONG>{{title}}</STRONG></a></p>
-					<p>{{published}}</p>
-					</li>
-	   		{{/articles}}</ul>
-	  	</script>
-	{%endverbatim%} 
+    {% include "quandl/company_form.html" %}
+    {% include "quandl/date_form.html" %}
+    {% include "markit/search_form.html" %}
+    {% include "markit/search_result.html" %}
+    {% include "article_feeds/story_template.html" %}
+    {% include "twitter/twitterForm.html" %}                    
 
 </body>	
 

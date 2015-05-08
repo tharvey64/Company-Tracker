@@ -18,6 +18,6 @@ class LiveStock(View):
 
 class CompanySearch(View):
 
-    def get(self, request, input_string):
-        data = Markit.find_company(input_string)
-        return JsonResponse(data)
+    def get(self, request):
+        search_result = Markit.find_company(request.GET.get('input_string',False))
+        return JsonResponse({'list': search_result})
