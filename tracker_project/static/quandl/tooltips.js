@@ -12,8 +12,6 @@
     return this.each(function(i, el) {
 
       $el = $(el).attr("data-tooltip", i);
-      // 
-      // el.__data__[1]
       // Make DIV and append to page 
       var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">' + $el.attr('title') + '<div class="arrow"></div></div>').appendTo("body");
 

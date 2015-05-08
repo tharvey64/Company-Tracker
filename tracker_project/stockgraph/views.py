@@ -15,11 +15,11 @@ class WelcomeView(View):
 
 class CompanyView(View):
 	lookup_url = "http://dev.markitondemand.com/Api/v2/Lookup/json?input="
-	quote_url = "http://dev.markitondemand.com/Api/v2/Quote/json?symbol="
+	# quote_url = "http://dev.markitondemand.com/Api/v2/Quote/json?symbol="
 
 	def post(self, request):
 		r = requests.get(self.lookup_url + request.POST['company'])
 		ticker = r.json()[0]['Symbol']
-		stock = (requests.get(self.quote_url + ticker)).json()['LastPrice']
-		return JsonResponse({'data' : [{'info' : str(stock)}]})
+		# stock = (requests.get(self.quote_url + ticker)).json()['LastPrice']
+		return JsonResponse({'data' : [{'info' : ticker}]})
 		# return JsonResponse({'data' : [{'info': str(block) + ' : ' + str(stock[block])} for block in stock]})

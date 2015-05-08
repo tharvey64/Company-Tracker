@@ -1,4 +1,6 @@
 function drawGraph(dataset){
+    $('#graph').empty();
+    $('.tooltip').remove();
     var parseDate = d3.time.format("%Y-%m-%d").parse
     var h = parseInt($("#graph").css("height"));
     var graphWidth = parseInt($("#graph").css('width'));
@@ -78,6 +80,11 @@ function renderForms(){
     Mustache.parse(searchTemplate);
     var info = Mustache.render(searchTemplate);
     $("#tab2").html(info);
+
+    var template = $('#twitter-form').html();
+    Mustache.parse(template);
+    var info = Mustache.render(template);
+    $('#tab3').html(info); 
 }
 
 $(document).ready(function(){
