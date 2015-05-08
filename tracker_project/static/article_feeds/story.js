@@ -1,13 +1,12 @@
 $(document).ready(function(){
-    $("#stockForm").on("submit", function(event){
+    $("#tab1, #graph").on("submit", "form", function(event){
         event.preventDefault();
-
         var symbol = $("input[name='company_symbol']").val();
         $.getJSON("/article_feeds/yahoo/" + symbol + "/", function(data){
-            var template = $('#storyTemplate').html();
-            Mustache.parse(template);
+            var template = $('#story-template').html();
+            console.log()
             var info = Mustache.render(template, data);
-            $('#stories').html(info);       
+            $("#stories").html(info);       
         });
 
     });

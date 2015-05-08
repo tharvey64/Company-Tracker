@@ -23,7 +23,7 @@ $(document).ready(function(){
             }
         });
     });
-    $("#graph").on("click", "button", function(event){
+    $("#graph").on("click", "button.search-result", function(event){
         var dbCode = $(this).attr("id").split("_");
         console.log(dbCode);
         var dateTemplate = $("#date-form").html();

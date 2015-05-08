@@ -1,6 +1,6 @@
 function drawGraph(dataset){
     var parseDate = d3.time.format("%Y-%m-%d").parse
-    var h = parseInt($("#graph").css('height'));
+    var h = parseInt($("#graph").css("height"));
     var graphWidth = parseInt($("#graph").css('width'));
     var w = dataset.length/5 * graphWidth;
 
@@ -88,18 +88,55 @@ $(document).ready(function(){
         var symbol = $("input[name='company_symbol']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
 
-        $.getJSON("/quandl/stock_history/" + symbol + "/" + date + "/",function(data){
-            if (data["errors"]){
-                console.log("Error");
+        $.getJSON("/quandl/stock_history/" + symbol + "/" + date,function(data){
+            console.log(data)
+            if (data.stocks){
+                $("#graph").empty();
+                var template = $("#company-form").html();
+                Mustache.parse(template);
+                var info = Mustache.render(template,{"result":data.stocks})
+                $("#graph").html(info);
             }
-            else{
+            else if (data.close){
                 $("#graph").empty();
                 $(".tooltips").remove();
-                stockPrices = data["close"];
+                stockPrices = data.close;
                 drawGraph(stockPrices);
             }
         });
     });
+
+    $("#graph").on("submit", "form", function(event){
+            event.preventDefault();
+            var url = $(this).attr("action"),
+            name = $("input[name='company_name']").val(),
+            symbol = $("input[name='company_symbol']").val(),
+            exchange = $("input[name='company_exchange']").val(),
+            token = $("input[name='csrfmiddlewaretoken']").val();
+            
+            $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
+                
+                if (data.company){
+                    
+                    date = "01-1-2005"
+                    
+                    $.post("/quandl/stock_history/" + data.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
+                        if (data.close){
+                            $("#graph").empty();
+                            $(".tooltips").remove();
+                            stockPrices = data.close;
+                            drawGraph(stockPrices);
+                        }
+                        else{
+                            console.log(data)
+                        }
+                    });
+                }
+                else{
+                    console.log(data)
+                }
+            });
+        });
 
 
     // $("#graph").on("mouseenter","circle", function(){
