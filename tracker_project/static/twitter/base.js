@@ -5,6 +5,8 @@ $(document).ready(function(){
         $.post($(this).attr('action'),
             {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
             function(data) {
+                $('#postedSearch').empty();
+                $('.tooltip').remove();
                 var dataset = []
                 var dates = data['dates']  
                 var favorites = data['favorites']
@@ -64,7 +66,7 @@ $(document).ready(function(){
                     return Math.sqrt(d[1] / 25);
                 })
                 .attr("title", function(d){
-                    return d[1-1];
+                    return d[0];
                 })
                 .attr("fill", "gold");
                 // .attr("fill", function(d) {

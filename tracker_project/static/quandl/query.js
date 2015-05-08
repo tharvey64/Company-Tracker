@@ -25,7 +25,6 @@ $(document).ready(function(){
 		}, 3000);		
 	});	
 	$('.btn').on('click', function(event) {	
-		$('.tooltip').empty()
 		$('.btn').css('display', 'none');		
 		$('.returned').css("display", "none");	
         $('#results').css("display", "none");  

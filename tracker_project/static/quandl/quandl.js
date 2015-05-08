@@ -1,4 +1,6 @@
 function drawGraph(dataset){
+    $('#graph').empty();
+    $('.tooltip').remove();
     var parseDate = d3.time.format("%Y-%m-%d").parse
     var h = parseInt($("#graph").css("height"));
     var graphWidth = parseInt($("#graph").css('width'));
