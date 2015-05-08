@@ -111,14 +111,17 @@ $(document).ready(function(){
         });
     });
 
-    $("#graph").on("submit", "form", function(event){
+    $("#graph").on("submit", ".companyForm", function(event){
             event.preventDefault();
             var url = $(this).attr("action"),
             name = $("input[name='company_name']").val(),
             symbol = $("input[name='company_symbol']").val(),
             exchange = $("input[name='company_exchange']").val(),
             token = $("input[name='csrfmiddlewaretoken']").val();
-            
+            console.log(name)
+            console.log(symbol)
+            console.log(exchange)
+
             $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
                 
                 if (data.company){

@@ -12,7 +12,7 @@ $(document).ready(function(){
                 // var feelings = data['feelings']
                 for (i=0; i < dates.length; i++) {
                     if (tweets[i] != undefined){
-                        dataset.push([dates[i]['date'], favorites[i]['favorite'], Math.random(1), tweets[i]['content']]) //feelings[i]['feeling']['docSentiment']['score']])
+                        dataset.push([tweets[i]['content'], favorites[i]['favorite'], Math.random(1), dates[i]['date']]) //feelings[i]['feeling']['docSentiment']['score']])
                     }
                     else{
                         continue
@@ -34,7 +34,7 @@ $(document).ready(function(){
 
             var xScale = d3.time.scale()
                 .domain(d3.extent(dataset, function(d){
-                    return parseDate(d[0]);
+                    return parseDate(d[3]);
                 }))
                 .range([padding, w - padding]);
 
@@ -55,15 +55,18 @@ $(document).ready(function(){
                 .enter()
                 .append("circle")
                 .attr("cx", function(d) {
-                    return xScale(parseDate(d[0]));
+                    return xScale(parseDate(d[3]));
                 })
                 .attr("cy", function(d){
-                    return yScale(d[2])
+                    return yScale(d[2]);
                 })
                 .attr("r", function(d) {
                     return Math.sqrt(d[1] / 25);
                 })
-                .attr("fill", "gold")
+                .attr("title", function(d){
+                    return d[1-1];
+                })
+                .attr("fill", "gold");
                 // .attr("fill", function(d) {
                 //     return d3.rgb((d[2] * -255),(d[2] * 255),0);
                 // });

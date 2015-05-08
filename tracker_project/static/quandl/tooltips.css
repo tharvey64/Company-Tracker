@@ -19,13 +19,16 @@
   text-decoration: none;
   text-transform: uppercase;
   box-shadow: 0 0 7px black;
+  height: 8em;
+  width: 25em;
 }
+
 .arrow {
   width: 70px;
-  height: 16px;
+  height: 20px;
   overflow: hidden;
   position: absolute;
-  left: 34.5%;
+  left: 48%;
   margin-left: -35px;
   bottom: -16px;
 }

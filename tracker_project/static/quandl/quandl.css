@@ -5,13 +5,20 @@ body{
 }
 
 h1 {
-    margin: .25em 0 1em 0;
+    margin: 3em 0 1em 0;
     text-align: center;
     font-family: 'Permanent Marker', cursive;
 }
 
+#results{
+    display: none;
+    font-size: 2em;
+    text-align: center;
+}
+
 .btn{
     display:none;
+    font-size: 2em;
 }
 
 #forms {
@@ -69,11 +76,11 @@ a{
 
 #loading{
     text-align: center;
-    margin: auto;
+    margin: 1em auto;
     display: none;    
 }
 
-p{
+p {
     font-family: 'News Cycle', sans-serif;
 }
 
@@ -90,7 +97,6 @@ img {
     background: black;
     opacity: .70;
 }
-/*markit search_result.html*/
 .company-list {
     list-style: none;
 }
