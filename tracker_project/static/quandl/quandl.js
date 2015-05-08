@@ -79,7 +79,7 @@ function renderForms(){
 
     var template = $('#twitter-form').html();
     Mustache.parse(template);
-    var info = Mustache.render(template, data);
+    var info = Mustache.render(template);
     $('#tab3').html(info); 
 }
 
