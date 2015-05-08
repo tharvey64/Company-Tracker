@@ -22,7 +22,6 @@ class StockHistoryView(View):
         start_date = datetime.strptime(date_string, "%B-%d-%Y").date()
         stock_history = StockPrice.objects.filter(company__symbol__iexact=symbol)
         stock_history = stock_history.filter(created_at__gte=start_date)
-
         if stock_history:
             data = {'close': [[day.created_at, day.close_price, day.volume] for day in stock_history]}
         else:
@@ -40,6 +39,7 @@ class StockHistoryView(View):
         prices = Quandl.get_dataset(code)
         if 'data' in prices:
             stock_prices = []
+
             for day in prices['data']:
                 date = datetime.strptime(day[0],'%Y-%m-%d').date()
                 stock_prices.append(
@@ -54,7 +54,7 @@ class StockHistoryView(View):
                     )
                 )
             StockPrice.objects.bulk_create(stock_prices)
-            return redirect('quandl:history',symbol=symbol,date_string="01-1-2005")
+            return redirect('quandl:history',symbol=symbol,date_string="January-1-2005")
         return JsonResponse({'error': 'Shit.'})
 
 
