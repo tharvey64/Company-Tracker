@@ -14,7 +14,7 @@ function drawGraph(dataset){
     var low = d3.min(dataset,function(d){return parseFloat(d[1])});
     var high = d3.max(dataset,function(d){return parseFloat(d[1])});
     
-    // Need To be Refactored
+    // Needs To be Refactored
 
     var padding = 30;
 
@@ -50,6 +50,8 @@ function drawGraph(dataset){
         return yScale(d[1]);
     }).attr("r", 3)
     .attr("class", function(d){
+        return d[0]
+    }).attr("title", function(d){
         return d[0]
     }).style("fill","gold");
     
@@ -94,7 +96,6 @@ $(document).ready(function(){
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
 
         $.getJSON("/quandl/stock_history/" + symbol + "/" + date,function(data){
-            console.log(data)
             if (data.stocks){
                 $("#graph").empty();
                 var template = $("#company-form").html();
@@ -104,34 +105,29 @@ $(document).ready(function(){
             }
             else if (data.close){
                 $("#graph").empty();
-                $(".tooltips").remove();
+                $("svg").remove(".tooltip");
                 stockPrices = data.close;
                 drawGraph(stockPrices);
             }
         });
     });
 
-    $("#graph").on("submit", ".companyForm", function(event){
+    $("#graph").on("submit", ".company-list form", function(event){
             event.preventDefault();
             var url = $(this).attr("action"),
-            name = $("input[name='company_name']").val(),
-            symbol = $("input[name='company_symbol']").val(),
-            exchange = $("input[name='company_exchange']").val(),
-            token = $("input[name='csrfmiddlewaretoken']").val();
-            console.log(name)
-            console.log(symbol)
-            console.log(exchange)
-
+            tag = $(this).attr("id"),
+            name = $($("#"+tag+" button ul li input")[0]).val(),
+            symbol = $($("#"+tag+" button ul li input")[1]).val(),
+            exchange = $($("#"+tag+" button ul li input")[2]).val(),
+            token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
             $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
                 
                 if (data.company){
-                    
-                    date = "01-1-2005"
-                    
+                    date = "January-1-2005"
                     $.post("/quandl/stock_history/" + data.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
                         if (data.close){
                             $("#graph").empty();
-                            $(".tooltips").remove();
+                            $("svg").remove(".tooltip");
                             stockPrices = data.close;
                             drawGraph(stockPrices);
                         }
