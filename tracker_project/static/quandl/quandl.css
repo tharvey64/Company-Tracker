@@ -3,21 +3,21 @@ body{
     background-image: url("background_images/1.jpg");
     opacity: 0.8;    
 }
+
 h1 {
-    margin-bottom: 0.1em;
+    margin: .25em 0 1em 0;
     text-align: center;
     font-family: 'Permanent Marker', cursive;
 }
 
-#title{
-    margin-top: 4em;
-
+.btn{
+    display:none;
 }
+
 #forms {
     height: 25%;
     width: 50%;
     margin: auto;
-    overflow: hidden;
 }
 #graph {
     height: 60%;
@@ -26,6 +26,14 @@ h1 {
 /*    border: groove 0.2em ;
 */    float:left;
 }
+
+#postedSearch {
+    height: 60%;
+    width: 45%;
+    overflow-x: scroll;
+    border-top: groove 0.2em ;
+}
+
 .axis path,
 .axis line {
     fill: none;
@@ -77,5 +85,5 @@ img {
 
 .navbar {
     background: black;
-    opacity: .75;
+    opacity: .70;
 }

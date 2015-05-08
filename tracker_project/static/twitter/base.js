@@ -1,12 +1,12 @@
 $(document).ready(function(){    
-    $('#searchTwitter').on('submit', function(event){
+    $('#twitterForm').on('submit', function(event){
         event.preventDefault();
-        $('#graph').empty()
+        // $('#graph').empty()
         $.post($(this).attr('action'),
             {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
             function(data) {
                 var dataset = []
-                var dates = data['dates'] 
+                var dates = data['dates']  
                 var favorites = data['favorites']
                 var tweets = data['tweets']
                 // var feelings = data['feelings']
@@ -46,7 +46,7 @@ $(document).ready(function(){
             yAxis.scale(yScale).orient("left");
             yAxis.ticks(10);
 
-            var svg = d3.select("#graph")
+            var svg = d3.select("#postedSearch")
                         .append("svg")
                         .attr("width", w)
                         .attr("height", h)  
@@ -84,10 +84,10 @@ $(document).ready(function(){
         //         Mustache.parse(template);
         //         var info = Mustache.render(template, data);
         //         $('#postedTweets').html(info); 
-                var template = $('#hashTemplate').html();
-                Mustache.parse(template);
-                var info = Mustache.render(template, data);
-                $('#postedHashes').html(info);                                 
+                // var template = $('#hashTemplate').html();
+                // Mustache.parse(template);
+                // var info = Mustache.render(template, data);
+                // $('#postedHashes').html(info);                                 
             }
         )
     
