@@ -1,10 +1,9 @@
-function drawGraph(dataset){
+function drawGraph(dataset, parseDate){
     $('#graph').empty();
     $('.tooltip').remove();
-    var parseDate = d3.time.format("%Y-%m-%d").parse
     var h = parseInt($("#graph").css("height"));
     var graphWidth = parseInt($("#graph").css('width'));
-    var w = dataset.length/5 * graphWidth;
+    var w = dataset.length/10 * graphWidth;
 
     d3.select("#graph")
     .append("svg")
@@ -51,9 +50,7 @@ function drawGraph(dataset){
     .attr("cy", function(d){
         return yScale(d[1]);
     }).attr("r", 3)
-    .attr("class", function(d){
-        return d[0]
-    }).attr("title", function(d){
+    .attr("title", function(d){
         return d[0]
     }).style("fill","gold");
     
@@ -114,7 +111,8 @@ $(document).ready(function(){
                 $("#graph").empty();
                 $("svg").remove(".tooltip");
                 stockPrices = data.close;
-                drawGraph(stockPrices);
+                var parseDate = d3.time.format("%Y-%m-%d").parse
+                drawGraph(stockPrices, parseDate);
             }
         });
     });
@@ -138,7 +136,8 @@ $(document).ready(function(){
                         $("#graph").empty();
                         $("svg").remove(".tooltip");
                         stockPrices = data.close;
-                        drawGraph(stockPrices);
+                        var parseDate = d3.time.format("%Y-%m-%d").parse
+                        drawGraph(stockPrices, parseDate);
                     }
                     else{
                         console.log(data);
@@ -150,14 +149,27 @@ $(document).ready(function(){
             }
         });
     });
+    // more thought required
+    // var dataset = []
+    // setInterval(function(){
+    //     $.getJSON("/markit/live_stock/",function(data){
+    //         if (data["Error"]){
+    //             console.log(data["Error"]);
+    //         }
+    //         else{
 
-
-    // $("#graph").on("mouseenter","circle", function(){
-    //     console.log($(this)[0].__data__[1])
-    // });
-
-    // $("#graph").on("mouseleave","circle", function(){
-    //     console.log($(this).attr("class")+"Leave");
-    // });
+    //             dataset.push([timestamp(data["Timestamp"]),data["LastPrice"]]);
+    //             var parseTimestamp = d3.time.format("%a %B %e %X %Z %Y").parse 
+    //         }       
+    //     });
+    // },50000);
 });
+
+// $("#graph").on("mouseenter","circle", function(){
+//     console.log($(this)[0].__data__[1])
+// });
+
+// $("#graph").on("mouseleave","circle", function(){
+//     console.log($(this).attr("class")+"Leave");
+// });
 

@@ -68,6 +68,7 @@ $(document).ready(function(){
                 .attr("title", function(d){
                     return d[0];
                 })
+                .attr("class", "tweet")
                 .attr("fill", "gold");
                 // .attr("fill", function(d) {
                 //     return d3.rgb((d[2] * -255),(d[2] * 255),0);

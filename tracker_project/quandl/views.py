@@ -49,7 +49,6 @@ class StockHistoryView(View):
         if last_close[0].updated_at.hour >= 16:
             d += 1
         updated_date = str(last_close[0].updated_at.date() + datetime.timedelta(days=d))
-        print("2")
         # timedelta prevents overlap
         if not (company and (symbol and exchange)):
             return JsonResponse({'error': 'Missing Input.'})
@@ -81,7 +80,7 @@ class StockHistoryView(View):
             if not date_string:
                 date_string = "January-1-2005"
             return redirect('quandl:history',symbol=symbol,date_string=date_string)
-        return JsonResponse({'error': 'Shit.'})
+        return JsonResponse({'error': 'data not found'})
 
 
 # Company CRUD

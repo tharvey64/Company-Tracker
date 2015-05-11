@@ -3,18 +3,17 @@
 
   // Create plugin
   //  $.fn.tooltips = function(el, text_for_tooltip) 
-  $.fn.tooltips = function(el) {
+  $.fn.tooltips = function(el, class_string) {
 
     var $tooltip,
       $body = $('body'),
       $el;
-
     // Ensure chaining works
-    return this.each(function(i, el) {
+    return this.each(function(i, el, class_string) {
 
       $el = $(el).attr("data-tooltip", i);
       // Make DIV and append to page 
-      var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">' + $el.attr('title') + '<div class="arrow"></div></div>').appendTo("body");
+      var $tooltip = $('<div class="tooltip' + class_string ' data-tooltip="' + i + '">' + $el.attr('title') + '<div class="arrow"></div></div>').appendTo("body");
 
       // Position right away, so first appearance is smooth
       // The above statement is False 
