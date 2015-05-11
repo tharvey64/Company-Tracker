@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <html>
 <header>
-<title>Quandl Graphs</title>
+<title>Graphs</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
@@ -56,6 +56,13 @@
     </div>
     <div class='returned' id="postedSearch">
     </div>
+
+        <form id="compareForm" method="POST">
+        {% csrf_token %}                    
+        # for hashtags, RT for retweets, etc. <input type="text" name="query">
+        <input id="compateButton" type="submit" value="Search">
+        </form>
+
 </div>	
 
     {% include "quandl/company_form.html" %}

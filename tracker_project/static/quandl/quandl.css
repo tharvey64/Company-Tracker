@@ -108,3 +108,13 @@ ul.company-info {
 button {
     text-align: left;
 }
+
+#compareForm{
+    border-top: groove .2em;
+    border-bottom: groove .2em;
+    display: none;
+    margin: 2em auto 0 auto;
+    text-align: center;
+    width: 40%;
+    padding: .5em;
+}

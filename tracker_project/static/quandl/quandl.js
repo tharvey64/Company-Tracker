@@ -50,7 +50,7 @@ function drawGraph(dataset){
     })
     .attr("cy", function(d){
         return yScale(d[1]);
-    }).attr("r", 3)
+    }).attr("r", 8)
     .attr("class", function(d){
         return d[0]
     }).attr("title", function(d){
