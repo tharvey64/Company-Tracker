@@ -28,7 +28,7 @@
 
       $el
       // Get rid of yellow box popup
-      .removeAttr("title")
+      // .removeAttr("title")
 
       // Mouseenter
       .hover(function() {

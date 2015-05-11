@@ -4,7 +4,7 @@ function drawGraph(dataset){
     var parseDate = d3.time.format("%Y-%m-%d").parse
     var h = parseInt($("#graph").css("height"));
     var graphWidth = parseInt($("#graph").css('width'));
-    var w = dataset.length/5 * graphWidth;
+    var w = graphWidth;
 
     d3.select("#graph")
     .append("svg")
@@ -13,8 +13,8 @@ function drawGraph(dataset){
 
     var svg = d3.select("svg");
 
-    var low = d3.min(dataset,function(d){return parseFloat(d[1])});
-    var high = d3.max(dataset,function(d){return parseFloat(d[1])});
+    var low = d3.min(dataset,function(d){return parseFloat(d[1]) * 0.8});
+    var high = d3.max(dataset,function(d){return parseFloat(d[1]) * 1.2});
     
     // Needs To be Refactored
 
@@ -22,7 +22,7 @@ function drawGraph(dataset){
 
     var yScale = d3.scale.linear();
     yScale.range([h - padding, padding]);
-    yScale.domain([0,high]);
+    yScale.domain([low, high]);
 
     var yAxis = d3.svg.axis();
     yAxis.scale(yScale).orient("left");
@@ -34,28 +34,28 @@ function drawGraph(dataset){
     });
 
     input[0].setDate(input[0].getDate()-1);
+    input[1] = new Date()
     input[1].setDate(input[1].getDate()+1);
     xScale.domain(input);
 
     var xAxis = d3.svg.axis();
     xAxis.scale(xScale).orient("bottom");
-    xAxis.ticks(d3.time.day, 1);
+    // xAxis.ticks(d3.time.day, 1);
 
     svg.selectAll("circle")
     .data(dataset)
     .enter()
     .append("circle")
+    .attr("class", "stock")
     .attr("cx", function(d){
         return xScale(parseDate(d[0]));
     })
     .attr("cy", function(d){
         return yScale(d[1]);
-    }).attr("r", 3)
-    .attr("class", function(d){
+    }).attr("r", 4)
+    .attr("title", function(d){
         return d[0]
-    }).attr("title", function(d){
-        return d[0]
-    }).style("fill","gold");
+    }).style("fill","red");
     
     svg.append("g")
     .attr("class", "axis")
@@ -67,7 +67,7 @@ function drawGraph(dataset){
     .attr("transform", "translate(" + padding +",0)")
     .call(yAxis);
 
-    $("svg > circle").tooltips();
+    $("svg > .stock").tooltips();
 }
 
 function renderForms(){
@@ -81,10 +81,11 @@ function renderForms(){
     var info = Mustache.render(searchTemplate);
     $("#tab2").html(info);
 
-    var template = $('#twitter-form').html();
-    Mustache.parse(template);
-    var info = Mustache.render(template);
-    $('#tab3').html(info); 
+    // var template = $('#twitter-form').html();
+    // Mustache.parse(template);
+    // var info = Mustache.render(template);
+    // $('#tab3').html(info); 
+ 
 }
 
 $(document).ready(function(){
@@ -97,6 +98,10 @@ $(document).ready(function(){
         var symbol = $("input[name='company_symbol']").val(),
         token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
+        var template = $('#twitter-form').html();
+        Mustache.parse(template);
+        var info = Mustache.render(template, {'startDate' : date});
+        $('#footer').html(info);        
         // pass the date as hidden input to the forms
         $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
             // wont work havent tested

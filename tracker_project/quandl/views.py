@@ -37,8 +37,11 @@ class StockHistoryView(View):
         if not last_close: 
             return redirect('quandl:company-create', symbol=symbol)
         # check this 
-        if last_close[0].updated_at.date() == datetime.datetime.today().date():
-            return redirect('quandl:history', date_string=date_string,symbol=last_close[0].company.symbol)
+        today = datetime.datetime.today()
+        current_to = last_close[0].updated_at
+        if current_to.date() == today.date():
+            if today.hour < 16 or current_to.hour >= 16:
+                return redirect('quandl:history', date_string=date_string,symbol=last_close[0].company.symbol)
         company = last_close[0].company
         exchange = company.exchange
         
@@ -49,7 +52,6 @@ class StockHistoryView(View):
         if last_close[0].updated_at.hour >= 16:
             d += 1
         updated_date = str(last_close[0].updated_at.date() + datetime.timedelta(days=d))
-        print("2")
         # timedelta prevents overlap
         if not (company and (symbol and exchange)):
             return JsonResponse({'error': 'Missing Input.'})
@@ -82,7 +84,6 @@ class StockHistoryView(View):
                 date_string = "January-1-2005"
             return redirect('quandl:history',symbol=symbol,date_string=date_string)
         return JsonResponse({'error': 'Shit.'})
-
 
 # Company CRUD
 class CreateCompanyView(View):
