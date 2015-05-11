@@ -56,12 +56,8 @@
     </div>
     <div class='returned' id="postedSearch">
     </div>
-
-        <form id="compareForm" method="POST">
-        {% csrf_token %}                    
-        # for hashtags, RT for retweets, etc. <input type="text" name="query">
-        <input id="compateButton" type="submit" value="Search">
-        </form>
+    <div class ='returned' id='footer'>
+    </div>
 
 </div>	
 
@@ -70,7 +66,7 @@
     {% include "markit/search_form.html" %}
     {% include "markit/search_result.html" %}
     {% include "article_feeds/story_template.html" %}
-    {% include "twitter/twitter-form.html" %}                    
+    {% include "twitter/twitter_form.html" %}  
 
 </body>	
 

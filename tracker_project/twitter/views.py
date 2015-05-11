@@ -18,7 +18,7 @@ class SearchView(View):
     def post(self, request):
         tweets = []
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-        result = twitter.search(q=request.POST['search'], count=100, result_type=request.POST['type'], lang='en') #everything
+        result = twitter.search(q=request.POST['search'], count=100, result_type=request.POST.get('type',False), lang='en') #everything
         start_point = result['statuses'] #one level into result... shouldnt have to use result again
         for tweet in start_point:
             if tweet['user']['followers_count'] > 5000:

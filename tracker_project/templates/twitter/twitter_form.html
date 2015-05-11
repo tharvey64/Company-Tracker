@@ -1,6 +1,9 @@
 <script id='twitter-form' type='x-tmpl-mustache'>
     <form id="twitterForm" method="POST" action='/twitter/submit/'>
         {% csrf_token %}
+        {% verbatim %}
+        <input type="hidden" name="start date" value="{{startDate}}" readonly>
+        {% endverbatim %}        
         <fieldset class="tweets">
             <legend>Twitter Look Up</legend>
             <label for="query"># for hashtags, RT for retweets, etc.</label>
