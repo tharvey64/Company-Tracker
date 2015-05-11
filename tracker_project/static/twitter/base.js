@@ -8,6 +8,7 @@ $(document).ready(function(){
             {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
             function(data) {
                 $(".tooltip").remove();
+                $(".tweet").remove();
                 var dataset = []
                 var dates = data['dates']  
                 var favorites = data['favorites']

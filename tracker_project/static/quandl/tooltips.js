@@ -8,7 +8,6 @@
     var $tooltip,
       $body = $('body'),
       $el;
-
     // Ensure chaining works
     return this.each(function(i, el) {
 

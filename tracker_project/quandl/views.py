@@ -83,7 +83,7 @@ class StockHistoryView(View):
             if not date_string:
                 date_string = "January-1-2005"
             return redirect('quandl:history',symbol=symbol,date_string=date_string)
-        return JsonResponse({'error': 'Shit.'})
+        return JsonResponse({'error': 'data not found'})
 
 # Company CRUD
 class CreateCompanyView(View):
