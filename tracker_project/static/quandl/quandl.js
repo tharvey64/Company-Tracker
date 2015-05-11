@@ -95,9 +95,11 @@ $(document).ready(function(){
     $("#tab1").on("submit", "#stockForm",function(event){
         event.preventDefault();
         var symbol = $("input[name='company_symbol']").val(),
+        token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
 
-        $.getJSON("/quandl/stock_history/" + symbol + "/" + date,function(data){
+        $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
+            // wont work havent tested
             if (data.stocks){
                 $("#graph").empty();
                 var template = $("#company-form").html();
@@ -115,34 +117,35 @@ $(document).ready(function(){
     });
 
     $("#graph").on("submit", ".company-list form", function(event){
-            event.preventDefault();
-            var url = $(this).attr("action"),
-            tag = $(this).attr("id"),
-            name = $($("#"+tag+" button ul li input")[0]).val(),
-            symbol = $($("#"+tag+" button ul li input")[1]).val(),
-            exchange = $($("#"+tag+" button ul li input")[2]).val(),
-            token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
-            $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
-                
-                if (data.company){
-                    date = "January-1-2005"
-                    $.post("/quandl/stock_history/" + data.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
-                        if (data.close){
-                            $("#graph").empty();
-                            $("svg").remove(".tooltip");
-                            stockPrices = data.close;
-                            drawGraph(stockPrices);
-                        }
-                        else{
-                            console.log(data)
-                        }
-                    });
-                }
-                else{
-                    console.log(data)
-                }
-            });
+        event.preventDefault();
+        var url = $(this).attr("action"),
+        tag = $(this).attr("id"),
+        name = $($("#"+tag+" button ul li input")[0]).val(),
+        symbol = $($("#"+tag+" button ul li input")[1]).val(),
+        exchange = $($("#"+tag+" button ul li input")[2]).val(),
+        token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
+        // There is a bug here that jams up company creation
+        $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
+
+            if (data.company){
+                date = "January-1-2005"
+                $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
+                    if (data.close){
+                        $("#graph").empty();
+                        $("svg").remove(".tooltip");
+                        stockPrices = data.close;
+                        drawGraph(stockPrices);
+                    }
+                    else{
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                console.log(data)
+            }
         });
+    });
 
 
     // $("#graph").on("mouseenter","circle", function(){
