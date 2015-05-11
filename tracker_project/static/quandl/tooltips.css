@@ -19,8 +19,9 @@
   text-decoration: none;
   text-transform: uppercase;
   box-shadow: 0 0 7px black;
-  height: 8em;
-  width: 25em;
+  min-height: 2em;
+  max-width: 20em;
+  word-wrap: break-word;
 }
 
 .arrow {
