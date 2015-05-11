@@ -128,12 +128,12 @@ $(document).ready(function(){
         event.preventDefault();
         var url = $(this).attr("action"),
         tag = $(this).attr("id"),
-        name = $($("#"+tag+" button ul li input")[0]).val(),
-        symbol = $($("#"+tag+" button ul li input")[1]).val(),
-        exchange = $($("#"+tag+" button ul li input")[2]).val(),
+        name = $("#"+tag+" input[name='name']").val(),
+        symbol = $("#"+tag+" input[name='symbol']").val(),
+        exchange = $("#"+tag+" input[name='exchange']").val(),
         date = $("#"+tag+" input[name='start date']").val(),
         token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
-
+        console.log($("#"+tag+" input[name='symbol']").val())
         $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
 
             if (data.company){
