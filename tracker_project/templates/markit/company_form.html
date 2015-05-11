@@ -3,7 +3,7 @@
     <ul class="company-list">
         {{#result}}
         <li>
-        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:create' %}" method="post">
+        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:company-create' %}" method="POST">
             {% csrf_token %}
             {% verbatim %}
             <button form="{{Exchange}}_{{Symbol}}" type="submit">

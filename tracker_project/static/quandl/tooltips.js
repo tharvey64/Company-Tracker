@@ -2,6 +2,7 @@
 (function( $ ) {
 
   // Create plugin
+  //  $.fn.tooltips = function(el, text_for_tooltip) 
   $.fn.tooltips = function(el) {
 
     var $tooltip,

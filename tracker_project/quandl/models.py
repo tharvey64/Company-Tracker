@@ -18,9 +18,13 @@ class StockPrice(models.Model):
     company = models.ForeignKey(Company)
     created_at = models.DateField()
 
+class LastPrice(models.Model):
+    updated_at = models.DateTimeField()
+    company = models.ForeignKey(Company)
+
 class Quandl:
     api_key = QUANDL_KEY
-    data_set = 'https://www.quandl.com/api/v1/datasets/'
+    base_url = 'https://www.quandl.com/api/v1/datasets/'
     format =  'json'
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #
@@ -33,9 +37,14 @@ class Quandl:
     # ----------------------------------------------------#
     
     @classmethod
-    def get_dataset(cls, code):
-        url = 'https://www.quandl.com/api/v1/datasets/{}.{}?auth_token={}'.format(code,cls.format,cls.api_key)
-        response = requests.get(url)
+    def get_dataset(cls, code, start_date):
+        command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}'.format(
+            db_code=code,
+            format=cls.format,
+            api_key=cls.api_key,
+            start=start_date
+        )
+        response = requests.get(cls.base_url + command)
         if response.status_code == 200:
             json = response.json()
             return {'data': json['data']}
