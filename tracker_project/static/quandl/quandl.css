@@ -108,3 +108,8 @@ ul.company-info {
 button {
     text-align: left;
 }
+
+#footer{
+    clear: both;
+    text-align: center;
+}
