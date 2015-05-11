@@ -97,10 +97,13 @@ $(document).ready(function(){
         var symbol = $("input[name='company_symbol']").val(),
         token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
-
+        // pass the date as hidden input to the forms
         $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
             // wont work havent tested
             if (data.stocks){
+                for (i in data.stocks){
+                    data.stocks[i]['startDate'] = date;
+                }
                 $("#graph").empty();
                 var template = $("#company-form").html();
                 Mustache.parse(template);
@@ -123,12 +126,13 @@ $(document).ready(function(){
         name = $($("#"+tag+" button ul li input")[0]).val(),
         symbol = $($("#"+tag+" button ul li input")[1]).val(),
         exchange = $($("#"+tag+" button ul li input")[2]).val(),
+        date = $("#"+tag+" input[name='start date']").val(),
         token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
-        // There is a bug here that jams up company creation
+
         $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
 
             if (data.company){
-                date = "January-1-2005"
+                // date = "January-1-2005"
                 $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
                     if (data.close){
                         $("#graph").empty();

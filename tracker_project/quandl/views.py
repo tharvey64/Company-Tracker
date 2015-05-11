@@ -88,7 +88,8 @@ class StockHistoryView(View):
 class CreateCompanyView(View):
 
     def get(self, request, symbol):
-        return JsonResponse({'stocks': Markit.find_company(symbol)})
+        companies = [company for company in Markit.find_company(symbol) if not company['Exchange'].startswith('BAT')]
+        return JsonResponse({'stocks': companies})
 
     def post(self, request, symbol):
         # Need an if statement for BATs
