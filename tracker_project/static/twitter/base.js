@@ -8,6 +8,7 @@ $(document).ready(function(){
             {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
             function(data) {
                 $(".tooltip").remove();
+                $(".tweet").remove();
                 var dataset = []
                 var dates = data['dates']  
                 var favorites = data['favorites']
@@ -74,7 +75,6 @@ $(document).ready(function(){
                 .attr("title", function(d){
                     return d[0];
                 })
-                .attr("class", "tweet")
                 .attr("fill", "gold");
                 // .attr("fill", function(d) {
                 //     return d3.rgb((d[2] * -255),(d[2] * 255),0);

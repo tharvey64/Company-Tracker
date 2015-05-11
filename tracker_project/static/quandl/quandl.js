@@ -3,11 +3,7 @@ function drawGraph(dataset, parseDate){
     $('.tooltip').remove();
     var h = parseInt($("#graph").css("height"));
     var graphWidth = parseInt($("#graph").css('width'));
-<<<<<<< HEAD
-    var w = dataset.length/10 * graphWidth;
-=======
     var w = graphWidth;
->>>>>>> master
 
     d3.select("#graph")
     .append("svg")
