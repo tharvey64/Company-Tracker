@@ -1,8 +1,8 @@
-from datetime import datetime
+import datetime
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic.base import View
-from quandl.models import Quandl, Company, StockPrice
+from quandl.models import Quandl, Company, StockPrice, LastPrice
 from markit.models import Markit
 
 from quandl.aapl import aapl_history
@@ -12,14 +12,17 @@ class IndexView(View):
 
     def get(self,request):
         return render(request, self.template)
-
+   
 class StockHistoryView(View):
 
     def get(self,request,symbol,date_string):
         # need to validate the date somewhere
-        if not Company.objects.filter(symbol__iexact=symbol): 
-            return redirect('quandl:create', symbol=symbol)
-        start_date = datetime.strptime(date_string, "%B-%d-%Y").date()
+        # company check might be unnecssary 
+        if not LastPrice.objects.filter(company__symbol__iexact=symbol): 
+            return redirect('quandl:company-create', symbol=symbol)
+
+        start_date = datetime.datetime.strptime(date_string, "%B-%d-%Y").date()
+
         stock_history = StockPrice.objects.filter(company__symbol__iexact=symbol)
         stock_history = stock_history.filter(created_at__gte=start_date)
         if stock_history:
@@ -29,19 +32,37 @@ class StockHistoryView(View):
         return JsonResponse(data)
 
     def post(self, request, symbol, date_string):
-        symbol = request.POST.get('symbol', False)
-        exchange = request.POST.get('exchange', False)
+        # not tested at all
+        last_close = LastPrice.objects.filter(company__symbol__iexact=symbol)
+        if not last_close: 
+            return redirect('quandl:company-create', symbol=symbol)
+        # check this 
+        if last_close[0].updated_at.date() == datetime.datetime.today().date():
+            return redirect('quandl:history', date_string=date_string,symbol=last_close[0].company.symbol)
+        company = last_close[0].company
+        exchange = company.exchange
+        
+        # need to account for different dbs
         db = "GOOG"
-        company = Company.objects.filter(symbol=symbol)
+
+        d = 0
+        if last_close[0].updated_at.hour >= 16:
+            d += 1
+        updated_date = str(last_close[0].updated_at.date() + datetime.timedelta(days=d))
+        print("2")
+        # timedelta prevents overlap
         if not (company and (symbol and exchange)):
             return JsonResponse({'error': 'Missing Input.'})
+        
+        # move this
         code = "{}/{}_{}".format(db,exchange,symbol)
-        prices = Quandl.get_dataset(code)
+        prices = Quandl.get_dataset(code, updated_date)
+
         if 'data' in prices:
             stock_prices = []
 
             for day in prices['data']:
-                date = datetime.strptime(day[0],'%Y-%m-%d').date()
+                date = datetime.datetime.strptime(day[0],'%Y-%m-%d').date()
                 stock_prices.append(
                     StockPrice(    
                         open_price=day[1] if day[1] else 0.0,
@@ -49,12 +70,17 @@ class StockHistoryView(View):
                         high_price=day[2] if day[2] else 0.0,  
                         low_price=day[3] if day[3] else 0.0, 
                         volume=day[5] if day[5] else 0.0,
-                        company=company[0],
+                        company=company,
                         created_at=date
                     )
                 )
             StockPrice.objects.bulk_create(stock_prices)
-            return redirect('quandl:history',symbol=symbol,date_string="January-1-2005")
+            # Update of last close
+            last_close[0].updated_at = datetime.datetime.today()
+            last_close[0].save()
+            if not date_string:
+                date_string = "January-1-2005"
+            return redirect('quandl:history',symbol=symbol,date_string=date_string)
         return JsonResponse({'error': 'Shit.'})
 
 
@@ -65,7 +91,7 @@ class CreateCompanyView(View):
         return JsonResponse({'stocks': Markit.find_company(symbol)})
 
     def post(self, request, symbol):
-
+        # Need an if statement for BATs
         symbol = request.POST.get('symbol', False)
         name = request.POST.get('name', False)
         exchange = request.POST.get('exchange', False)
@@ -77,13 +103,17 @@ class CreateCompanyView(View):
         company = Company.objects.filter(symbol=symbol)
 
         if company:
-            return redirect('quandl:view', symbol=symbol)
+            return redirect('quandl:company-view', symbol=symbol)
         company = Company.objects.create(
             symbol=symbol,
             name=name,
             exchange=exchange
         )
-        return redirect('quandl:view', symbol=symbol)
+        # Creates LastPrice
+        DEFAULT_START = "January-1-2005"
+        date = datetime.datetime.strptime(DEFAULT_START, "%B-%d-%Y")
+        LastPrice.objects.create(company=company, updated_at=date)
+        return redirect('quandl:company-view', symbol=symbol)
 
 class CompanyView(View):
 
@@ -97,7 +127,7 @@ class CompanyView(View):
                     exchange=company[0].exchange
                 )
             })
-        return redirect('quandl:create', symbol=symbol)
+        return redirect('quandl:company-create', symbol=symbol)
 
 # class DeleteCompanyView(View):
 #     # delete?
