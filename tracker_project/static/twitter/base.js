@@ -37,7 +37,7 @@ $(document).ready(function(){
                 .range([h - padding, padding]);    
             var startDate = d3.time.format("%B-%e-%Y").parse(start);
             var endDate = new Date();
-            var input = [startDate, endDate]
+            var input = [startDate, endDate];
             input[0].setDate(input[0].getDate()-1);
             input[1].setDate(input[1].getDate()+1);
             var xScale = d3.time.scale()
@@ -49,7 +49,7 @@ $(document).ready(function(){
             xAxis.ticks(horizontalTicks);   
 
             var yAxis = d3.svg.axis();
-            yAxis.scale(yScale).orient("left");
+            yAxis.scale(yScale).orient("right");
             // yAxis.ticks(10);
 
             // var svg = d3.select("#graph")
@@ -86,7 +86,7 @@ $(document).ready(function(){
                 d3.select("svg")
                     .append("g")
                         .attr("class", "axis")
-                        .attr("transform", "translate(" + w + ",0)")
+                        .attr("transform", "translate(" + (w - padding) + ",0)")
                         .call(yAxis);
                 $("circle").tooltips();
         //         var template = $('#sentimentTemplate').html();
