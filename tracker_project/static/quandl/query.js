@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("#stockForm, #searchForm").on("submit", function(event) {
+    $("#tab1, #tab2").on("submit", "#stockForm, #searchForm", function(event) {
         event.preventDefault();
             $("#loading").css("display", "block");          
         setTimeout(function(){ 

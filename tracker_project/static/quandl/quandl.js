@@ -17,7 +17,7 @@ function drawGraph(dataset, parseDate){
     
     // Needs To be Refactored
 
-    var padding = 30;
+    var padding = 50;
 
     var yScale = d3.scale.linear();
     yScale.range([h - padding, padding]);
@@ -59,7 +59,14 @@ function drawGraph(dataset, parseDate){
     svg.append("g")
     .attr("class", "axis")
     .attr("transform", "translate(0," + (h - padding) +")")
-    .call(xAxis);
+    .call(xAxis)
+    .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", function(){
+            return "rotate(-65)";
+    });
 
     svg.append("g")
     .attr("class", "axis")
