@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db.utils import IntegrityError
 from quandl.models import Company, StockPrice, Quandl
 
-
+# OUT OF DATE
 def seed_nasdaq_100(path_to_companies="quandl/nasdaq100.csv"):
     with open(path_to_companies) as companies:
         file_reader = csv.reader(companies, delimiter=',')
