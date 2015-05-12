@@ -133,7 +133,7 @@ $(document).ready(function(){
         exchange = $("#"+tag+" input[name='exchange']").val(),
         date = $("#"+tag+" input[name='start date']").val(),
         token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
-        console.log($("#"+tag+" input[name='symbol']").val())
+
         $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
 
             if (data.company){

@@ -13,11 +13,9 @@ class IndexView(View):
     def get(self,request):
         return render(request, self.template)
    
-class StockHistoryView(View):
+class QuandlHistoryView(View):
 
     def get(self,request,symbol,date_string):
-        # need to validate the date somewhere
-        # company check might be unnecssary 
         if not LastPrice.objects.filter(company__symbol__iexact=symbol): 
             return redirect('quandl:company-create', symbol=symbol)
 
@@ -32,34 +30,30 @@ class StockHistoryView(View):
         return JsonResponse(data)
 
     def post(self, request, symbol, date_string):
-        # not tested at all
+
         last_close = LastPrice.objects.filter(company__symbol__iexact=symbol)
         if not last_close: 
             return redirect('quandl:company-create', symbol=symbol)
-        # check this 
-        today = datetime.datetime.today()
+    
+        today = datetime.datetime.today().date()
         current_to = last_close[0].updated_at
-        if current_to.date() == today.date():
-            if today.hour < 16 or current_to.hour >= 16:
+        # check this 
+        if (today - current_to).days <= 4:
+            if today.weekday() > 4 or today.weekday() == 0 or (today - current_to).days < 2:
                 return redirect('quandl:history', date_string=date_string,symbol=last_close[0].company.symbol)
+
         company = last_close[0].company
         exchange = company.exchange
         
         # need to account for different dbs
         db = "GOOG"
-
-        d = 0
-        if last_close[0].updated_at.hour >= 16:
-            d += 1
-        updated_date = str(last_close[0].updated_at.date() + datetime.timedelta(days=d))
+        updated_date = str(current_to + datetime.timedelta(days=1))
         # timedelta prevents overlap
         if not (company and (symbol and exchange)):
             return JsonResponse({'error': 'Missing Input.'})
-        
         # move this
         code = "{}/{}_{}".format(db,exchange,symbol)
         prices = Quandl.get_dataset(code, updated_date)
-
         if 'data' in prices:
             stock_prices = []
 
@@ -78,11 +72,11 @@ class StockHistoryView(View):
                 )
             StockPrice.objects.bulk_create(stock_prices)
             # Update of last close
-            last_close[0].updated_at = datetime.datetime.today()
+            last_close[0].updated_at = datetime.datetime.strptime(prices['data'][0][0],'%Y-%m-%d').date()
             last_close[0].save()
             if not date_string:
                 date_string = "January-1-2005"
-            return redirect('quandl:history',symbol=symbol,date_string=date_string)
+            return redirect('quandl:history', symbol=symbol, date_string=date_string)
         return JsonResponse({'error': 'data not found'})
 
 # Company CRUD
@@ -114,7 +108,9 @@ class CreateCompanyView(View):
         # Creates LastPrice
         DEFAULT_START = "January-1-2005"
         date = datetime.datetime.strptime(DEFAULT_START, "%B-%d-%Y")
-        LastPrice.objects.create(company=company, updated_at=date)
+        updated_at = (date - datetime.timedelta(days=1)).date()
+        print(updated_at)
+        LastPrice.objects.create(company=company, updated_at=updated_at)
         return redirect('quandl:company-view', symbol=symbol)
 
 class CompanyView(View):

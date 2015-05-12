@@ -19,7 +19,7 @@ class StockPrice(models.Model):
     created_at = models.DateField()
 
 class LastPrice(models.Model):
-    updated_at = models.DateTimeField()
+    updated_at = models.DateField()
     company = models.ForeignKey(Company)
 
 class Quandl:
