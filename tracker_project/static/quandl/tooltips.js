@@ -1,8 +1,7 @@
 // https://css-tricks.com/bubble-point-tooltips-with-css3-jquery/
 (function( $ ) {
 
-  // Create plugin
-  //  $.fn.tooltips = function(el, text_for_tooltip) 
+  // Create plugin 
   $.fn.tooltips = function(el) {
 
     var $tooltip,
@@ -16,7 +15,6 @@
       var $tooltip = $('<div class="tooltip" data-tooltip="' + i + '">' + $el.attr('title') + '<div class="arrow"></div></div>').appendTo("body");
 
       // Position right away, so first appearance is smooth
-      // The above statement is False 
       
       // var linkPosition = $el.position();
 

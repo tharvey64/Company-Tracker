@@ -17,4 +17,14 @@ $(document).ready(function(){
         });
 
     });
+    $("#stories").on("click", "button", function(event){
+        event.preventDefault();
+        var url = $(this).val();
+        var p = $(this).parent();
+        
+        $.getJSON("/article_feeds/article_sentiment/",{"url":url},function(data){
+            console.log(data);
+            p.replaceWith("<p> Score: " + data.docSentiment.score +", Type: " + data.docSentiment.type + "</p>");
+        });
+    });
 });
