@@ -1,6 +1,5 @@
 $(document).ready(function(){
-    $("#stockForm, #searchForm").on("submit", function(event) {
-        event.preventDefault();
+    $("#tab1, #tab2").on("submit", "#stockForm, #searchForm", function(event) {
             $("#loading").css("display", "block");          
         setTimeout(function(){ 
             $("#loading").css("display", "none");
@@ -15,7 +14,6 @@ $(document).ready(function(){
         }, 4000);       
     });
     $("#twitterForm").on("submit", function(event) {
-        event.preventDefault();
             $("#loading").css("display", "block");          
         setTimeout(function(){ 
             $("#loading").css("display", "none");
@@ -34,4 +32,16 @@ $(document).ready(function(){
         $("h1").slideDown(1500); 
         $("#forms").slideDown(1500);    
     }); 
+    $("#graph").on("click", "button.search-result", function(event){
+        $(".btn").css("display", "none");       
+        $(".returned").css("display", "none");  
+        $("#results").css("display", "none"); 
+        $("#compareForm").css("display", "none");
+        $("h1").slideDown(1500); 
+        $("#forms").slideDown(1500); 
+
+        $('.tabs #tab1').show().siblings().hide();
+
+        $("[href='#tab1']").parent('li').addClass('active').siblings().removeClass('active');               
+    });
 });

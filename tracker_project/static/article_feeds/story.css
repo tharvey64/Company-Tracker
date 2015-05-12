@@ -1,7 +1,7 @@
 #stories{
-    height: 60%;
+    height: 42em;
     min-height: 20em;
-    width: 45%;
+    width: 41.5em;
     border-left: groove 0.2em;
     display: none;    
     overflow-x: scroll;
