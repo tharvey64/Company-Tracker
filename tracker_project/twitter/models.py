@@ -1,8 +1,9 @@
 from django.db import models
 from quandl.models import Company
+from sentiment.models import Sentiment
 # Create your models here.
-class Sentiment(models.Model):
-    result = models.CharField(max_length=8)
-    score = models.DecimalField(decimal_places=10,max_digits=11)
-    company = models.ForeignKey(Company)
-    created_at = models.DateField()
+
+class Tweet(models.Model):
+    pass
+    # Needs pointer to Sentiment
+    # Needs pointer to Company
