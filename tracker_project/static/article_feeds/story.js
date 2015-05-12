@@ -19,6 +19,7 @@ $(document).ready(function(){
     });
     $("#stories").on("click", "button", function(event){
         event.preventDefault();
+        // $(this).attr("disabled");
         var url = $(this).val();
         var p = $(this).parent();
         

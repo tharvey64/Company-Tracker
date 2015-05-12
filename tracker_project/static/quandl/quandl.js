@@ -133,6 +133,7 @@ $(document).ready(function(){
 
     $("#graph").on("submit", ".company-list form", function(event){
         event.preventDefault();
+        // $(".company-list form button").attr("disabled");
         var url = $(this).attr("action"),
         tag = $(this).attr("id"),
         name = $("#"+tag+" input[name='name']").val(),
