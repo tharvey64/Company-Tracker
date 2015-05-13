@@ -35,7 +35,9 @@ class SearchView(View):
                 Tweet.objects.create(text=response['text'], tweet_id=response['id'], favorites=response['favorite_count'],
                                     tweet_date=formatted_date, keyword=user_query, sentiment=tweet_sentiment_value)
             else:
-                continue
+                tweet_to_update = Tweet.objects.filter(tweet_id=response['id'])
+                tweet_to_update[0].favorites = response['favorite_count']
+                tweet_to_update[0].save()
         all_tweets = Tweet.objects.filter(keyword=user_query)
         return JsonResponse({'dates' : [{'date' : str(row.tweet_date)} for row in all_tweets], 
                             'scores' : [{'score' : data.sentiment.score} for data in all_tweets],

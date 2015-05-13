@@ -70,14 +70,21 @@ $(document).ready(function(){
                 .append("circle")
                 .attr("class", "tweet")
                 .attr("cx", function(d) {
-                    console.log(parseDate(timestamp(d[3])))
                     return xScale(parseDate(timestamp(d[3])));
                 })
                 .attr("cy", function(d){
                     return yScale(d[2]);
                 })
                 .attr("r", function(d) {
-                    return Math.sqrt(d[1] /15);
+                    if(Math.sqrt(d[1] /15) > 20){
+                        return 21
+                    }
+                    else if (Math.sqrt(d[1] /15) < 5){
+                        return 4
+                    }
+                    else{
+                        return Math.sqrt(d[1] /15);
+                    }
                 })
                 .attr("title", function(d){
                     return d[0];
