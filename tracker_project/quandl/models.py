@@ -27,7 +27,7 @@ class Quandl:
     api_key = QUANDL_KEY
     base_url = 'https://www.quandl.com/api/v1/datasets/'
     format =  'json'
-    db = "GOOG"
+    db = 'GOOG'
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #
     # --------------------|---------------------|---------#
@@ -52,5 +52,5 @@ class Quandl:
         response = requests.get(cls.base_url + command)
         if response.status_code == 200:
             json = response.json()
-            return {'data': json['data']}
-        return {'error':'request failed'}
+            return {'data': json}
+        return {'error': response.status_code}

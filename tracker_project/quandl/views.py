@@ -24,33 +24,35 @@ class QuandlHistoryView(View):
         if stock_history:
             data = {'close': [[day.created_at, day.close_price, day.volume] for day in stock_history]}
         else:
+            # Redirect to An Error?
             data = {'error': 'Stock Data Not Found'}
         return JsonResponse(data)
 
     def post(self, request, symbol, date_string):
         last_close = LastPrice.objects.filter(company__symbol__iexact=symbol)
-
         if not help.check_company(last_close): 
             return redirect('quandl:company-create', symbol=symbol)
-    
+            
         if not help.check_date(last_close):
             return redirect('quandl:history', symbol=symbol, date_string=date_string)
-
+        
         company = last_close[0].company
         update_start = str(last_close[0].updated_at + datetime.timedelta(days=1))
         prices = Quandl.get_dataset(company.exchange, company.symbol, update_start)
         
-        if not 'data' in prices:
-            return JsonResponse({'error': 'Quandl Data Not Found.'})
-
-        stock_prices = help.price_list(prices['data'], company)
-        StockPrice.objects.bulk_create(stock_prices)
-
-        last_close[0].updated_at = help.date_format_one(prices['data'][0][0])
-        last_close[0].save()
+        if 'error' in prices:
+            # Redirect to An Error View
+            return JsonResponse(prices)
+        
+        if prices.get('data', False):
+            stock_prices = help.stock_price_list(prices['data'], company)
+            StockPrice.objects.bulk_create(stock_prices)
+            
+            last_close[0].updated_at = help.date_format_one(prices['data'][0][0])
+            last_close[0].save()
         
         if not date_string:
-            date_string = "January-1-2005"
+            date_string = 'January-1-2005'
         return redirect('quandl:history', symbol=symbol, date_string=date_string)
 
 class CreateCompanyView(View):
@@ -65,15 +67,16 @@ class CreateCompanyView(View):
         exchange = request.POST.get('exchange', False)
 
         if not (symbol and name and exchange):
+            # Redirect to An Error View
             return JsonResponse({'error': 'Missing Input.'})
 
-        company = Company.objects.create(
-            symbol=symbol,
-            name=name,
-            exchange=exchange
-        )
-
-        LastPrice.objects.create(company=company)
+        if not Company.objects.filter(symbol__iexact=symbol):
+            company = Company.objects.create(
+                symbol=symbol,
+                name=name,
+                exchange=exchange
+            )
+            LastPrice.objects.create(company=company)
         return redirect('quandl:company-view', symbol=symbol)
 
 class CompanyView(View):
@@ -88,6 +91,7 @@ class CompanyView(View):
                     exchange=company[0].exchange
                 )
             })
+        # Make this a Json
         return redirect('quandl:company-create', symbol=symbol)
 
 # class DeleteCompanyView(View):

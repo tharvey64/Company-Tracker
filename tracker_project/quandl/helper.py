@@ -16,19 +16,20 @@ def check_date(close):
 def date_format_one(date_string):
     return datetime.datetime.strptime(date_string,'%Y-%m-%d').date()
 
-def price_list(prices, company):
+def stock_price_list(prices, company):
     stock_prices = []
     for day in prices:
-        date = date_format_one(day[0])
-        stock_prices.append(
-            StockPrice(    
-                open_price=day[1] if day[1] else -1.0,
-                close_price=day[4] if day[4] else -1.0, 
-                high_price=day[2] if day[2] else -1.0,  
-                low_price=day[3] if day[3] else -1.0, 
-                volume=day[5] if day[5] else -1.0,
-                company=company,
-                created_at=date
-            )
-        )
+        day[0] = date_format_one(day[0])
+        stock_prices.append(stock(company, *day))
     return stock_prices
+
+def stock(company, *args):
+    return StockPrice(    
+        open_price=args[1] if args[1] else -1.0,
+        close_price=args[4] if args[4] else -1.0, 
+        high_price=args[2] if args[2] else -1.0,  
+        low_price=args[3] if args[3] else -1.0, 
+        volume=args[5] if args[5] else -1.0,
+        company=company,
+        created_at=args[0]
+    )
