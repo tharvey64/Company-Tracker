@@ -136,17 +136,13 @@ $(document).ready(function(){
         // $(".company-list form button").attr("disabled");
         var url = $(this).attr("action"),
         tag = $(this).attr("id"),
-        name = $("#"+tag+" input[name='name']").val(),
-        symbol = $("#"+tag+" input[name='symbol']").val(),
-        exchange = $("#"+tag+" input[name='exchange']").val(),
         date = $("#"+tag+" input[name='start date']").val(),
-        token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
-
-        $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
+        input = $(this).serialize()
+        $.post(url, input, function(data){
 
             if (data.company){
                 // date = "January-1-2005"
-                $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
+                $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, input, function(data){
                     if (data.close){
                         $("#graph").empty();
                         $("svg").remove(".tooltip");

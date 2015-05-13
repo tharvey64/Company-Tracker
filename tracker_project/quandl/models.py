@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 import requests
 from tracker_project.settings import QUANDL_KEY
@@ -19,13 +20,14 @@ class StockPrice(models.Model):
     created_at = models.DateField()
 
 class LastPrice(models.Model):
-    updated_at = models.DateField()
+    updated_at = models.DateField(default=datetime.date(2004,12,31))
     company = models.ForeignKey(Company)
 
 class Quandl:
     api_key = QUANDL_KEY
     base_url = 'https://www.quandl.com/api/v1/datasets/'
     format =  'json'
+    db = "GOOG"
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #
     # --------------------|---------------------|---------#
@@ -37,7 +39,10 @@ class Quandl:
     # ----------------------------------------------------#
     
     @classmethod
-    def get_dataset(cls, code, start_date):
+    def get_dataset(cls, exchange, symbol, start_date):
+        # yahoo and google format
+        code = "{}/{}_{}".format(cls.db,exchange,symbol)
+        # update_start = str(start_date + datetime.timedelta(days=1))
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}'.format(
             db_code=code,
             format=cls.format,
