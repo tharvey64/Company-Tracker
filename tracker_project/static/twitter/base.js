@@ -28,7 +28,7 @@ $(document).ready(function(){
                         continue
                     }
                 } 
-            var padding = 30;
+            var padding = 50;
             var high = d3.max(dataset,function(d){return d[1]});            
             var verticalTicks = high/10;
             var graphHeight = parseInt($("#graph").css('height'));
@@ -39,7 +39,7 @@ $(document).ready(function(){
             var horizontalTicks = w/100;                            
 
             var yScale = d3.scale.linear()
-                .domain([0, 2])
+                .domain([-1, 1])
                 .range([h - padding, padding]);    
             var startDate = d3.time.format("%B-%e-%Y").parse(start);
             var endDate = new Date();
@@ -74,7 +74,7 @@ $(document).ready(function(){
                     return xScale(parseDate(timestamp(d[3])));
                 })
                 .attr("cy", function(d){
-                    return yScale(d[2] + 1);
+                    return yScale(d[2]);
                 })
                 .attr("r", function(d) {
                     return Math.sqrt(d[1] /15);
