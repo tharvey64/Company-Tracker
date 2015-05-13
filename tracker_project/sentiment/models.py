@@ -4,5 +4,4 @@ from django.db import models
 class Sentiment(models.Model):
     value = models.CharField(max_length=10)
     score = models.CharField(max_length=20)
-    mixed = models.CharField(max_length=3)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)

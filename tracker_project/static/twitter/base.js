@@ -1,3 +1,9 @@
+function timestamp(time_string){
+    var x = time_string.lastIndexOf(":");
+    time_string = time_string.slice(0,x) + time_string.substring(x+1)
+    return time_string;
+}
+
 $(document).ready(function(){    
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
@@ -13,10 +19,10 @@ $(document).ready(function(){
                 var dates = data['dates']  
                 var favorites = data['favorites']
                 var tweets = data['tweets']
-                // var feelings = data['feelings']
+                var scores = data['scores']
                 for (i=0; i < dates.length; i++) {
                     if (tweets[i] != undefined){
-                        dataset.push([tweets[i]['content'], favorites[i]['favorite'], Math.random(3), dates[i]['date']]) //feelings[i]['feeling']['docSentiment']['score']])
+                        dataset.push([tweets[i]['content'], favorites[i]['favorite'], scores[i]['score'], dates[i]['date']]) //feelings[i]['feeling']['docSentiment']['score']])
                     }
                     else{
                         continue
@@ -29,7 +35,7 @@ $(document).ready(function(){
             var h = graphHeight
             var graphWidth = parseInt($("#graph").css('width'));
             var w = graphWidth; 
-            var parseDate = d3.time.format("%a %B %e %X %Z %Y").parse; 
+            var parseDate = d3.time.format("%Y-%m-%d %X%Z").parse; 
             var horizontalTicks = w/100;                            
 
             var yScale = d3.scale.linear()
@@ -64,10 +70,11 @@ $(document).ready(function(){
                 .append("circle")
                 .attr("class", "tweet")
                 .attr("cx", function(d) {
-                    return xScale(parseDate(d[3]));
+                    console.log(parseDate(timestamp(d[3])))
+                    return xScale(parseDate(timestamp(d[3])));
                 })
                 .attr("cy", function(d){
-                    return yScale(d[2]);
+                    return yScale(d[2] + 1);
                 })
                 .attr("r", function(d) {
                     return Math.sqrt(d[1] /15);
