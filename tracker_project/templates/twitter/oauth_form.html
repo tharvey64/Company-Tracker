@@ -1,0 +1,10 @@
+<script id='register-form' type='x-tmpl-mustache'>
+    <form id="oauthForm" method="GET" action='/twitter/oauth/'>
+        {% csrf_token %}       
+        <fieldset class="oauth">
+        <legend>Sync your own twitter account</legend>
+        <button id='signUp' type="submit" class="btn btn-info">Sign Up
+        </button>
+        </fieldset>
+    </form>
+</script>
