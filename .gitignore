@@ -51,7 +51,6 @@ coverage.xml
 *.log
 settings.py
 venv/
-migrations
 
 # Sphinx documentation
 docs/_build/
