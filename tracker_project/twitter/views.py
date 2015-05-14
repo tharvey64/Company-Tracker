@@ -1,22 +1,34 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
 from twython import Twython
 from alchemyapi import AlchemyAPI
-from collections import Counter
 from tracker_project.settings import TWITTER_KEY
 from tracker_project.settings import TWITTER_SECRET
 from sentiment.models import Sentiment
 from twitter.models import Tweet
 import datetime
 
-class SearchView(View):
-    template = 'twitter/index.html'
-    alchemyapi = AlchemyAPI()
-
+class AppView(View):
+    twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
+    auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
 
     def get(self, request):
-       return render(request, self.template)
+        request.session['OAUTH_TOKEN'] = self.auth['oauth_token']
+        request.session['OAUTH_TOKEN_SECRET'] = self.auth['oauth_token_secret']
+        return redirect(self.auth['auth_url'])
+
+class CallbackView(View):
+
+    def get(self, request):
+        oauth_verifier = request.GET['oauth_verifier']
+        twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
+        request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
+        final_step = twitter.get_authorized_tokens(oauth_verifier)
+        return redirect('/quandl')
+
+class SearchView(View):
+    alchemyapi = AlchemyAPI()
 
     def post(self, request):
         user_query = request.POST['search']   #the user searched for this  

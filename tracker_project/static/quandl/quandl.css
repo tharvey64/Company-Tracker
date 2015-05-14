@@ -1,6 +1,7 @@
 body{
-    background-image: url("background_images/1.jpg");
     opacity: 0.8; 
+    background-image: url("background_images/1.jpg");
+
 }
 
 h1 {
@@ -25,7 +26,7 @@ h1 {
     height: 25%;
     width: 52.5%;
     /*max-height: 8em;*/
-    margin: 15em auto;
+    margin: 15em auto;    
 }
 #graph {
     height: 42em;
