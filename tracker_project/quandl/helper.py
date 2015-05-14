@@ -7,7 +7,7 @@ def check_company(close):
     return True
 
 def check_date(close):
-    today = datetime.datetime.today().date() 
+    today = datetime.datetime.today().date()
     if (today - close[0].updated_at).days <= 4:
         if today.weekday() > 4 or today.weekday() == 0 or (today - close[0].updated_at).days < 2:
             return False

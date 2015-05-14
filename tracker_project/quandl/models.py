@@ -42,7 +42,6 @@ class Quandl:
     def get_dataset(cls, exchange, symbol, start_date):
         # yahoo and google format
         code = "{}/{}_{}".format(cls.db,exchange,symbol)
-        # update_start = str(start_date + datetime.timedelta(days=1))
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}'.format(
             db_code=code,
             format=cls.format,
@@ -51,6 +50,5 @@ class Quandl:
         )
         response = requests.get(cls.base_url + command)
         if response.status_code == 200:
-            json = response.json()
-            return {'data': json}
+            return response.json()
         return {'error': response.status_code}

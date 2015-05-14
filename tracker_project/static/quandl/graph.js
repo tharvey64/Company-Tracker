@@ -6,8 +6,9 @@ function createSvg(height, width){
         .attr("width",width)
         .attr("height",height);
 }
-function drawGraph(dataset, parseDate, startDate, circleClass, radiusRange, newGraph){
-    $('.tooltip').remove();
+// Could Make the parameter a json
+function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIndex, radiusRange, newGraph){
+    $("body").remove(".tooltip");
     var h = parseInt($("#graph").css("height"));
     var w = parseInt($("#graph").css('width'));
     if (newGraph){
@@ -19,10 +20,9 @@ function drawGraph(dataset, parseDate, startDate, circleClass, radiusRange, newG
 
     var padding = 50;
 
-    // PARAMETER
-    var low = d3.min(dataset,function(d){return parseFloat(d[1]) * 0.8});
-    var high = d3.max(dataset,function(d){return parseFloat(d[1]) * 1.2});
-
+    // THIS SHOULD NOT SCALE FOR SENTIMENT
+    var low = d3.min(dataset,function(d){return  (parseFloat(d[1]) < 1 ? -1:parseFloat(d[1]) * 0.8)});
+    var high = d3.max(dataset,function(d){return (parseFloat(d[1]) < 1 ? 1:parseFloat(d[1]) * 1.2)});
     var yScale = d3.scale.linear();
     yScale.range([h - padding, padding]);
     yScale.domain([low, high]);
@@ -46,7 +46,8 @@ function drawGraph(dataset, parseDate, startDate, circleClass, radiusRange, newG
 
     var xAxis = d3.svg.axis();
     xAxis.scale(xScale).orient("bottom");
-    svg.selectAll("circle")
+    
+    svg.selectAll(selector)
         .data(dataset)
         .enter()
         .append("circle")
@@ -55,15 +56,15 @@ function drawGraph(dataset, parseDate, startDate, circleClass, radiusRange, newG
             return xScale(parseDate(d[0]));
         })
         .attr("cy", function(d){
-            return yScale(d[1]);
+            return yScale(parseFloat(d[1]));
         }).attr("r", function(d){
             return radiusScale(d[2]);
         }).attr("title", function(d){
-            return d[0]
+            return d[titleIndex];
         });
     
     // New Function To Attach Axis 
-    var translate = "translate(0," + (w-padding) +")"
+    var translate = "translate(" + (w-padding) +",0)";
     if (newGraph){
         svg.append("g")
             .attr("class", "axis")
@@ -89,7 +90,7 @@ function drawGraph(dataset, parseDate, startDate, circleClass, radiusRange, newG
 }
 
 $(document).ready(function(){
-    $("#graph").on("drawGraph", function(event, graphData, dateFormat, start, className, radiusRange, newGraph){
-        drawGraph(graphData, dateFormat, start, className, radiusRange, newGraph);
+    $("#graph").on("drawGraph", function(event, graphData, dateFormat, start, className, selector, titleIndex,radiusRange, newGraph){
+        drawGraph(graphData, dateFormat, start, className, selector, titleIndex, radiusRange, newGraph);
     });
 });
