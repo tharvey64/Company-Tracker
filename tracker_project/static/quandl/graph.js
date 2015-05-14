@@ -92,6 +92,8 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
 $(document).ready(function(){
     $("#graph").on("drawGraph", function(event, graphData, dateFormat, start, className, selector, titleIndex,radiusRange, newGraph){
         drawGraph(graphData, dateFormat, start, className, selector, titleIndex, radiusRange, newGraph);
+        setTimeout(function(){ 
         $("#footer").css("display", "block");
+    }, 4000); 
     });
 });
