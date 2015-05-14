@@ -7,14 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('twitter', '0001_initial'),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='sentiment',
-            name='created_at',
-            field=models.DateField(),
-            preserve_default=True,
+        migrations.CreateModel(
+            name='Article',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, verbose_name='ID', auto_created=True)),
+            ],
         ),
     ]
