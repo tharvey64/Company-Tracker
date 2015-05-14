@@ -8,7 +8,6 @@ $(document).ready(function(){
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
         var startDate = $("#twitterForm input[name='start date']").val();
-        // $('#graph').empty()
 
         $.post($(this).attr('action'),
             {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
@@ -22,6 +21,7 @@ $(document).ready(function(){
                 var scores = data['scores']
                 for (i=0; i < dates.length; i++) {
                     if (tweets[i] != undefined){
+                        // We Should try using a list of dictionaries instead of a list of lists
                         dataset.push([timestamp(dates[i]['date']), scores[i]['score'], favorites[i]['favorite'], tweets[i]['content']]) //feelings[i]['feeling']['docSentiment']['score']])
                     }
                     else{
@@ -36,15 +36,3 @@ $(document).ready(function(){
         });
     });
 });
-        //         var template = $('#sentimentTemplate').html();
-        //         Mustache.parse(template);
-        //         var info = Mustache.render(template, data);
-        //         $('#postedSearch').html(info);
-        //         var template = $('#tweetTemplate').html();
-        //         Mustache.parse(template);
-        //         var info = Mustache.render(template, data);
-        //         $('#postedTweets').html(info); 
-                // var template = $('#hashTemplate').html();
-                // Mustache.parse(template);
-                // var info = Mustache.render(template, data);
-                // $('#postedHashes').html(info);                                 
