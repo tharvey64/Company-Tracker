@@ -7,10 +7,11 @@ function timestamp(time_string){
 $(document).ready(function(){    
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
-        var startDate = $("#twitterForm input[name='start date']").val();
+        var startDate = $("#twitterForm input[name='start date']").val(),
+        search = $("#twitterForm input[name='search']").val();
 
         $.post($(this).attr('action'),
-            {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
+            {'search': search, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
             function(data) {
                 $(".tooltip").remove();
                 $(".tweet").remove();

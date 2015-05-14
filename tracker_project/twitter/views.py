@@ -19,7 +19,8 @@ class SearchView(View):
        return render(request, self.template)
 
     def post(self, request):
-        user_query = request.POST['search']   #the user searched for this  
+        user_query = request.POST['search']   #the user searched for this 
+        print(user_query)
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)           
         twython_results = twitter.search(q=user_query, result_type=request.POST.get('type',False), lang='en') #twitter search results
         stored_tweets_of_query = Tweet.objects.filter(keyword=user_query) #tweets in the database

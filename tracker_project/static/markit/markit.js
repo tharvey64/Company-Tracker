@@ -30,6 +30,7 @@ $(document).ready(function(){
         var info = Mustache.render(dateTemplate, {"ticker": dbCode[1]});
         $("#tab1").html(info);
     });
+});
     // var dataset = [];
 
     // setInterval(function(){
@@ -109,4 +110,3 @@ $(document).ready(function(){
     //         }
     //     });
     // }, 20000);
-});
