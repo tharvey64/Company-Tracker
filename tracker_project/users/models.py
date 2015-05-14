@@ -1,19 +1,9 @@
 from django.db import models
-from django.contib.auth.models import (
+from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
-# Broken Forms 
-# UserCreationForm
-# UserChangeForm
-# Create your models here.
 
-# USER FIELDS
-# email
-# password
-# first name
-# last name
-# token
-# secret
+# Create your models here.
 class TwitterUserManager(BaseUserManager):
 
     def create_user(self, email, token, secret, password=None):
@@ -51,7 +41,6 @@ class TwitterUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email address', max_length=255,unique=True)
     token = models.CharField(max_length=150)
     secret = models.CharField(max_length=150)
-    password = models.CharField(max_length=80)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 

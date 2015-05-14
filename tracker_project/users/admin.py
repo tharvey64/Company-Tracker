@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from customauth.models import TwitterUser
+from users.models import TwitterUser
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -41,7 +41,7 @@ class UserChangeForm(forms.ModelForm):
 class TwitterUserAdmin(UserAdmin):
     form = UserChangeForm        
     add_form = UserCreationForm
-    
+
     list_display = ('email', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (

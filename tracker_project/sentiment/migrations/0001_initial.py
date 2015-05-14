@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Sentiment',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('value', models.CharField(max_length=10)),
                 ('score', models.CharField(max_length=20)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
