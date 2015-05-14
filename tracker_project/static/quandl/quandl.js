@@ -1,81 +1,3 @@
-function drawGraph(dataset, parseDate){
-    $('#graph').empty();
-    $('.tooltip').remove();
-    var h = parseInt($("#graph").css("height"));
-    var graphWidth = parseInt($("#graph").css('width'));
-    var w = graphWidth;
-
-    d3.select("#graph")
-    .append("svg")
-    .attr("width",w)
-    .attr("height",h);
-
-    var svg = d3.select("svg");
-
-    var low = d3.min(dataset,function(d){return parseFloat(d[1]) * 0.8});
-    var high = d3.max(dataset,function(d){return parseFloat(d[1]) * 1.2});
-    
-    // Needs To be Refactored
-
-    var padding = 50;
-
-    var yScale = d3.scale.linear();
-    yScale.range([h - padding, padding]);
-    yScale.domain([low, high]);
-
-    var yAxis = d3.svg.axis();
-    yAxis.scale(yScale).orient("left");
-
-    var xScale = d3.time.scale().range([padding, w-padding]);
-
-    var input = d3.extent(dataset,function(d){ 
-        return parseDate(d[0]);
-    });
-
-    input[0].setDate(input[0].getDate()-1);
-    input[1] = new Date()
-    input[1].setDate(input[1].getDate()+1);
-    xScale.domain(input);
-
-    var xAxis = d3.svg.axis();
-    xAxis.scale(xScale).orient("bottom");
-    // xAxis.ticks(d3.time.day, 1);
-
-    svg.selectAll("circle")
-    .data(dataset)
-    .enter()
-    .append("circle")
-    .attr("class", "stock")
-    .attr("cx", function(d){
-        return xScale(parseDate(d[0]));
-    })
-    .attr("cy", function(d){
-        return yScale(d[1]);
-    }).attr("r", 4)
-    .attr("title", function(d){
-        return d[0]
-    }).style("fill","red");
-    
-    svg.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(0," + (h - padding) +")")
-    .call(xAxis)
-    .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em")
-        .attr("dy", ".15em")
-        .attr("transform", function(){
-            return "rotate(-65)";
-    });
-
-    svg.append("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(" + padding +",0)")
-    .call(yAxis);
-
-    $("svg > .stock").tooltips();
-}
-
 function renderForms(){
     var dateTemplate = $("#date-form").html();
     Mustache.parse(dateTemplate);
@@ -104,55 +26,56 @@ $(document).ready(function(){
         var symbol = $("input[name='company_symbol']").val(),
         token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
+        
         var template = $('#twitter-form').html();
         Mustache.parse(template);
         var info = Mustache.render(template, {'startDate' : date});
-        $('#footer').html(info);        
-        // pass the date as hidden input to the forms
+        $('#footer').html(info);   
+
         $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
-            // wont work havent tested
             if (data.stocks){
                 for (i in data.stocks){
+                    // do this loop in python
                     data.stocks[i]['startDate'] = date;
                 }
+
                 $("#graph").empty();
                 var template = $("#company-form").html();
                 Mustache.parse(template);
                 var info = Mustache.render(template,{"result":data.stocks})
                 $("#graph").html(info);
+
             }
             else if (data.close){
+
                 $("#graph").empty();
-                $("svg").remove(".tooltip");
                 stockPrices = data.close;
-                var parseDate = d3.time.format("%Y-%m-%d").parse
-                drawGraph(stockPrices, parseDate);
+                var parseDate = d3.time.format("%Y-%m-%d").parse;
+                var start = d3.time.format("%B-%e-%Y").parse(date);
+                $("#graph").trigger("drawGraph",[stockPrices, parseDate, start, "stock", "circle", 0, [5,5], true]);
+                d3.selectAll(".stock").style("fill", "red");
+
             }
         });
     });
 
     $("#graph").on("submit", ".company-list form", function(event){
         event.preventDefault();
-        // $(".company-list form button").attr("disabled");
         var url = $(this).attr("action"),
         tag = $(this).attr("id"),
-        name = $("#"+tag+" input[name='name']").val(),
-        symbol = $("#"+tag+" input[name='symbol']").val(),
-        exchange = $("#"+tag+" input[name='exchange']").val(),
         date = $("#"+tag+" input[name='start date']").val(),
-        token = $("#"+tag+" input[name='csrfmiddlewaretoken']").val();
-
-        $.post(url, {"csrfmiddlewaretoken": token,"name": name, "symbol": symbol, "exchange": exchange}, function(data){
+        input = $(this).serialize()
+        $.post(url, input, function(data){
 
             if (data.company){
-                // date = "January-1-2005"
-                $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, {"csrfmiddlewaretoken": token, "symbol":symbol, "exchange" :data.company.exchange}, function(data){
+                $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, input, function(data){
                     if (data.close){
                         $("#graph").empty();
-                        $("svg").remove(".tooltip");
                         stockPrices = data.close;
-                        var parseDate = d3.time.format("%Y-%m-%d").parse
-                        drawGraph(stockPrices, parseDate);
+                        var parseDate = d3.time.format("%Y-%m-%d").parse;
+                        var start = d3.time.format("%B-%e-%Y").parse(date);
+                        $("#graph").trigger("drawGraph",[stockPrices, parseDate, start, "stock", "circle", 0, [5,5], true]);
+                        d3.selectAll(".stock").style("fill", "red");
                     }
                     else{
                         console.log(data);

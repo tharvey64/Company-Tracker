@@ -10,7 +10,7 @@ $(document).ready(function(){
         event.preventDefault();
 
         var company = $("input[name=company_name]").val()
-        $.getJSON("/markit/search/",{"input_string": company},function(data){
+        $.getJSON("/markit/search/", {"input_string": company},function(data){
             $("#graph").empty();
             if (!data.list.length || data.list.Error){
                 console.log("" + (!data.list.length ? "Error" : data.list.Error));

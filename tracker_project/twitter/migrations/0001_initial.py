@@ -7,21 +7,20 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('quandl', '0001_initial'),
+        ('sentiment', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Sentiment',
+            name='Tweet',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
-                ('result', models.CharField(max_length=8)),
-                ('score', models.DecimalField(max_digits=11, decimal_places=10)),
-                ('created_at', models.DateField(auto_now_add=True)),
-                ('company', models.ForeignKey(to='quandl.Company')),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('text', models.CharField(max_length=180)),
+                ('tweet_id', models.BigIntegerField()),
+                ('favorites', models.IntegerField()),
+                ('tweet_date', models.DateTimeField()),
+                ('keyword', models.CharField(max_length=200)),
+                ('sentiment', models.ForeignKey(to='sentiment.Sentiment')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
     ]

@@ -2,19 +2,19 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import datetime
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('twitter', '0001_initial'),
+        ('quandl', '0009_auto_20150512_1548'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sentiment',
-            name='created_at',
-            field=models.DateField(),
-            preserve_default=True,
+            model_name='lastprice',
+            name='updated_at',
+            field=models.DateField(default=datetime.date(2004, 12, 31)),
         ),
     ]
