@@ -22,6 +22,7 @@ $(document).ready(function(){
                 var scores = data['scores']
                 for (i=0; i < dates.length; i++) {
                     if (tweets[i] != undefined){
+                        // We Should try using a list of dictionaries instead of a list of lists
                         dataset.push([timestamp(dates[i]['date']), scores[i]['score'], favorites[i]['favorite'], tweets[i]['content']]) //feelings[i]['feeling']['docSentiment']['score']])
                     }
                     else{
