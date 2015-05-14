@@ -25,7 +25,7 @@
 <body>
 <nav class='navbar navbar-default navbar-static-top'>
     <h1 id='title'>MARKET TRACKER</h1>
-        <button type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
+        <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
 </nav>
 <div class="container">
 
@@ -38,13 +38,15 @@
             <ul class="tab-links">
                 <li class="active"><a href="#tab1">Quote</a></li>
                 <li><a href="#tab2">Find Company</a></li>
-                <li><a href="#tab3">Twitter Search</a></li>
+                <li><a href="#tab3">Login</a></li>
+                <li><a href="#tab4">Register</a></li>                
             </ul>
 
             <div class="tab-content">
                 <div id="tab1" class="tab active"></div>
                 <div id="tab2" class="tab"></div>
                 <div id="tab3" class="tab"></div>
+                <div id="tab4" class="tab"></div>
             </div>
             <div id='loading'><img  src='http://www.ajaxload.info/images/exemples/9.gif'/>
             </div> 
@@ -69,6 +71,8 @@
     {% include "markit/search_result.html" %}
     {% include "article_feeds/story_template.html" %}
     {% include "twitter/twitter_form.html" %}  
+    {% include "twitter/login_form.html" %} 
+    {% include "twitter/register_form.html" %}  
 
 </body>
 
