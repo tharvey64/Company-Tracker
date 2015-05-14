@@ -9,11 +9,15 @@ function renderForms(){
     var info = Mustache.render(searchTemplate);
     $("#tab2").html(info);
 
-    // var template = $('#twitter-form').html();
-    // Mustache.parse(template);
-    // var info = Mustache.render(template);
-    // $('#tab3').html(info); 
- 
+    var template = $('#login-form').html();
+    Mustache.parse(template);
+    var info = Mustache.render(template);
+    $('#tab3').html(info); 
+
+    var template = $('#register-form').html();
+    Mustache.parse(template);
+    var info = Mustache.render(template);
+    $('#tab4').html(info); 
 }
 
 $(document).ready(function(){
@@ -47,14 +51,14 @@ $(document).ready(function(){
 
             }
             else if (data.close){
-
+                $("#stories").empty();
+                $("#stories").trigger("getStories", [symbol]);
                 $("#graph").empty();
                 stockPrices = data.close;
                 var parseDate = d3.time.format("%Y-%m-%d").parse;
                 var start = d3.time.format("%B-%e-%Y").parse(date);
                 $("#graph").trigger("drawGraph",[stockPrices, parseDate, start, "stock", "circle", 0, [5,5], true]);
                 d3.selectAll(".stock").style("fill", "red");
-
             }
         });
     });
@@ -68,8 +72,11 @@ $(document).ready(function(){
         $.post(url, input, function(data){
 
             if (data.company){
-                $.post("/quandl/stock_history/" + data.company.symbol + "/" +  date, input, function(data){
+                var company = data.company
+                $.post("/quandl/stock_history/" + company.symbol + "/" +  date, input, function(data){
                     if (data.close){
+                        $("#stories").empty();
+                        $("#stories").trigger("getStories", [company.symbol]);
                         $("#graph").empty();
                         stockPrices = data.close;
                         var parseDate = d3.time.format("%Y-%m-%d").parse;
