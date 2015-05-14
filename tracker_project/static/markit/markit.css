@@ -1,17 +1,11 @@
-.container {
-    height: 20em;
-    width: 40em;
-    overflow-x: scroll;
-    border: dashed 0.5em;
-}
-.axis path,
-.axis line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
+.btn-primary{
+	width: 30em;
+	margin-bottom: 1em;
 }
 
-.axis text {
-    font-family: sans-serif;
-    font-size: 0.5em;
+.companyForm input{
+    border: none;
+    background-color: #337ab7;
 }
+
+

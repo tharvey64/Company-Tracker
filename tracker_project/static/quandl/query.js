@@ -1,11 +1,14 @@
 $(document).ready(function(){
     $("#tab2").on("submit", "#searchForm", function(event) {
+        $("#loading").css("display", "block");          
+        setTimeout(function(){         
         $("#loading").css("display", "none");
         $("#backButton").css("display", "block")       
         $("#graph").css("display", "inline-block"); 
         $("#results").css("display", "block");  
         $("h1").slideUp(1500);              
         $("#forms").slideUp(1500);
+        }, 4000);               
     });
     $("#tab1").on("submit", "#stockForm", function(event) {
             $("#loading").css("display", "block");          

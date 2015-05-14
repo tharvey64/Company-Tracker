@@ -33,15 +33,17 @@
     text-decoration: none;
 }
 li.active a, li.active a:hover {
-    background: #FFF;
-    color: #4C4C4C;
+    background-image: url("background_images/1.jpg");
+    color: white;
 }
 .tab-content {
     padding: 0.5em;
     box-shadow: -0.1em 0.1em 0.1em rgba(0,0,0,0.15);
     background: white;
     border-radius: 3em;
+    background-color: white;
 }
+
 .tab{
     display: none;
 }
