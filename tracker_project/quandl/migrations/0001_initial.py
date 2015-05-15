@@ -14,9 +14,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Company',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=60)),
-                ('symbol', models.CharField(unique=True, max_length=15)),
+                ('symbol', models.CharField(max_length=15, unique=True)),
                 ('exchange', models.CharField(max_length=30)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LastPrice',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('updated_at', models.DateField(default=datetime.date(2004, 12, 31))),
                 ('company', models.ForeignKey(to='quandl.Company')),
             ],
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StockPrice',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('open_price', models.DecimalField(max_digits=8, decimal_places=2)),
                 ('close_price', models.DecimalField(max_digits=8, decimal_places=2)),
                 ('high_price', models.DecimalField(max_digits=8, decimal_places=2)),
