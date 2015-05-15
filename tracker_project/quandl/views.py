@@ -29,6 +29,10 @@ class QuandlHistoryView(View):
         return JsonResponse(data)
 
     def post(self, request, symbol, date_string):
+        print("is_active: ",request.user.is_active)
+        print("is_authenticated: ",request.user.is_authenticated())
+        print("is_anonymous: ",request.user.is_anonymous())
+        print(type(request.user))
         last_close = LastPrice.objects.filter(company__symbol__iexact=symbol)
 
         if not help.check_company(last_close): 
@@ -40,14 +44,17 @@ class QuandlHistoryView(View):
         company = last_close[0].company
         update_start = str(last_close[0].updated_at + datetime.timedelta(days=1))
         prices = Quandl.get_dataset(company.exchange, company.symbol, update_start)
+        
         if 'error' in prices:
             # Redirect to An Error View
             return JsonResponse(prices)
+
         if prices.get('data', False):
             stock_prices = help.stock_price_list(prices['data'], company)
             StockPrice.objects.bulk_create(stock_prices)  
             last_close[0].updated_at = prices['data'][0][0]
             last_close[0].save()
+
         if not date_string:
             date_string = 'January-1-2005'
         return redirect('quandl:history', symbol=symbol, date_string=date_string)
