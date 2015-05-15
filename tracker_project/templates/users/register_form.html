@@ -1,0 +1,20 @@
+{% extends "quandl/graph.html" %}
+
+{%block content%}
+
+    <form id="registerForm" method="POST" action='/users/register/'>
+        {% csrf_token %}      
+        <fieldset class="login">
+            <legend>Fill out the form below to finish registration</legend>
+            <label for="username">Username</label> 
+                <input type="text" id="registerUsername" name="registerUsername">
+            <label for="email">Email</label>
+                <input type="text" id="registerUEmail" name="registerEmail">
+            <label for="password">Password</label> 
+                <input type="password" id="registerPassword" name="registerPassword">
+            <input class='btn-info margin-auto' id="registerButton" type="submit" value="Submit">
+        </fieldset>
+    </form>
+
+    <div id='mainMenu'><button type='button' class='btn btn-Danger'><p>Continue as an anonymous user</p></button></div>
+{%endblock%}

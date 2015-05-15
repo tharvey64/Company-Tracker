@@ -12,9 +12,9 @@ function renderForms(){
     var template = $('#login-form').html();
     Mustache.parse(template);
     var info = Mustache.render(template);
-    $('#tab3').html(info); 
+    $('#tab3').html(info);
 
-    var template = $('#register-form').html();
+    var template = $('#oauth-form').html();
     Mustache.parse(template);
     var info = Mustache.render(template);
     $('#tab4').html(info); 

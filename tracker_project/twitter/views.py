@@ -28,8 +28,7 @@ class CallbackView(View):
         request.session['OAUTH_TOKEN'] = final_step['oauth_token']
         request.session['OAUTH_TOKEN_SECRET'] = final_step['oauth_token_secret']
         request.session['screen_name'] = final_step['screen_name']
-        import pdb; pdb.set_trace()
-        return redirect('/quandl')
+        return redirect('/users/register')
 
 class SearchView(View):
     alchemyapi = AlchemyAPI()
@@ -73,21 +72,9 @@ class SearchView(View):
                         returns[-1]['sentiment'] = 0        
                     else:
                         returns[-1]['sentiment'] = alchemy_result['docSentiment']['score']
-            # import pdb; pdb.set_trace()
             if not returns:
                 return JsonResponse({'empty': 'Please try another query'})
             return JsonResponse({'dates' : [{'date' : str(datetime.datetime.strptime(row['created_at'], "%a %B %d %X %z %Y"))} for row in returns],
                                'scores' : [{'score' : data['sentiment']} for data in returns],
                                'favorites' : [{'favorite' : block['favorite_count']} for block in returns],
                                'tweets' : [{'content' : line['text']} for line in returns]})
-
-
-
-
-
-
-
-
-            
-
-
