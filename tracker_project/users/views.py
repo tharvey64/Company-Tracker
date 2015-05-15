@@ -24,17 +24,16 @@ class LoginView(View):
         if user: 
             if user.is_active:
                 login(request, user)
-                # redirect('pages:success', status='Logged In.')
+                return redirect('pages:success', status='Logged In.')
             else:
-                # redirect('pages:error', error='Inactive User.')
-        else:
-            # redirect('pages:error', error='Invalid username or password.')
+                return redirect('pages:error', error='Inactive User.')
+        return redirect('pages:error', error='Invalid username or password.')
 
 class LogoutView(View):
 
     def post(request):
         logout(request)
-        # redirect('pages:success', status='Logged out.')
+        return redirect('pages:success', status='Logged out.')
 
 # Reset password view 
 # Update account view
