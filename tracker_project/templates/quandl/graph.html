@@ -19,6 +19,7 @@
 <link rel="stylesheet" type="text/css" href='{% static "quandl/tooltips.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "quandl/tabs.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "article_feeds/story.css" %}'/>
+<link rel="stylesheet" type="text/css" href='{% static "users/users.css" %}'/>
 <link rel="stylesheet" type="text/css" href="{%static "markit/markit.css"%}"></link>        
 <link href='http://fonts.googleapis.com/css?family=News+Cycle|Libre+Baskerville' rel='stylesheet' type='text/css'>
 
@@ -28,6 +29,8 @@
     <h1 id='title'>MARKET TRACKER</h1>
         <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
 </nav>
+
+{%block content%}
 <div class="container">
 
     <p id='results'>Results</p>
@@ -38,7 +41,7 @@
                 <li class="active"><a href="#tab1">Quote</a></li>
                 <li><a href="#tab2">Find Company</a></li>
                 <li><a href="#tab3">Login</a></li>
-                <li><a href="#tab4">Register</a></li>                
+                <li><a href="#tab4">Sign Up</a></li>                             
             </ul>
 
             <div class="tab-content">
@@ -51,7 +54,7 @@
             </div> 
         </div>
     </div> 
-
+{%endblock%}
 
     <div class='returned' id="graph">
     </div>   
@@ -70,9 +73,8 @@
     {% include "markit/search_result.html" %}
     {% include "article_feeds/story_template.html" %}
     {% include "twitter/twitter_form.html" %}  
-    {% include "twitter/login_form.html" %} 
-    {% include "twitter/oauth_form.html" %}  
-
+    {% include "twitter/oauth_form.html" %} 
+    {% include "users/login_form.html" %} 
 </body>
 
 <footer>
