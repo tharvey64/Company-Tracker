@@ -12,8 +12,8 @@ class RegisterView(View):
         password = request.POST.get('password',False)
         if username and password:
             user = User.objects.create_user(username,email,password)
-            # redirect(to success page)
-        # redirect(to error page)
+            # redirect('pages:success', status='Registered.')
+        # redirect('pages:error', error='Invalid username or password')
 
 class LoginView(View):
 
@@ -24,17 +24,17 @@ class LoginView(View):
         if user: 
             if user.is_active:
                 login(request, user)
-                # redirect(to success page)
+                # redirect('pages:success', status='Logged In.')
             else:
-                # disabled user
+                # redirect('pages:error', error='Inactive User.')
         else:
-            # invalid login
+            # redirect('pages:error', error='Invalid username or password.')
 
 class LogoutView(View):
 
     def post(request):
         logout(request)
-        # redirect(to success page)
+        # redirect('pages:success', status='Logged out.')
 
 # Reset password view 
 # Update account view
