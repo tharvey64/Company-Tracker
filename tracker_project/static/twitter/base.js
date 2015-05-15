@@ -10,7 +10,7 @@ $(document).ready(function(){
         var startDate = $("#twitterForm input[name='start date']").val();
 
         $.post($(this).attr('action'),
-            {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val() },
+            {'search': ($('#search')).val(), csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val(), 'path': $('#path').val()},
             function(data) {
                 $(".tooltip").remove();
                 $(".tweet").remove();
