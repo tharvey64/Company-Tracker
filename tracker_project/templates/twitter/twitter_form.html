@@ -9,19 +9,16 @@
             <label for="query"># for hashtags, RT for retweets, etc.</label>
             <input type="text" id="search" name="search">
             <label for="filter">Filter</label>
-            <select id="filter" name="filter">
+            <select class="btn-info" id="filter" name="filter">
                 <option value="popular">Popular</option>
                 <option value="mixed">Mixed</option>
                 <option value="recent">Recent</option>
-            </select> 
-    <div class="btn-group" role="group" aria-label="...">
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-info">Your Lists</button>
-        </div>
-        <div class="btn-group" role="group">
-            <button type="submit" class="btn btn-danger">Random</button>
-        </div>
-    </div>           
-        </fieldset>
+            </select>
+            <select class="btn-info" id="path" name="path">
+                <option value="random">Random</option>
+                <option value="lists">Your Twitter List</option>
+            </select>
+                <button type="submit">Search</button>       
+                </fieldset>
     </form>
 </script>
