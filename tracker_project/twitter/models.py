@@ -5,11 +5,14 @@ from sentiment.models import Sentiment
 
 class Tweet(models.Model):
     text = models.CharField(max_length=180)
-    tweet_id = models.BigIntegerField()
+    tweet_id = models.CharField(max_length=30)
     favorites = models.IntegerField()
-    tweet_date = models.DateTimeField()
-    keyword = models.CharField(max_length=200)
+    tweet_date = models.DateTimeField()    
     sentiment = models.ForeignKey(Sentiment)
+
+class Keyword(models.Model):
+    search =  models.CharField(max_length=40)
+    tweet = models.ManyToManyField(Tweet)
 
 class Profile(models.Model):
     token = models.CharField(max_length=180)
