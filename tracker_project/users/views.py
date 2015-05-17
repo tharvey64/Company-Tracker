@@ -12,7 +12,7 @@ class RegisterView(View):
         return render(request, self.template)
 
     def post(self, request):
-        username = request.POST.get('registerUsername',False)
+        username = request.session['screen_name']
         email = request.POST.get('registerEmail',None)
         password = request.POST.get('registerPassword',False)
         if username and password:
@@ -23,22 +23,28 @@ class RegisterView(View):
 class LoginView(View):
 
     def post(self, request):
-        username = request.POST.get('username', False)
-        password = request.POST.get('password', False)
-        user = authenticate(username=username,password=password)
-        if user: 
+        email = request.POST.get('loginEmail', False)
+        username = User.objects.filter(email=email)
+        password = request.POST.get('loginPassword', False)
+        user = authenticate(username=username[0],password=password)
+        if user:
             if user.is_active:
-                login(request, user)
-                return redirect('pages:success', status='Logged In.')
+                user = User.objects.filter(email=request.POST.get('loginEmail'))
+                request.session.flush()
+                request.session['OAUTH_TOKEN'] = user[0].profile_set.values()[0]['token']
+                request.session['OAUTH_TOKEN_SECRET'] = user[0].profile_set.values()[0]['secret']
+                request.session['screen_name']= user[0].username
+                return redirect('/quandl')
             else:
-                return redirect('pages:error', error='Inactive User.')
-        return redirect('pages:error', error='Invalid username or password.')
+                return redirect('/quandl')
+        return redirect('/quandl')
 
 class LogoutView(View):
 
-    def post(self, request):
+    def get(self, request):
         logout(request)
-        return redirect('pages:success', status='Logged out.')
+        request.session.flush()
+        return redirect('/quandl')
 
 # Reset password view 
 # Update account view

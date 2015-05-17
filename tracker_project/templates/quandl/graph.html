@@ -28,7 +28,11 @@
 <nav class='navbar navbar-default navbar-static-top'>
     <h1 id='title'>MARKET TRACKER</h1>
         <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
+        <form id="logout" method="GET" action='/users/logout/'>
+        <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
+    </form>
 </nav>
+
 
 {%block content%}
 <div class="container">

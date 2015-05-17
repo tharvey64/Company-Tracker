@@ -11,7 +11,7 @@ $(document).ready(function(){
         search = $("#twitterForm input[name='search']").val();
 
         $.post($(this).attr('action'),
-            {'search': search, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val(),'path': $('#path').val() },
+            {'search': search, csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, 'type' :$('[name=filter]').val(),'path': $('#path').val(), 'list_name': $('#listName').val() },
             function(data) {
                 $(".tooltip").remove();
                 $(".tweet").remove();
