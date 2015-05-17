@@ -6,8 +6,6 @@
         {% csrf_token %}      
         <fieldset class="login">
             <legend>Fill out the form below to finish registration</legend>
-            <label for="username">Username</label> 
-                <input type="text" id="registerUsername" name="registerUsername">
             <label for="email">Email</label>
                 <input type="text" id="registerUEmail" name="registerEmail">
             <label for="password">Password</label> 
@@ -16,5 +14,5 @@
         </fieldset>
     </form>
 
-    <div id='mainMenu'><button type='button' class='btn btn-Danger'><p>Continue as an anonymous user</p></button></div>
+    <form id='mainMenu' method="GET" action='/quandl/'><input type='submit' class='btn btn-Danger' value='Continue as an anonymous user'></div>
 {%endblock%}

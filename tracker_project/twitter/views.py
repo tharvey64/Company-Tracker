@@ -34,6 +34,7 @@ class SearchView(View):
     alchemyapi = AlchemyAPI()
 
     def post(self, request):
+        print(request.POST)
         user_query = request.POST['search']   #the user searched for this  
         if request.POST['path'] == 'random':        
             twitter = Twython(TWITTER_KEY, TWITTER_SECRET)           
@@ -63,7 +64,7 @@ class SearchView(View):
             returns = []
             twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
             request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])    
-            list_of_tweets = twitter.get_list_statuses(slug='people', owner_screen_name='anthonysays', count=200)              
+            list_of_tweets = twitter.get_list_statuses(slug=request.POST['list_name'], owner_screen_name=request.session['screen_name'], count=200)              
             for unique_tweet in list_of_tweets:
                 if user_query.lower() in unique_tweet['text'].lower():
                     returns.append(unique_tweet)                        
