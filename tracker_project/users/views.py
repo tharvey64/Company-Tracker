@@ -22,7 +22,7 @@ class RegisterView(View):
                 secret=request.session['OAUTH_TOKEN_SECRET'], 
                 user=user
             )
-        return redirect('/', logged_in=True)
+        return redirect('/')
 
 class LoginView(View):
 
@@ -34,17 +34,17 @@ class LoginView(View):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect('/', logged_in=True)
+                return redirect('/')
             else:
-                return redirect('/', logged_in=False)
-        return redirect('/', logged_in=False)
+                return redirect('/')
+        return redirect('/')
 
 class LogoutView(View):
 
     def get(self, request):
         logout(request)
         request.session.flush()
-        return redirect('/', logged_in=True)
+        return redirect('/')
 
 # Reset password view 
 # Update account view
