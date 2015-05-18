@@ -6,4 +6,4 @@ class IndexView(View):
     template = 'pages/index.html'
 
     def get(self, request):
-        return render(request, self.template)
+        return render(request, self.template, {'logged_in': request.GET.get('logged_in', False)})
