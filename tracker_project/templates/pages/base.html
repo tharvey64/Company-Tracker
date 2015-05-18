@@ -3,6 +3,7 @@
     <head>
         <title>Sentiment Tracker</title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -24,6 +25,21 @@
         <link href='http://fonts.googleapis.com/css?family=News+Cycle|Libre+Baskerville' rel='stylesheet' type='text/css'>
     </head>
     <body>
+
+    <div id='selector' class="btn-group">
+        <button type="button" id='selectorButton' class="btn btn-block btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <p>I<br>
+        N<br>
+        F<br>
+        O</p>
+        </button>
+         <ul id='selectorMenu' class="dropdown-menu" role="menu">
+            <a id='twitterPath' href='#'>Twitter</a>
+            <li class="divider"></li>
+            <a id='storyPath' href='#'>Stories</a>
+         </ul>
+    </div>   
+
         <div class ="container">
 
             <header>

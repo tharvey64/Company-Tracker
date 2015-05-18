@@ -1,8 +1,7 @@
 #stories{
     height: 42em;
     min-height: 20em;
-    width: 40em;
-    border-right: groove 0.2em;
+    width: 80em;
     display: none;    
     overflow-x: scroll;
     overflow-y: scroll;

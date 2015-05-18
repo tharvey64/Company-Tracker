@@ -18,7 +18,7 @@ class RegisterView(View):
         if username and password:
             user = User.objects.create_user(username, email, password)
             profile = Profile.objects.create(token=request.session['OAUTH_TOKEN'], secret=request.session['OAUTH_TOKEN_SECRET'], user=user)
-        return redirect('/quandl')
+        return redirect('/')
 
 class LoginView(View):
 
@@ -34,17 +34,17 @@ class LoginView(View):
                 request.session['OAUTH_TOKEN'] = user[0].profile_set.values()[0]['token']
                 request.session['OAUTH_TOKEN_SECRET'] = user[0].profile_set.values()[0]['secret']
                 request.session['screen_name']= user[0].username
-                return redirect('/quandl')
+                return redirect('/')
             else:
-                return redirect('/quandl')
-        return redirect('/quandl')
+                return redirect('/')
+        return redirect('/')
 
 class LogoutView(View):
 
     def get(self, request):
         logout(request)
         request.session.flush()
-        return redirect('/quandl')
+        return redirect('/')
 
 # Reset password view 
 # Update account view

@@ -3,16 +3,36 @@ body{
     background-image: url("background_images/1.jpg");
 }
 
-#logout p, #backbutton p, #tab4 p{
+.navButs p, #backbutton p, #selector p{
     color: white;
-    font-size: 1em;
+    font-size: 1.1em;
+}
+
+#selectorButton {
+    position: fixed;
+    float: left;
+    margin-top: 20em;
+    height: 8em;
+    width: 3em;
+    display: none;
+}
+
+#selectorMenu {
+    margin: 21em 0 0 2.8em;
+}
+
+#selectorButton ul{
+    text-align: center;
 }
 
 .navButs{   
     display:inline-block;
     float: right;
-    width: 10em;
-    margin: .5em .0 0 0;
+    margin: .5em 0 0 0;
+}
+
+#loginDrop{
+    height: 3.2em;
 }
 
 h1 {
@@ -40,12 +60,12 @@ h1 {
     height: 25%;
     width: 52.5%;
     /*max-height: 8em;*/
-    margin: 15em auto;    
+    margin: 20em auto;    
 }
 
 #graph {
     height: 42em;
-    width: 60em;
+    width: 80em;
     overflow-x: scroll;
     /*border: groove 0.2em ;
     min-height: 20em;
