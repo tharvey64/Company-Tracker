@@ -1,15 +1,9 @@
-function timestamp(time_string){
-    var x = time_string.lastIndexOf(":");
-    time_string = time_string.slice(0,x) + time_string.substring(x+1)
-    return time_string;
-}
-
 $(document).ready(function(){    
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
         var startDate = $("#twitterForm input[name='start date']").val();
         
-        $.post($(this).attr('action'),
+        $.post($(this).attr("action") + $("#path").val(),
             $("#twitterForm").serialize(),
             function(data) {
                 console.log(data)
@@ -22,7 +16,7 @@ $(document).ready(function(){
                     $("#graph").trigger("drawGraph",[data.tweets, parseDate, start, "tweet", "circle:not(.stock)", 3, [5,25], false]);
                     d3.selectAll(".tweet").style("fill", "yellow");
                 }else{
-                    console.log('twitter view error')
+                    console.log("twitter view error")
                 }
         });
     });
