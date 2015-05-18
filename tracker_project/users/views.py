@@ -17,23 +17,23 @@ class RegisterView(View):
         password = request.POST.get('registerPassword',False)
         if username and password:
             user = User.objects.create_user(username, email, password)
-            profile = Profile.objects.create(token=request.session['OAUTH_TOKEN'], secret=request.session['OAUTH_TOKEN_SECRET'], user=user)
+            profile = Profile.objects.create(
+                token=request.session['OAUTH_TOKEN'],
+                secret=request.session['OAUTH_TOKEN_SECRET'], 
+                user=user
+            )
         return redirect('/')
 
 class LoginView(View):
 
     def post(self, request):
         email = request.POST.get('loginEmail', False)
-        username = User.objects.filter(email=email)
+        user = User.objects.filter(email=email)
         password = request.POST.get('loginPassword', False)
-        user = authenticate(username=username[0],password=password)
+        user = authenticate(username=user[0].username, password=password)
         if user:
             if user.is_active:
-                user = User.objects.filter(email=request.POST.get('loginEmail'))
-                request.session.flush()
-                request.session['OAUTH_TOKEN'] = user[0].profile_set.values()[0]['token']
-                request.session['OAUTH_TOKEN_SECRET'] = user[0].profile_set.values()[0]['secret']
-                request.session['screen_name']= user[0].username
+                login(request, user)
                 return redirect('/')
             else:
                 return redirect('/')

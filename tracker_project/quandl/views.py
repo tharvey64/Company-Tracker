@@ -5,7 +5,7 @@ from django.views.generic.base import View
 from quandl.models import Quandl, Company, StockPrice, LastPrice
 from markit.models import Markit
 import quandl.helper as help
-  
+
 class QuandlHistoryView(View):
 
     def get(self, request, symbol, date_string):
@@ -23,10 +23,6 @@ class QuandlHistoryView(View):
         return JsonResponse(data)
 
     def post(self, request, symbol, date_string):
-        print("is_active: ",request.user.is_active)
-        print("is_authenticated: ",request.user.is_authenticated())
-        print("is_anonymous: ",request.user.is_anonymous())
-        print(type(request.user))
         last_close = LastPrice.objects.filter(company__symbol__iexact=symbol)
 
         if not help.check_company(last_close): 

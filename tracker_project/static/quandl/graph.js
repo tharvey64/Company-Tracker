@@ -1,5 +1,5 @@
 function createSvg(height, width){
-    $('#graph').empty();
+    $("#graph").empty();
 
     d3.select("#graph")
         .append("svg")
@@ -7,10 +7,11 @@ function createSvg(height, width){
         .attr("height",height);
 }
 // Could Make the parameter a json
+// This Function Should only Handle One Dataset At a Time
 function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIndex, radiusRange, newGraph){
     $("body").remove(".tooltip");
     var h = parseInt($("#graph").css("height"));
-    var w = parseInt($("#graph").css('width'));
+    var w = parseInt($("#graph").css("width"));
     if (newGraph){
         createSvg(h,w);
     }
@@ -47,7 +48,7 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
     var xAxis = d3.svg.axis();
     xAxis.scale(xScale).orient("bottom");
     
-    svg.selectAll(selector)
+    svg.selectAll("circle" + circleClass)
         .data(dataset)
         .enter()
         .append("circle")
@@ -89,11 +90,23 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
     $("circle").tooltips();
 }
 
+// var graphData = {
+//     "dataset":[], 
+//     "parseDate" = function(d){}, 
+//     "circleClass":"", 
+//     "title" = function(d){}, 
+//     "radiusRange":[1,1]
+// }
+
 $(document).ready(function(){
+
+    // var graph = {
+    //     "datasets":[],
+    //     "startDate": undefined
+    // }
+
     $("#graph").on("drawGraph", function(event, graphData, dateFormat, start, className, selector, titleIndex,radiusRange, newGraph){
         drawGraph(graphData, dateFormat, start, className, selector, titleIndex, radiusRange, newGraph);
-        setTimeout(function(){ 
         $("#footer").css("display", "block");
-    }, 4000); 
-    });
+    });   
 });
