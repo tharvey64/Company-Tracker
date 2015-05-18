@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
 from twython import Twython
-from alchemyapi import AlchemyAPI
+from sentiment.alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
 from twitter.models import Tweet, Keyword, Profile
 from tracker_project.settings import TWITTER_KEY, TWITTER_SECRET 

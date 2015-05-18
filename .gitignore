@@ -52,10 +52,9 @@ coverage.xml
 
 # Django stuff:
 *.log
-settings.py
-heroku_settings.py
+not_settings.py
 venv
-Procfile
+graphObj.js
 
 # Sphinx documentation
 docs/_build/

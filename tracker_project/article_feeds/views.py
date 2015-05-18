@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View
 import feedparser
-from alchemyapi import AlchemyAPI
+from sentiment.alchemyapi import AlchemyAPI
 
 
 # Create your views here.
