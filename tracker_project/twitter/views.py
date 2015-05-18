@@ -36,7 +36,6 @@ class SearchView(View):
         user_query = request.POST['search']   #the user searched for this  
 
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-
         twython_results = twitter.search(q=user_query, result_type=request.POST.get('type',False), lang='en') #twitter search results
         
         keyword, created = Keyword.objects.get_or_create(search__iexact=user_query)
@@ -44,7 +43,6 @@ class SearchView(View):
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
 
         new_tweets = []
-
         for response in twython_results['statuses']: #iterating through each tweet
 
             old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
@@ -72,11 +70,8 @@ class SearchView(View):
                     sentiment=tweet_sentiment_value
                 )
                 new_tweets.append(tweet)
-        
-        keyword.tweet.add(new_tweets)
-
-        all_tweets = new_tweets + stored_tweets_of_query
-
+        keyword.tweet.add(*new_tweets)
+        all_tweets = new_tweets + list(stored_tweets_of_query)
         tweet_dataset = [[row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), row.sentiment.score, row.favorites, row.text] for row in all_tweets]
         return JsonResponse({'tweets': tweet_dataset})
 
