@@ -1,12 +1,8 @@
-#mainMenu{
-	margin: 5em auto;
-	width: 14.3em;
-}
-
 #registerForm{
-	margin-top: 5em;
+	margin: 5em 0 3em 0;
 }
 
-#logout {
-	height: 1em;
+#mainMenu{
+	margin: auto;
+	width: 16.3em;
 }
