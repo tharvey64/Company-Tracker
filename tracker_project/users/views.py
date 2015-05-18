@@ -17,7 +17,11 @@ class RegisterView(View):
         password = request.POST.get('registerPassword',False)
         if username and password:
             user = User.objects.create_user(username, email, password)
-            profile = Profile.objects.create(token=request.session['OAUTH_TOKEN'], secret=request.session['OAUTH_TOKEN_SECRET'], user=user)
+            profile = Profile.objects.create(
+                token=request.session['OAUTH_TOKEN'],
+                secret=request.session['OAUTH_TOKEN_SECRET'], 
+                user=user
+            )
         return redirect('/')
 
 class LoginView(View):
