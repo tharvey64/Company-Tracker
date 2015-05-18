@@ -21,5 +21,8 @@ class ArticleSentiment(View):
     def get(self, request):
         url = self.request.GET.get('url', False)
         if url:
-            return JsonResponse(self.alchemy.sentiment('url', url))
+            sentiment = self.alchemy.sentiment('url', url).get('docSentiment')
+            if sentiment:
+                sentiment.setdefault('score', 0)
+                return JsonResponse(sentiment)
         return JsonResponse({'error': 'Missing Url'})
