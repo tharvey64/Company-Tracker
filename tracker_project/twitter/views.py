@@ -49,7 +49,8 @@ class SearchView(View):
 
             for response in twython_results['statuses']: #iterating through each tweet
             # response['id_str']
-                old_tweet = stored_tweets_of_query.filter(tweet_id=response['id'])
+
+                old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
                 
                 if old_tweet and len(old_tweet) == 1:
                     old_tweet[0].favorites = response['favorite_count']
@@ -68,7 +69,7 @@ class SearchView(View):
 
                     tweet = Tweet.objects.create(
                         text=response['text'], 
-                        tweet_id=response['id'], 
+                        tweet_id=response['id_str'], 
                         favorites=response['favorite_count'],
                         tweet_date=formatted_date, 
                         sentiment=tweet_sentiment_value
@@ -85,8 +86,7 @@ class SearchView(View):
         else:
             # twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
             # request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET']) 
-            twitter = Twython('qhSibJ9AHocN8nKNncBa3V9pD', 'iwO0UZXVUc4NpbKNex510GdX7hzHknF5EUDC2DkpcfOBVlql94',
-            '3164579495-SdoKch0mV3v6tPJCH6Gxdznx6Lt9PJT8PvFe61g', 'ppkxy8KjRRdl408GKY1B19tuGKGfp4h5yTekKKCWgs2KA') 
+            twitter = Twython() 
             # list_of_tweets = twitter.get_list_statuses(slug=request.POST['list_name'], owner_screen_name=request.session['screen_name'], count=200)  
             list_of_tweets = twitter.get_list_statuses(slug='test', owner_screen_name='theHarv242', count=200)
             
