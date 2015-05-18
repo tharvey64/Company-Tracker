@@ -1,7 +1,6 @@
-{% extends "quandl/graph.html" %}
+{% extends "pages/index.html" %}
 
 {%block content%}
-
     <form id="registerForm" method="POST" action='/users/register/'>
         {% csrf_token %}      
         <fieldset class="login">
@@ -14,5 +13,5 @@
         </fieldset>
     </form>
 
-    <form id='mainMenu' method="GET" action='/quandl/'><input type='submit' class='btn btn-Danger' value='Continue as an anonymous user'></div>
+    <form id='mainMenu' method="GET" action='/'><input type='submit' class='btn btn-Danger' value='Continue as an anonymous user'></div>
 {%endblock%}

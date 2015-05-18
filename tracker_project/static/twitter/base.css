@@ -11,7 +11,6 @@
 	float: left;
 }
 
-
 #heading {
 	text-align: center;
 }
@@ -30,16 +29,6 @@
 
 #searchButton:focus{
 	outline: 0;
-}
-
-#graph {
-    height: 60%;
-    width: 65%;
-    overflow-x: scroll;
-    border: dashed 0.2em;
-    display: inline-block;
-    float:left;
-    margin: 0 0 5em 0;
 }
 
 div.tooltip {   

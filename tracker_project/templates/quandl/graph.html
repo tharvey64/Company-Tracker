@@ -21,15 +21,13 @@
 <link rel="stylesheet" type="text/css" href='{% static "article_feeds/story.css" %}'/>
 <link rel="stylesheet" type="text/css" href='{% static "users/users.css" %}'/>
 <link rel="stylesheet" type="text/css" href="{%static "markit/markit.css"%}"></link>        
-<link href='http://fonts.googleapis.com/css?family=News+Cycle|Libre+Baskerville' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=News+Cycle|Oswald' rel='stylesheet' type='text/css'>
 
 </header>
 <body>
-<nav class='navbar navbar-default navbar-static-top'>
-    <h1 id='title'>MARKET TRACKER</h1>
-        <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
-        <form id="logout" method="GET" action='/users/logout/'>
-        <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
+    <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
+    <form id="logout" method="GET" action='/users/logout/'>
+    <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
     </form>
 </nav>
 
@@ -40,6 +38,8 @@
 
 	<div id="forms">
         <div class="tabs">
+                <h1 id='title'>MARKET TRACKER</h1>
+
             <ul class="tab-links">
                 <li class="active"><a href="#tab1">Quote</a></li>
                 <li><a href="#tab2">Find Company</a></li>
@@ -61,9 +61,9 @@
 
     <div class ='returned' id='footer'>
     </div>
+    <p id='results'><u>Results</u></p>
     <div class='returned' id="graph">
     </div>   
-    
     <div class='returned' id="stories">
     </div>
     <div class='returned' id="postedSearch">

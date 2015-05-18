@@ -5,7 +5,7 @@ from django.views.generic.base import View
 from quandl.models import Quandl, Company, StockPrice, LastPrice
 from markit.models import Markit
 import quandl.helper as help
-   
+
 class QuandlHistoryView(View):
 
     def get(self, request, symbol, date_string):
