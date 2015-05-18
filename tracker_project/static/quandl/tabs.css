@@ -1,7 +1,6 @@
 .tabs {
     width: 45em;
     display: inline-block;
-    padding: .5em;
 }
 
 .tab-links:after {

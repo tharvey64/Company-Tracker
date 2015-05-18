@@ -3,51 +3,68 @@ $(document).ready(function(){
         $("#loading").css("display", "block");          
         setTimeout(function(){      
         $("#loading").css("display", "none");
-        $("#backButton").css("display", "block")       
+        $("#backButton").css("display", "block");
+        $("#forms").animate({
+            opacity: 0
+        }, 1000);          
+        $(".navButs").animate({
+            opacity: 0
+        }, 2000);       
         $("#graph").css("display", "inline-block"); 
         $("#results").css("display", "block");
-        $("#selectorButton").css("display", "block");
-        $("h1").slideUp(1500);              
-        $("#forms").slideUp(1500);
+        $("#forms").slideUp(2000);
         }, 4000);               
     });
     $("#tab1").on("submit", "#stockForm", function(event) {
             $("#loading").css("display", "block");          
         setTimeout(function(){ 
-                $("#loading").css("display", "none");
+            $("#loading").css("display", "none");
+            $("#forms").animate({
+                opacity: 0
+            }, 1000);               
+            $("#forms").slideUp(2000);             
+            $(".navButs").animate({
+                opacity: 0
+            }, 2000);                      
             $("#backButton").css("display", "block")       
             $("#graph").css("display", "inline-block"); 
-            $("#results").css("display", "block");  
             $("#selectorButton").css("display", "block");
-            $("#logout").slideDown(1500);
-            $("h1").slideUp(1500);              
-            $("#forms").slideUp(1500); 
         }, 4000);       
     });
     $("#backButton").on("click", function(event) { 
         $("#backButton").css("display", "none");       
         $(".returned").css("display", "none");  
-        $("#results").css("display", "none"); 
-        $("#selectorButton").css("display", "none");        
+        $("#selectorButton").css("display", "none"); 
+        $("#forms").animate({
+            opacity: 1
+        }, 1000);                 
         $("#stories, #graph").empty();
-        $("h1").slideDown(1500); 
-        $("#forms").slideDown(1500);    
+        $(".navButs").animate({
+            opacity: 1
+        }, 2000);  
+        $("#forms").slideDown(2000);    
     }); 
     $("#twitterPath").on("click", function(event){
         $("#stories").css("display", "none");
+        $("#footer").css("display", "block");
         $("#graph").css("display", "block");        
     });
     $("#storyPath").on("click", function(event){
         $("#stories").css("display", "block");
-        $("#graph").css("display", "none");        
+        $("#graph").css("display", "none");  
+        $("#footer").css("display", "none");              
     });    
     $("#graph").on("click", "button.search-result", function(event){
         $("#backButton").css("display", "none");  
         $(".returned").css("display", "none");  
-        $("#results").css("display", "none");
-        $("#selectorButton").css("display", "none");        
-        $("h1").slideDown(1500); 
-        $("#forms").slideDown(1500); 
+        $("#selectorButton").css("display", "none");  
+        $("#forms").animate({
+            opacity: 1
+        }, 1000);            
+        $(".navButs").animate({
+            opacity: 1
+        }, 2000);            
+        $("#forms").slideDown(2000); 
 
         $('.tabs #tab1').show().siblings().hide();
 

@@ -1,6 +1,8 @@
 {% extends "pages/base.html" %}
    
+
 {% block header %}
+    <div id="mariner">
     <div class = "navButs"><form id="logout" method="GET" action='/users/logout/'>
         <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
         </form>
@@ -17,11 +19,10 @@
 
     <div class ='navButs' id="tab4">
     </div>
-
+    <div>
 {% endblock header %}
 
 {% block content %}
-    <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
 
     <div id="forms">
 
