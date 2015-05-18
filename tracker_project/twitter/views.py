@@ -27,12 +27,13 @@ class CallbackView(View):
         request.session['OAUTH_TOKEN'] = final_step['oauth_token']
         request.session['OAUTH_TOKEN_SECRET'] = final_step['oauth_token_secret']
         request.session['screen_name'] = final_step['screen_name']
-        return redirect('/quandl')
+        return redirect('/users/register')
 
 class SearchView(View):
     alchemyapi = AlchemyAPI()
 
     def post(self, request):
+        print(request.POST)
         user_query = request.POST['search']   #the user searched for this  
         if request.POST['path'] == 'random':
 
@@ -86,7 +87,7 @@ class SearchView(View):
             # request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET']) 
             twitter = Twython('qhSibJ9AHocN8nKNncBa3V9pD', 'iwO0UZXVUc4NpbKNex510GdX7hzHknF5EUDC2DkpcfOBVlql94',
             '3164579495-SdoKch0mV3v6tPJCH6Gxdznx6Lt9PJT8PvFe61g', 'ppkxy8KjRRdl408GKY1B19tuGKGfp4h5yTekKKCWgs2KA') 
-            # lists = twitter.show_owned_lists(screen_name='theHarv242') 
+            # list_of_tweets = twitter.get_list_statuses(slug=request.POST['list_name'], owner_screen_name=request.session['screen_name'], count=200)  
             list_of_tweets = twitter.get_list_statuses(slug='test', owner_screen_name='theHarv242', count=200)
             
             list_dataset = []
