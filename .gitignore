@@ -1,6 +1,9 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.pyc
+.env
+staticfiles
 
 # C extensions
 *.so
@@ -50,11 +53,14 @@ coverage.xml
 # Django stuff:
 *.log
 settings.py
-venv/
+heroku_settings.py
+venv
+Procfile
 
 # Sphinx documentation
 docs/_build/
 
 # PyBuilder
 target/
+
 api_key.txt
