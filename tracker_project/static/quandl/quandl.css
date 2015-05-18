@@ -1,14 +1,26 @@
 body{
     opacity: 0.8; 
     background-image: url("background_images/1.jpg");
+}
 
+#logout p, #backbutton p, #tab4 p{
+    color: white;
+    font-size: 1em;
+}
+
+.navButs{   
+    display:inline-block;
+    float: right;
+    width: 10em;
+    margin: .5em .0 0 0;
 }
 
 h1 {
-    margin: .25em 0 .25em 0;
+    margin: 1em 0 .25em 0;
     text-align: center;
-    font-family: 'Libre Baskerville', serif;    
-    color: white;
+    font-family: 'Oswald', sans-serif;    
+    color: black;
+    font-size:3em;
 }
 
 #results{
@@ -20,6 +32,8 @@ h1 {
 #backButton{
     display:none;
     font-size: 2em;
+    color: white;
+    position:fixed;
 }
 
 #forms {
@@ -28,21 +42,21 @@ h1 {
     /*max-height: 8em;*/
     margin: 15em auto;    
 }
+
 #graph {
     height: 42em;
-    width: 80em;
+    width: 60em;
     overflow-x: scroll;
     /*border: groove 0.2em ;
     min-height: 20em;
     display: inline-block;*/
-    float:left;
 }
 
 #postedSearch {
     height: 60%;
     width: 45%;
     overflow-x: scroll;
-    border-top: groove 0.2em ;
+    border-top: groove 0.2em;
 }
 
 .axis path,
@@ -58,7 +72,7 @@ h1 {
 }
 
 .container{
-    height: 50em;
+    height: 40em;
     width: 90em;
     margin: auto;
 }
@@ -72,10 +86,6 @@ legend {
     text-align: center;
 }
 
-a{
-    color: black;
-}
-
 #loading{
     text-align: center;
     margin: 2em auto 0 auto;
@@ -84,6 +94,7 @@ a{
 }
 
 p {
+    font-size: 1.25em;
     font-family: 'News Cycle', sans-serif;
 }
 
@@ -96,13 +107,6 @@ img {
     border-top: groove 0.2em;
 }
 
-.navbar {
-    width: 100%;
-    background: black;
-    opacity: .70;
-
-}
-
 .company-list {
     list-style: none;
 }
@@ -112,6 +116,7 @@ ul.company-info {
     padding-left: 0.2em;
     list-style: none;
 }
+
 button {
     text-align: left;
 }

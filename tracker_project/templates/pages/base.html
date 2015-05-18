@@ -1,21 +1,35 @@
 {% load staticfiles %}
 <html>
     <head>
-        <title>Graphed Stocks</title>
+        <title>Sentiment Tracker</title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-        <script src="{%static "stockgraph/base.js"%}"></script>
-        <link rel="stylesheet" href="{% static 'stockgraph/base.css' %}">
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src='{% static "quandl/tooltips.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/graph.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/quandl.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/tabs.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/query.js" %}'></script>
+        <script type="text/javascript" src='{% static "markit/markit.js" %}'></script>
+        <script type="text/javascript" src='{% static "article_feeds/story.js" %}'></script>
+        <script type="text/javascript" src='{%static "twitter/base.js"%}'></script>        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">  
+        <link rel="stylesheet" type="text/css" href='{% static "quandl/quandl.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "quandl/tooltips.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "quandl/tabs.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "article_feeds/story.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "users/users.css" %}'/>
+        <link rel="stylesheet" type="text/css" href="{%static "markit/markit.css"%}"></link>        
+        <link href='http://fonts.googleapis.com/css?family=News+Cycle|Libre+Baskerville' rel='stylesheet' type='text/css'>
     </head>
     <body>
-        <div class ="container-fluid">
+        <div class ="container">
 
             <header>
-                <nav class='navbar navbar-default navbar-static-top'>
-                {% block header %}                   
-                {% endblock %}
+                {% block header %}
+                                       
+                {% endblock header %}
                 </nav>
             </header>
 
@@ -28,10 +42,16 @@
                 {% block footer %}
                 {% endblock %}
             </footer>
-
-            {% block scripts %}
-            {% endblock %}
-
         </div>
     </body>
+        {% block scripts %}
+            {% include "quandl/company_form.html" %}
+            {% include "quandl/date_form.html" %}
+            {% include "markit/search_form.html" %}
+            {% include "markit/search_result.html" %}
+            {% include "article_feeds/story_template.html" %}
+            {% include "twitter/twitter_form.html" %}  
+            {% include "twitter/oauth_form.html" %} 
+            {% include "users/login_form.html" %} 
+        {% endblock %}
 </html>
