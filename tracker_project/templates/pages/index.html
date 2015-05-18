@@ -1,11 +1,13 @@
 {% extends "pages/base.html" %}
    
 {% block header %}
-    <div class = "navButs"><form id="logout" method="GET" action='/users/logout/'>
+    {% if logged_in %}
+    <div class = "navButs">
+        <form id="logout" method="GET" action='/users/logout/'>
         <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
         </form>
     </div>
-
+    {% else %}
     <div class="navButs btn-group">
         <button type="button" id='loginDrop' class="btn btn-block btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         Login <span class="caret"></span>
@@ -14,7 +16,7 @@
             <div class ='navButs' id="tab3"></div>
          </ul>
     </div>
-
+    {% endif %}
     <div class ='navButs' id="tab4">
     </div>
 
