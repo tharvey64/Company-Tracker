@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from twython import Twython
 from alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
-from twitter.models import Tweet, Keyword
+from twitter.models import Tweet, Keyword, Profile
 from tracker_project.settings import TWITTER_KEY, TWITTER_SECRET 
 
 class AppView(View):
@@ -48,7 +48,6 @@ class SearchView(View):
             new_tweets = []
 
             for response in twython_results['statuses']: #iterating through each tweet
-            # response['id_str']
 
                 old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
                 
@@ -84,12 +83,9 @@ class SearchView(View):
             return JsonResponse({'tweets': tweet_dataset})
 
         else:
-            # twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
-            # request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET']) 
-            twitter = Twython() 
-            # list_of_tweets = twitter.get_list_statuses(slug=request.POST['list_name'], owner_screen_name=request.session['screen_name'], count=200)  
-            list_of_tweets = twitter.get_list_statuses(slug='test', owner_screen_name='theHarv242', count=200)
-            
+            profile = Profile.objects.filter(user__pk=request.user.id)
+            twitter = Twython(TWITTER_KEY, TWITTER_SECRET, profile[0].token, profile[0].secret)
+            list_of_tweets = twitter.get_list_statuses(slug=request.POST['listName'], owner_screen_name=request.user.username, count=200)
             list_dataset = []
             for unique_tweet in list_of_tweets:
                 if user_query.lower() in unique_tweet['text'].lower():
@@ -97,8 +93,7 @@ class SearchView(View):
                     alchemy_result = self.alchemyapi.sentiment("text", unique_tweet['text'])
                     if not alchemy_result.get('docSentiment', False):
                         continue
-                    score = alchemy_result['docSentiment'].get('score', False)
-                    unique_tweet['sentiment'] = score if score else 0
+                    unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
                     unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %B %d %X %z %Y")
 
                     list_dataset.append([
