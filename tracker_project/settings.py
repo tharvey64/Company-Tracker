@@ -20,20 +20,20 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['secret']
+SECRET_KEY = os.environ['SECRET_KEY']
 
-QUANDL_KEY = os.environ['quandl']
+QUANDL_KEY = os.environ['QUANDL_KEY']
 
-TWITTER_KEY = os.environ['twitter_token']
-TWITTER_SECRET = os.environ['twitter_secret']
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+TWITTER_KEY = os.environ['TWITTER_KEY']
+TWITTER_SECRET = os.environ['TWITTER_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+#########################
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
 
+ALLOWED_HOSTS = []
+#########################
 # Application definition
 
 INSTALLED_APPS = (
@@ -88,8 +88,16 @@ WSGI_APPLICATION = 'tracker_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'tracker',
+        'USER': os.environ['USER'],
+        'PASSWORD': os.environ['USER_PASSWORD'],
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
 
 
 # Internationalization
@@ -108,6 +116,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-STATIC_ROOT = 'staticfile'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ( os.path.join(BASE_DIR, 'static'),)
