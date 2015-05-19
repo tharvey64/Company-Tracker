@@ -1,0 +1,14 @@
+#stories{
+    height: 42em;
+    min-height: 20em;
+    width: 80em;
+    display: none;    
+    overflow-x: scroll;
+    overflow-y: scroll;
+    padding: .25em;
+    margin-bottom: 3em;
+}
+
+p, a {
+	color: black;
+}
