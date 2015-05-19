@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 .env
 staticfiles
+.DS_Store
 
 # C extensions
 *.so
