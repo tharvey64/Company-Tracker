@@ -6,4 +6,4 @@ class IndexView(View):
     template = 'pages/index.html'
 
     def get(self, request):
-        return render(request, self.template)
+        return render(request, self.template, {'logged_in': not request.user.is_anonymous()})
