@@ -55,7 +55,6 @@ coverage.xml
 settings.py
 heroku_settings.py
 venv
-Procfile
 
 # Sphinx documentation
 docs/_build/

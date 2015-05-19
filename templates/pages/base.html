@@ -1,0 +1,75 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Sentiment Tracker</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src='{% static "quandl/tooltips.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/graph.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/quandl.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/tabs.js" %}'></script>
+        <script type="text/javascript" src='{% static "quandl/query.js" %}'></script>
+        <script type="text/javascript" src='{% static "markit/markit.js" %}'></script>
+        <script type="text/javascript" src='{% static "article_feeds/story.js" %}'></script>
+        <script type="text/javascript" src='{%static "twitter/base.js"%}'></script>        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">  
+        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=News+Cycle|Libre+Baskerville'>
+        <link rel="stylesheet" type="text/css" href='{% static "quandl/quandl.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "quandl/tooltips.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "quandl/tabs.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "article_feeds/story.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "users/users.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{%static "markit/markit.css"%}'></link>
+    </head>
+    <body>
+        
+    <button id="backButton" type='button' class='btn btn-block btn-info'><p>What will you search for now?</p></button>
+
+    <div id='selector' class="btn-group">
+        <button type="button" id='selectorButton' class="btn btn-block btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <p>I<br>
+        N<br>
+        F<br>
+        O</p>
+        </button>
+         <ul id='selectorMenu' class="dropdown-menu" role="menu">
+            <a id='twitterPath' href='#'>Twitter</a>
+            <li class="divider"></li>
+            <a id='storyPath' href='#'>Stories</a>
+         </ul>
+    </div>   
+
+        <div class ="container">
+
+            <header>
+                {% block header %}
+                                       
+                {% endblock header %}
+                </nav>
+            </header>
+
+            <div class ="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <footer>
+                {% block footer %}
+                {% endblock %}
+            </footer>
+        </div>
+    </body>
+        {% block scripts %}
+            {% include "quandl/company_form.html" %}
+            {% include "quandl/date_form.html" %}
+            {% include "markit/search_form.html" %}
+            {% include "markit/search_result.html" %}
+            {% include "article_feeds/story_template.html" %}
+            {% include "twitter/twitter_form.html" %}  
+            {% include "twitter/oauth_form.html" %} 
+            {% include "users/login_form.html" %} 
+        {% endblock %}
+</html>
