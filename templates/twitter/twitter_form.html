@@ -12,8 +12,8 @@
             {% if logged_in %}
             <label for="list">Enter the name of your list</label>
                 <input type="text" id="listName" name="listName">
+                {% endif %}
             <label for="filter">Filter</label>
-            {% endif %}
             <select class="btn-info" id="filter" name="filter">
                 <option value="popular">Popular</option>
                 <option value="mixed">Mixed</option>

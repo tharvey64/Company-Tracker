@@ -49,14 +49,13 @@ h1 {
     display:none;
     font-size: 2em;
     color: white;
-    position:fixed;
 }
 
 #forms {
     height: 25%;
     width: 52.5%;
     /*max-height: 8em;*/
-    margin: 16em auto;    
+    margin: 17em auto;    
 }
 
 #graph {
@@ -96,7 +95,7 @@ h1 {
 
 .returned{
     display: none;
-    margin: 8em 1em 0 1em;
+    margin: 0 1em 0 1em;
 }
 
 legend {
@@ -139,7 +138,6 @@ button {
 }
 
 #footer{
-    margin-top: 4em;
     clear: both;
     text-align: center;
 }

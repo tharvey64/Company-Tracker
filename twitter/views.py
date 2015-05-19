@@ -36,7 +36,7 @@ class SearchView(View):
         user_query = request.POST['search']   #the user searched for this  
 
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-        twython_results = twitter.search(q=user_query, result_type=request.POST.get('type',False), lang='en') #twitter search results
+        twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
         
         keyword, created = Keyword.objects.get_or_create(search__iexact=user_query)
 
@@ -82,7 +82,7 @@ class SearchListView(View):
         user_query = request.POST['search'] 
         profile = Profile.objects.filter(user__pk=request.user.id)
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET, profile[0].token, profile[0].secret)
-        list_of_tweets = twitter.get_list_statuses(slug=request.POST['listName'], owner_screen_name=request.user.username, count=200)
+        list_of_tweets = twitter.get_list_statuses(slug=request.POST['list_name'], owner_screen_name=request.user.username, count=200)
         list_dataset = []
         for unique_tweet in list_of_tweets:
             if user_query.lower() in unique_tweet['text'].lower():
