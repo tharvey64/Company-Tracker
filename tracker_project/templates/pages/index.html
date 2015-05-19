@@ -2,9 +2,9 @@
    
 
 {% block header %}
+    {% if logged_in %}
     <div id="mariner">
     <div class = "navButs"><form id="logout" method="GET" action='/users/logout/'>
-
         <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
         </form>
     </div>
