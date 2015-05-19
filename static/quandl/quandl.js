@@ -94,6 +94,12 @@ $(document).ready(function(){
             }
         });
     });
+    $('#loginEmail, #loginPassword').on('click', function(event){
+        console.log('hi');
+        setTimeout(function(){      
+        $('#login').addClass('open');
+        }, 1);               
+    });
     // more thought required
     // var dataset = []
     // setInterval(function(){
