@@ -34,30 +34,30 @@ except ImportError:
     import simplejson as json
 
 
-if __name__ == '__main__':
-    """
-    Writes the API key to api_key.txt file. It will create the file if it doesn't exist.
-    This function is intended to be called from the Python command line using: python alchemyapi YOUR_API_KEY
-    If you don't have an API key yet, register for one at: http://www.alchemyapi.com/api/register.html
-    INPUT:
-    argv[1] -> Your API key from AlchemyAPI. Should be 40 hex characters
-    OUTPUT:
-    none
-    """
+# if __name__ == '__main__':
+#     """
+#     Writes the API key to api_key.txt file. It will create the file if it doesn't exist.
+#     This function is intended to be called from the Python command line using: python alchemyapi YOUR_API_KEY
+#     If you don't have an API key yet, register for one at: http://www.alchemyapi.com/api/register.html
+#     INPUT:
+#     argv[1] -> Your API key from AlchemyAPI. Should be 40 hex characters
+#     OUTPUT:
+#     none
+#     """
 
-    import sys
-    if len(sys.argv) == 2 and sys.argv[1]:
-        if len(sys.argv[1]) == 40:
-            # write the key to the file
-            f = open('api_key.txt', 'w')
-            f.write(sys.argv[1])
-            f.close()
-            print('Key: ' + sys.argv[1] + ' was written to api_key.txt')
-            print(
-                'You are now ready to start using AlchemyAPI. For an example, run: python example.py')
-        else:
-            print(
-                'The key appears to invalid. Please make sure to use the 40 character key assigned by AlchemyAPI')
+#     import sys
+#     if len(sys.argv) == 2 and sys.argv[1]:
+#         if len(sys.argv[1]) == 40:
+#             # write the key to the file
+#             f = open('api_key.txt', 'w')
+#             f.write(sys.argv[1])
+#             f.close()
+#             print('Key: ' + sys.argv[1] + ' was written to api_key.txt')
+#             print(
+#                 'You are now ready to start using AlchemyAPI. For an example, run: python example.py')
+#         else:
+#             print(
+#                 'The key appears to invalid. Please make sure to use the 40 character key assigned by AlchemyAPI')
 
 
 class AlchemyAPI:
@@ -139,43 +139,46 @@ class AlchemyAPI:
         Initializes the SDK so it can send requests to AlchemyAPI for analysis.
         It loads the API key from api_key.txt and configures the endpoints.
         """
+        import os
+        self.apikey = os.environ['ALCHEMY_KEY']
 
-        import sys
-        try:
-            # Open the key file and read the key
-            f = open("api_key.txt", "r")
-            key = f.read().strip()
 
-            if key == '':
-                # The key file should't be blank
-                print(
-                    'The api_key.txt file appears to be blank, please run: python alchemyapi.py YOUR_KEY_HERE')
-                print(
-                    'If you do not have an API Key from AlchemyAPI, please register for one at: http://www.alchemyapi.com/api/register.html')
-                sys.exit(0)
-            elif len(key) != 40:
-                # Keys should be exactly 40 characters long
-                print(
-                    'It appears that the key in api_key.txt is invalid. Please make sure the file only includes the API key, and it is the correct one.')
-                sys.exit(0)
-            else:
-                # setup the key
-                self.apikey = key
+        # import sys
+        # try:
+        #     # Open the key file and read the key
+        #     f = open("api_key.txt", "r")
+        #     key = f.read().strip()
 
-            # Close file
-            f.close()
-        except IOError:
-            # The file doesn't exist, so show the message and create the file.
-            print(
-                'API Key not found! Please run: python alchemyapi.py YOUR_KEY_HERE')
-            print(
-                'If you do not have an API Key from AlchemyAPI, please register for one at: http://www.alchemyapi.com/api/register.html')
+        #     if key == '':
+        #         # The key file should't be blank
+        #         print(
+        #             'The api_key.txt file appears to be blank, please run: python alchemyapi.py YOUR_KEY_HERE')
+        #         print(
+        #             'If you do not have an API Key from AlchemyAPI, please register for one at: http://www.alchemyapi.com/api/register.html')
+        #         sys.exit(0)
+        #     elif len(key) != 40:
+        #         # Keys should be exactly 40 characters long
+        #         print(
+        #             'It appears that the key in api_key.txt is invalid. Please make sure the file only includes the API key, and it is the correct one.')
+        #         sys.exit(0)
+        #     else:
+        #         # setup the key
+        #         self.apikey = key
 
-            # create a blank key file
-            open('api_key.txt', 'a').close()
-            sys.exit(0)
-        except Exception as e:
-            print(e)
+        #     # Close file
+        #     f.close()
+        # except IOError:
+        #     # The file doesn't exist, so show the message and create the file.
+        #     print(
+        #         'API Key not found! Please run: python alchemyapi.py YOUR_KEY_HERE')
+        #     print(
+        #         'If you do not have an API Key from AlchemyAPI, please register for one at: http://www.alchemyapi.com/api/register.html')
+
+        #     # create a blank key file
+        #     open('api_key.txt', 'a').close()
+        #     sys.exit(0)
+        # except Exception as e:
+        #     print(e)
 
     def entities(self, flavor, data, options={}):
         """

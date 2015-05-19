@@ -63,3 +63,4 @@ docs/_build/
 target/
 
 api_key.txt
+start.sh

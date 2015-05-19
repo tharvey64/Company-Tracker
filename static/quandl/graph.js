@@ -27,7 +27,7 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
     var yScale = d3.scale.linear();
     yScale.range([h - padding, padding]);
     yScale.domain([low, high]);
-
+    
     var yAxis = d3.svg.axis();
     yAxis.scale(yScale).orient("left");
 
