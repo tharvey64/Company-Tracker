@@ -2,9 +2,6 @@
 __pycache__/
 *.py[cod]
 *.pyc
-.env
-staticfiles
-.DS_Store
 
 # C extensions
 *.so
@@ -53,9 +50,6 @@ coverage.xml
 
 # Django stuff:
 *.log
-not_settings.py
-venv
-graphObj.js
 
 # Sphinx documentation
 docs/_build/
@@ -64,3 +58,9 @@ docs/_build/
 target/
 
 api_key.txt
+settings.py
+venv
+graphObj.js
+start.sh
+staticfiles
+.DS_Store
