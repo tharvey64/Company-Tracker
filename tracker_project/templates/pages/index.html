@@ -2,8 +2,8 @@
    
 
 {% block header %}
-    {% if logged_in %}
     <div id="mariner">
+    {% if logged_in %}
     <div class = "navButs"><form id="logout" method="GET" action='/users/logout/'>
         <button id="logoutButton" type='submit' class='btn btn-block btn-danger'><p>Logout</p></button>
         </form>
@@ -20,7 +20,7 @@
     {% endif %}
     <div class ='navButs' id="tab4">
     </div>
-    <div>
+    </div>
 {% endblock header %}
 
 {% block content %}

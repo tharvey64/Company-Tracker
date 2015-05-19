@@ -108,7 +108,9 @@ $(document).ready(function(){
     $("#graph").on("drawGraph", function(event, graphData, dateFormat, start, className, selector, titleIndex,radiusRange, newGraph){
         drawGraph(graphData, dateFormat, start, className, selector, titleIndex, radiusRange, newGraph);
         setTimeout(function(){ 
-        $("#footer").css("display", "block");
-        }, 4000);       
+        $("#graph").css("display", "block"); 
+        $("#footer").css("display", "block");                
+        $("#selectorButton").css("display", "block");
+        }, 3000);       
     });   
 });

@@ -3,46 +3,37 @@ $(document).ready(function(){
         $("#loading").css("display", "block");          
         setTimeout(function(){      
         $("#loading").css("display", "none");
-        $("#backButton").css("display", "block");
-        $("#forms").animate({
-            opacity: 0
-        }, 1000);          
+        $("#backButton").css("display", "block");       
         $(".navButs").animate({
             opacity: 0
         }, 2000);       
         $("#graph").css("display", "inline-block"); 
         $("#results").css("display", "block");
-        $("#forms").slideUp(2000);
-        }, 4000);               
+        $("#forms").slideUp(1800);
+        }, 3000);               
     });
     $("#tab1").on("submit", "#stockForm", function(event) {
             $("#loading").css("display", "block");          
         setTimeout(function(){ 
-            $("#loading").css("display", "none");
-            $("#forms").animate({
-                opacity: 0
-            }, 1000);               
-            $("#forms").slideUp(2000);             
+            $("#loading").css("display", "none");              
+            $("#forms").slideUp(1800); 
+            $("#graph").css("display", "block"); 
             $(".navButs").animate({
                 opacity: 0
             }, 2000);                      
             $("#backButton").css("display", "block")       
             $("#graph").css("display", "inline-block"); 
-            $("#selectorButton").css("display", "block");
-        }, 4000);       
+        }, 3000);       
     });
     $("#backButton").on("click", function(event) { 
         $("#backButton").css("display", "none");       
         $(".returned").css("display", "none");  
-        $("#selectorButton").css("display", "none"); 
-        $("#forms").animate({
-            opacity: 1
-        }, 1000);                 
+        $("#selectorButton").css("display", "none");                
         $("#stories, #graph").empty();
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
-        $("#forms").slideDown(2000);    
+        $("#forms").slideDown(1800);    
     }); 
     $("#twitterPath").on("click", function(event){
         $("#stories").css("display", "none");
@@ -57,14 +48,11 @@ $(document).ready(function(){
     $("#graph").on("click", "button.search-result", function(event){
         $("#backButton").css("display", "none");  
         $(".returned").css("display", "none");  
-        $("#selectorButton").css("display", "none");  
-        $("#forms").animate({
-            opacity: 1
-        }, 1000);            
+        $("#selectorButton").css("display", "none");           
         $(".navButs").animate({
             opacity: 1
         }, 2000);            
-        $("#forms").slideDown(2000); 
+        $("#forms").slideDown(1800); 
 
         $('.tabs #tab1').show().siblings().hide();
 

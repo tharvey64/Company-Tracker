@@ -63,6 +63,7 @@ h1 {
     height: 42em;
     width: 80em;
     overflow-x: scroll;
+    display: none;
     /*border: groove 0.2em ;
     min-height: 20em;
     display: inline-block;*/

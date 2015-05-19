@@ -12,23 +12,32 @@ class RegisterView(View):
         return render(request, self.template)
 
     def post(self, request):
+        if len(request.session.keys()) is 0:
+            return redirect('/')
+        token = request.session['OAUTH_TOKEN']
+        secret = request.session['OAUTH_TOKEN_SECRET']
         username = request.session['screen_name']
         email = request.POST.get('registerEmail',None)
         password = request.POST.get('registerPassword',False)
-        if username and password:
+        if username and password and token and secret and email:
             user = User.objects.create_user(username, email, password)
             profile = Profile.objects.create(
-                token=request.session['OAUTH_TOKEN'],
-                secret=request.session['OAUTH_TOKEN_SECRET'], 
+                token=token,
+                secret=secret, 
                 user=user
             )
-        return redirect('/')
+            request.session.flush()
+            return redirect('/')
+        else:
+            return redirect('/users/register/')
 
 class LoginView(View):
 
     def post(self, request):
         email = request.POST.get('loginEmail', False)
         user = User.objects.filter(email=email)
+        if len(user) is 0:
+            return redirect('/')
         password = request.POST.get('loginPassword', False)
         user = authenticate(username=user[0].username, password=password)
         if user:
