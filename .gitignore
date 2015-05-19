@@ -60,7 +60,6 @@ target/
 api_key.txt
 settings.py
 venv
-graphObj.js
 start.sh
 staticfiles
 .DS_Store

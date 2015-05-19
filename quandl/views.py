@@ -16,7 +16,7 @@ class QuandlHistoryView(View):
         stock_history = StockPrice.objects.filter(company__symbol__iexact=symbol).filter(created_at__gte=start_date)
 
         if stock_history:
-            data = {'close': [[day.created_at, day.close_price, day.volume] for day in stock_history]}
+            data = {'close': [dict(date=day.created_at, height=day.close_price, radius=day.volume, title=day.created_at) for day in stock_history]}
         else:
             # Redirect to An Error?
             data = {'error': 'Stock Data Not Found'}

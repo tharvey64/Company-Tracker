@@ -72,7 +72,7 @@ class SearchView(View):
                 new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
         all_tweets = new_tweets + list(stored_tweets_of_query)
-        tweet_dataset = [[row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), row.sentiment.score, row.favorites, row.text] for row in all_tweets]
+        tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
         return JsonResponse({'tweets': tweet_dataset})
 
 class SearchListView(View):
@@ -93,10 +93,10 @@ class SearchListView(View):
                 unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
                 unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %B %d %X %z %Y")
 
-                list_dataset.append([
-                    unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
-                    unique_tweet['sentiment'], 
-                    unique_tweet['favorite_count'], 
-                    unique_tweet['text']
-                ])
+                list_dataset.append(dict(
+                    date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
+                    height=unique_tweet['sentiment'], 
+                    radius=unique_tweet['favorite_count'], 
+                    title=unique_tweet['text']
+                ))
         return JsonResponse({'tweets': list_dataset})
