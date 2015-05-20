@@ -14,6 +14,10 @@ $(document).ready(function(){
             $("#graph").empty();
             if (!data.list.length || data.list.Error){
                 console.log("" + (!data.list.length ? "Error" : data.list.Error));
+                $('#mariner h3').remove()
+                setTimeout(function(){ 
+                return $('#mariner').append("<h3>No results found</h3>");
+                }, 2800); 
             }
             else {
                 var template = $("#search-result").html();
