@@ -9,21 +9,25 @@
             <legend>Twitter Look Up</legend>
             <label for="query"># for hashtags, RT for retweets, etc.</label>
                 <input type="text" id="search" name="search">
-            {% if logged_in %}
-            <label for="list">Enter the name of your list</label>
-                <input type="text" id="listName" name="listName">
-                {% endif %}
             <label for="filter">Filter</label>
             <select class="btn-info" id="filter" name="filter">
                 <option value="popular">Popular</option>
                 <option value="mixed">Mixed</option>
-            </select>
-            <select class="btn-info" id="path" name="path">
+            </select>                
+            {% if logged_in%}
+            <div id='listForm'>
+            <label for="list">Enter the name of your list</label>
+                <input type="text" id="listName" name="listName">
+                </div>
+                <select class="btn-info" id="path" name="path">
+                <option value="lists">Your Twitter List</option>                
                 <option value="random">Random</option>
-                {% if logged_in %}
-                <option value="lists">Your Twitter List</option>
-                {% endif %}
-            </select>
+                </select>
+            {% else %}
+                <select class="btn-info" id="path" name="path">
+                <option value="random">Random</option>
+                </select>
+            {% endif %}
                 <button type="submit">Search</button>       
                 </fieldset>
     </form>

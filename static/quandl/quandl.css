@@ -6,6 +6,11 @@ body{
 #mariner {
     width: 100%;
     height: 5em;
+    text-align: center;
+}
+
+h3 {
+    margin-left: 7.375em;
 }
 
 .navButs p, #backbutton p, #selector p{
