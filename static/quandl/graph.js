@@ -26,6 +26,7 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
     var high = d3.max(dataset,function(d){return (parseFloat(d[1]) < 1 ? 1:parseFloat(d[1]) * 1.2)});
     var yScale = d3.scale.linear();
     yScale.range([h - padding, padding]);
+    
     yScale.domain([low, high]);
 
     var yAxis = d3.svg.axis();
@@ -107,6 +108,10 @@ $(document).ready(function(){
 
     $("#graph").on("drawGraph", function(event, graphData, dateFormat, start, className, selector, titleIndex,radiusRange, newGraph){
         drawGraph(graphData, dateFormat, start, className, selector, titleIndex, radiusRange, newGraph);
-        $("#footer").css("display", "block");
+        setTimeout(function(){ 
+        $("#graph").css("display", "block"); 
+        $("#footer").css("display", "block");                
+        $("#selectorButton").css("display", "block");
+        }, 3000);       
     });   
 });
