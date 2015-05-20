@@ -37,17 +37,9 @@ class SearchView(View):
         if not user_query:
             return JsonResponse({"error" : "Please enter a search value"})
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-<<<<<<< HEAD:twitter/views.py
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
-        print(created)
-        print(keyword.search)
-=======
-        twython_results = twitter.search(q=user_query, result_type=request.POST.get('type',False), lang='en') #twitter search results
-        
-        keyword, created = Keyword.objects.get_or_create(search=user_query)
 
->>>>>>> thomas:twitter/views.py
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
 
         new_tweets = []
@@ -80,14 +72,11 @@ class SearchView(View):
                 new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
         all_tweets = new_tweets + list(stored_tweets_of_query)
-<<<<<<< HEAD:twitter/views.py
-        tweet_dataset = [[row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), row.sentiment.score, row.favorites, row.text] for row in all_tweets]
-        if len(tweet_dataset) is 0:
-            return JsonResponse({'error': 'Please simplify your search'})
-=======
         tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
->>>>>>> thomas:twitter/views.py
-        return JsonResponse({'tweets': tweet_dataset})
+        data = {'tweets': tweet_dataset}
+        if len(tweet_dataset) is 0:
+            data = {'error': 'Please simplify your search'}
+        return JsonResponse(data)
 
 class SearchListView(View):
     alchemyapi = AlchemyAPI()
@@ -106,21 +95,6 @@ class SearchListView(View):
                     continue
                 unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
                 unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %B %d %X %z %Y")
-
-<<<<<<< HEAD:twitter/views.py
-                list_dataset.append([
-                    unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
-                    unique_tweet['sentiment'], 
-                    unique_tweet['favorite_count'], 
-                    unique_tweet['text']
-                ])
-        return JsonResponse({'tweets': list_dataset})
-
-
-
-
-
-=======
                 list_dataset.append(dict(
                     date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
                     height=unique_tweet['sentiment'], 
@@ -128,4 +102,3 @@ class SearchListView(View):
                     title=unique_tweet['text']
                 ))
         return JsonResponse({'tweets': list_dataset})
->>>>>>> thomas:twitter/views.py
