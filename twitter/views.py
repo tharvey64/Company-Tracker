@@ -38,7 +38,7 @@ class SearchView(View):
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
         twython_results = twitter.search(q=user_query, result_type=request.POST.get('type',False), lang='en') #twitter search results
         
-        keyword, created = Keyword.objects.get_or_create(search__iexact=user_query)
+        keyword, created = Keyword.objects.get_or_create(search=user_query)
 
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
 
