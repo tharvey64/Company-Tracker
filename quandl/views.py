@@ -9,6 +9,7 @@ import quandl.helper as help
 class QuandlHistoryView(View):
 
     def get(self, request, symbol, date_string):
+        # might just return all the stock data
         if not LastPrice.objects.filter(company__symbol__iexact=symbol): 
             return redirect('quandl:company-create', symbol=symbol)
 

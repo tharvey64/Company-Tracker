@@ -53,7 +53,15 @@ $(document).ready(function(){
             else if (data.close){
                 $("#stories").empty();
                 $("#stories").trigger("getStories", [symbol]);
+
                 $("#graph").empty();
+
+                // var company = new Qwarg("price", data.close, company.symbol);
+                // company.parseDate = d3.time.format("%Y-%m-%d").parse;
+                // company.fill = "red";
+                // company.raduisRange = [1,1];
+                // company.show = true;
+
                 stockPrices = data.close;
                 var parseDate = d3.time.format("%Y-%m-%d").parse;
                 var start = d3.time.format("%B-%e-%Y").parse(date);
@@ -77,7 +85,15 @@ $(document).ready(function(){
                     if (data.close){
                         $("#stories").empty();
                         $("#stories").trigger("getStories", [company.symbol]);
+
                         $("#graph").empty();
+
+                        // var company = new Qwarg("price", data.close, "." + company.symbol);
+                        // company.parseDate = d3.time.format("%Y-%m-%d").parse;
+                        // company.fill = "red";
+                        // company.raduisRange = [1,1];
+                        // company.show = true;
+
                         stockPrices = data.close;
                         var parseDate = d3.time.format("%Y-%m-%d").parse;
                         var start = d3.time.format("%B-%e-%Y").parse(date);
@@ -85,7 +101,7 @@ $(document).ready(function(){
                         d3.selectAll(".stock").style("fill", "red");
                     }
                     else{
-                        console.log(data);
+                        console.log(data.error);
                     }
                 });
             }
