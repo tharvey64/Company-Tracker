@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
     $("#tab2").on("submit", "#searchForm", function(event) {
         $("#loading").css("display", "block");          
@@ -58,4 +59,14 @@ $(document).ready(function(){
 
         $("[href='#tab1']").parent('li').addClass('active').siblings().removeClass('active');               
     });
+    
 });
+
+
+
+
+
+
+
+
+

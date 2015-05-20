@@ -20,4 +20,12 @@ $(document).ready(function(){
                 }
         });
     });
+    $('#footer').on("change", "#path", function(event){ 
+        if (($("#path option:selected").val()) == 'random'){
+            $("#listForm").slideUp(1000);   
+        }
+        else{
+           $("#listForm").slideDown(1000);   
+        }
+    });
 });
