@@ -15,16 +15,20 @@
                 <option value="mixed">Mixed</option>
             </select>                
             {% if logged_in%}
-                <div id='listForm'>
-                    <label for="list">Enter the name of your list</label>
-                        <input type="text" id="listName" name="listName">
-                        </div>
-                        <select class="btn-info" id="path" name="path">
-                        <option value="lists">Your Twitter List</option>                
-                        <option value="random">Random</option>
-                        </select>
+            <div id='listForm'>
+            <label for="list">Enter the name of your list</label>
+                <input type="text" id="listName" name="listName">
+                </div>
+                <select class="btn-info" id="path" name="path">
+                <option value="lists">Your Twitter List</option>                
+                <option value="random">Random</option>
+                </select>
+            {% else %}
+                <select class="btn-info" id="path" name="path">
+                <option value="random">Random</option>
+                </select>
             {% endif %}
-            <button type="submit">Search</button>       
-            </fieldset>
+                <button type="submit">Search</button>       
+                </fieldset>
     </form>
 </script>

@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
     $("#tab2").on("submit", "#searchForm", function(event) {
         $("#loading").css("display", "block");          
