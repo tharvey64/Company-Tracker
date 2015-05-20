@@ -141,14 +141,12 @@ class AlchemyAPI:
         """
         import os
         self.apikey = os.environ['ALCHEMY_KEY']
-
-
         # import sys
         # try:
         #     # Open the key file and read the key
-        #     f = open("api_key.txt", "r")
+        #     f = open("sentiment/api_key.txt", "r")
         #     key = f.read().strip()
-
+        #     print(key)
         #     if key == '':
         #         # The key file should't be blank
         #         print(

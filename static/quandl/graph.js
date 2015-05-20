@@ -22,10 +22,11 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
     var padding = 50;
 
     // THIS SHOULD NOT SCALE FOR SENTIMENT
-    var low = d3.min(dataset,function(d){return  (parseFloat(d[1]) < 1 ? -1:parseFloat(d[1]) * 0.8)});
-    var high = d3.max(dataset,function(d){return (parseFloat(d[1]) < 1 ? 1:parseFloat(d[1]) * 1.2)});
+    var low = d3.min(dataset,function(d){return  (parseFloat(d.height) < 1 ? -1:parseFloat(d.height) * 0.8)});
+    var high = d3.max(dataset,function(d){return (parseFloat(d.height) < 1 ? 1:parseFloat(d.height) * 1.2)});
     var yScale = d3.scale.linear();
     yScale.range([h - padding, padding]);
+    
     yScale.domain([low, high]);
     
     var yAxis = d3.svg.axis();
@@ -38,8 +39,8 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
     endDate.setDate(endDate.getDate()+1);
     xScale.domain([startDate, endDate]);
 
-    var radiusHigh = d3.max(dataset,function(d){return parseFloat(d[2])});
-    var radiusLow = d3.min(dataset,function(d){return parseFloat(d[2])});
+    var radiusHigh = d3.max(dataset,function(d){return parseFloat(d.radius)});
+    var radiusLow = d3.min(dataset,function(d){return parseFloat(d.radius)});
     var radiusScale = d3.scale.linear()
     
     radiusScale.range(radiusRange)
@@ -54,14 +55,14 @@ function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIn
         .append("circle")
         .attr("class", circleClass)
         .attr("cx", function(d){
-            return xScale(parseDate(d[0]));
+            return xScale(parseDate(d.date));
         })
         .attr("cy", function(d){
-            return yScale(parseFloat(d[1]));
+            return yScale(parseFloat(d.height));
         }).attr("r", function(d){
-            return radiusScale(d[2]);
+            return radiusScale(d.radius);
         }).attr("title", function(d){
-            return d[titleIndex];
+            return d.title;
         });
     
     // New Function To Attach Axis 
