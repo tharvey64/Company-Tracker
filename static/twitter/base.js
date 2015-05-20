@@ -6,7 +6,11 @@ $(document).ready(function(){
         $.post($(this).attr("action") + $("#path").val(),
             $("#twitterForm").serialize(),
             function(data) {
-                console.log(data)
+                if (data['error']){
+                    $('#mariner h3').remove()
+                    return $('#mariner').append("<h3>"+data['error']+"<h3>");
+                }
+                $('#mariner h3').remove()
                 $(".tooltip").remove();
                 $(".tweet").remove();
                 if (data.hasOwnProperty("tweets")){

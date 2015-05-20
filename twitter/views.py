@@ -34,12 +34,13 @@ class SearchView(View):
 
     def post(self, request):
         user_query = request.POST['search']   #the user searched for this  
-
+        if not user_query:
+            return JsonResponse({"error" : "Please enter a search value"})
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
-        
-        keyword, created = Keyword.objects.get_or_create(search__iexact=user_query)
-
+        keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
+        print(created)
+        print(keyword.search)
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
 
         new_tweets = []
@@ -73,6 +74,8 @@ class SearchView(View):
         keyword.tweet.add(*new_tweets)
         all_tweets = new_tweets + list(stored_tweets_of_query)
         tweet_dataset = [[row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), row.sentiment.score, row.favorites, row.text] for row in all_tweets]
+        if len(tweet_dataset) is 0:
+            return JsonResponse({'error': 'Please simplify your search'})
         return JsonResponse({'tweets': tweet_dataset})
 
 class SearchListView(View):
@@ -100,3 +103,8 @@ class SearchListView(View):
                     unique_tweet['text']
                 ])
         return JsonResponse({'tweets': list_dataset})
+
+
+
+
+

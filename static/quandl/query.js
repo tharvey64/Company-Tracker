@@ -31,6 +31,7 @@ $(document).ready(function(){
         $(".returned").css("display", "none");  
         $("#selectorButton").css("display", "none");                
         $("#stories, #graph").empty();
+        $('#mariner h3').remove()
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
