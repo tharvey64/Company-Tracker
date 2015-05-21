@@ -1,3 +1,7 @@
+body{
+    opacity: 0.8; 
+    background-image: url("background_images/1.jpg");
+}
 #colorSelection {
 	width: 8em;
 	height: 2em;
