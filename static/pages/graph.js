@@ -29,7 +29,7 @@ function Graph(){
     // date range would require scaling the dateSet
     this.startDate;
     this.endDate;
-    this.highPrice;
+    this.highPrice = 0;
     this.padding = 50;
     this.graphHeight = parseInt($("#graph").css("height"));
     this.graphWidth = parseInt($("#graph").css("width"));
@@ -120,7 +120,7 @@ Graph.prototype.draw = function(){
             price = true;
         }
         else if (this.qwargSet[q].qwargType == "sentiment"){
-            sentiment = true
+            sentiment = true;
         }
     }
     this.setDateScale();
@@ -207,6 +207,7 @@ $(document).ready(function(){
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
         if (stockQwarg && (qwarg.qwargType == "price")){
             delete graph.qwargSet[stockQwarg]
+            graph.highPrice = 0;
         }
         graph.endDate = endDate;
         graph.startDate = startDate;

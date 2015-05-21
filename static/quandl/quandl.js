@@ -95,6 +95,10 @@ $(document).ready(function(){
                         company.show = true;
                         var start = d3.time.format("%B-%e-%Y").parse(date);
                         $("#graph").trigger("drawGraph",[start, company]);
+
+                        $("#graph").css("display", "block"); 
+                        $("#footer").css("display", "block");                
+                        $("#selectorButton").css("display", "block");
                     }
                     else{
                         console.log(data.error);
