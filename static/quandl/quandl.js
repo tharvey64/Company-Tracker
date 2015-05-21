@@ -9,15 +9,20 @@ function renderForms(){
     var info = Mustache.render(searchTemplate);
     $("#tab2").html(info);
 
-    var template = $('#login-form').html();
+    var loginTemplate = $('#login-form').html();
     Mustache.parse(template);
-    var info = Mustache.render(template);
+    var info = Mustache.render(loginTemplate);
     $('#tab3').html(info);
 
     var template = $('#oauth-form').html();
     Mustache.parse(template);
     var info = Mustache.render(template);
     $('#tab4').html(info); 
+
+    var colorTemplate = $('#color-form').html();
+    Mustache.parse(template);
+    var info = Mustache.render(colorTemplate);
+    $('#fillSelector').html(info);
 }
 
 $(document).ready(function(){
@@ -30,7 +35,12 @@ $(document).ready(function(){
         var symbol = $("input[name='company_symbol']").val(),
         token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
-        
+        if (symbol.length == 0){
+            $('#mariner h3').remove()
+            setTimeout(function(){ 
+            return $('#mariner').append("<h3>No results found</h3>"); 
+            }, 2800);       
+        }
         var template = $('#twitter-form').html();
         Mustache.parse(template);
         var info = Mustache.render(template, {'startDate' : date});
@@ -38,6 +48,12 @@ $(document).ready(function(){
 
         $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
             if (data.stocks){
+                if (data.stocks.length == 0){
+                    $('#mariner h3').remove()
+                    setTimeout(function(){ 
+                    return $('#mariner').append("<h3>No results found</h3>");
+                }, 2800);
+                }
                 for (i in data.stocks){
                     // do this loop in python
                     data.stocks[i]['startDate'] = date;

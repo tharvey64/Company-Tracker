@@ -5,8 +5,12 @@ body{
 
 #mariner {
     width: 100%;
-    height: 5em;
+    height: 4.5em;
     text-align: center;
+}
+
+#filterForm{
+    display: none;
 }
 
 h3 {
@@ -21,7 +25,7 @@ h3 {
 #selectorButton {
     position: absolute;
     float: left;
-    margin-top: 20em;
+    margin-top: 19em;
     height: 8em;
     width: 3em;
     display: none;
@@ -68,6 +72,7 @@ h1 {
     width: 80em;
     overflow-x: scroll;
     display: none;
+    margin-bottom: 1em;
     /*border: groove 0.2em ;
     min-height: 20em;
     display: inline-block;*/
