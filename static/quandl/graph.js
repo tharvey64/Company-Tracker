@@ -6,6 +6,7 @@ function createSvg(height, width){
         .attr("width",width)
         .attr("height",height);
 }
+
 // Could Make the parameter a json
 // This Function Should only Handle One Dataset At a Time
 function drawGraph(dataset, parseDate, startDate, circleClass, selector, titleIndex, radiusRange, newGraph){

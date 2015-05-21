@@ -1,6 +1,7 @@
 #colorSelection {
-	width: 8em;
+	width: 3em;
 	height: 2em;
+	float: left;
 }
 
 #fillSelector {
@@ -11,6 +12,10 @@
     text-align: center;
     display: none;
     float: right;
+}
+
+#colorBut{
+	width: 3em;
 }
 
 #colorTweetBut{
@@ -24,6 +29,6 @@
 }
 
 #colorTweetSelection{
-	width: 8em;
+	width: 5em;
 	height: 2em;
 }
