@@ -22,8 +22,6 @@ function Graph(){
     // Set the below with a method so they can adjust
     this.graphHeight = parseInt($("#graph").css("height"));
     this.graphWidth = parseInt($("#graph").css("width"));
-    this.yScale;
-    this.xScale;
     this.priceScale;
     this.dateScale;
     this.qwargSet = {};
@@ -76,7 +74,6 @@ Graph.prototype.drawXAxis = function(translateString){
         .attr("transform", function(){
             return "rotate(-65)";
         });
-    console.log("Here");
 }
 Graph.prototype.drawYAxis = function(currentScale,translateString){
     // if you tag the axis you can delete it
@@ -109,14 +106,21 @@ Graph.prototype.draw = function(){
     for (q in this.qwargSet){
         this.plot(this.qwargSet[q]);
     }
+    $("circle").tooltips();
+}
+Graph.prototype.clear =function(setString){
+    $(".tooltip").remove();
+    $(setString).remove();
+    $("circle").tooltips();
 }
 Graph.prototype.plot = function(qwarg){
     // Determine the conditions underwhich one would have to 
     // redraw the graph
-    $("body").remove(".tooltip");
+    $(".tooltip").remove();
     var translate,
-    y,
-    x = this.dateScale;
+    yScale,
+    xScale = this.dateScale,
+    checkDate = this.checkDate,
     svg = d3.select("svg");
 
     if (!svg[0][0]){
@@ -125,59 +129,65 @@ Graph.prototype.plot = function(qwarg){
         this.drawXAxis("translate(0," + (this.graphHeight - this.padding) +")");
     }
     if (qwarg.qwargType == "price"){
-        y = this.priceScale;
+        yScale = this.priceScale;
         translate = "translate(" + this.padding +",0)";
     }
     else if (qwarg.qwargType == "sentiment"){
-        y = this.sentimentScale();
+        yScale = this.sentimentScale();
         translate = "translate(" + (this.graphWidth-this.padding) +",0)";
     }
     else{
         throw "Missing Qwarg Type";
     }
     
-    this.drawYAxis(y, translate);
+    this.drawYAxis(yScale, translate);
 
     var radiusHigh = d3.max(qwarg.qwargData,function(d){return parseFloat(d.radius)});
     var radiusLow = d3.min(qwarg.qwargData,function(d){return parseFloat(d.radius)});
     var radiusScale = d3.scale.linear();
     radiusScale.domain([radiusLow,radiusHigh]);
     radiusScale.range(qwarg.radiusRange);
-    
+
+    var start = this.startDate, 
+    end = this.endDate;
+
     svg.selectAll("circle" + qwarg.qwargClassString)
         .data(qwarg.qwargData)
         .enter()
         .append("circle")
         .attr("class", qwarg.qwargClassString)
         .attr("cx", function(d){
-            return x(qwarg.qwargParseDate(d.date));
+            return xScale(qwarg.qwargParseDate(d.date));
         }).attr("cy", function(d){
-            return y(parseFloat(d.height));
+            return yScale(parseFloat(d.height));
         }).attr("r", function(d){
             return radiusScale(d.radius);
         }).attr("title", function(d){
             return d.title;
-        }).style("fill", qwarg.fill);
-        // .style("display", function(d){
-        //     date = qwarg.qwargParseDate(d.date);
-        //     if (date < this.startDate || date > this.endDate){
-        //         return "none";
-        //     }
-        //     else{
-        //         return "initial";
-        //     }
-        // });
+        }).style("fill", qwarg.fill)
+        .style("display", function(d){
+            date = qwarg.qwargParseDate(d.date);
+            start.valueOf();
+            if ((date > start) && (date < end)){
+                return "initial";
+            }
+            else{
+                return "none";
+            }
+        });
     // Put tooltips somewhere else
-    $("circle").tooltips();
 }
 $(document).ready(function(){
     var endDate = new Date();
     var graph = new Graph();
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        graph.endDate = endDate,
+        for (q in graph.qwargSet){
+            graph.clear(graph.qwargSet[q].qwargClassString)
+        }
+        graph.clear(".AAPL");
+        graph.endDate = endDate;
         graph.startDate = startDate;
-        graph.qwargSet[qwarg.qwargClassString] = qwarg
-        console.log(graph.qwargSet)
-        graph.draw()
+        graph.qwargSet[qwarg.qwargClassString] = qwarg;
+        graph.draw();
     });
 });
