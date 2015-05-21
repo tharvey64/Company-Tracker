@@ -68,13 +68,22 @@ $(document).ready(function(){
             }
             else if (data.close){
                 $("#stories").empty();
+                // Symbol needs to be Capital
                 $("#stories").trigger("getStories", [symbol]);
+
                 $("#graph").empty();
-                stockPrices = data.close;
-                var parseDate = d3.time.format("%Y-%m-%d").parse;
-                var start = d3.time.format("%B-%e-%Y").parse(date);
-                $("#graph").trigger("drawGraph",[stockPrices, parseDate, start, "stock", "circle", 0, [5,5], true]);
-                d3.selectAll(".stock").style("fill", "red");
+
+                var company = new Qwarg("price", data.close, "." + symbol.toUpperCase());
+                company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
+                company.fill = "red";
+                company.radiusRange = [5,5];
+                company.show = true;
+                $("#graph").trigger("drawGraph",[d3.time.format("%B-%e-%Y").parse(date), company]);
+
+                $("#graph").css("display", "block"); 
+                $("#footer").css("display", "block");                
+                $("#selectorButton").css("display", "block");
+                $('#fillSelector').css('display', 'block')
             }
         });
     });
@@ -88,20 +97,29 @@ $(document).ready(function(){
         $.post(url, input, function(data){
 
             if (data.company){
-                var company = data.company
-                $.post("/quandl/stock_history/" + company.symbol + "/" +  date, input, function(data){
+                var companyInfo = data.company;
+                $.post("/quandl/stock_history/" + companyInfo.symbol + "/" + date, input, function(data){
                     if (data.close){
                         $("#stories").empty();
-                        $("#stories").trigger("getStories", [company.symbol]);
+                        $("#stories").trigger("getStories", [companyInfo.symbol]);
+
                         $("#graph").empty();
-                        stockPrices = data.close;
-                        var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+                        var company = new Qwarg("price", data.close, "." + companyInfo.symbol);
+                        company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
+                        company.fill = "red";
+                        company.radiusRange = [5,5];
+                        company.show = true;
                         var start = d3.time.format("%B-%e-%Y").parse(date);
-                        $("#graph").trigger("drawGraph",[stockPrices, parseDate, start, "stock", "circle", 0, [5,5], true]);
-                        d3.selectAll(".stock").style("fill", "red");
+                        $("#graph").trigger("drawGraph",[start, company]);
+
+                        $("#graph").css("display", "block"); 
+                        $("#footer").css("display", "block");                
+                        $("#selectorButton").css("display", "block");
+                        $('#fillSelector').css('display', 'block')
                     }
                     else{
-                        console.log(data);
+                        console.log(data.error);
                     }
                 });
             }
@@ -111,9 +129,8 @@ $(document).ready(function(){
         });
     });
     $('#loginEmail, #loginPassword').on('click', function(event){
-        console.log('hi');
         setTimeout(function(){      
-        $('#login').addClass('open');
+            $('#login').addClass('open');
         }, 1);               
     });
     // more thought required

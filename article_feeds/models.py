@@ -5,5 +5,8 @@ from sentiment.models import Sentiment
 
 class Article(models.Model):
     pass
-    # Needs pointer to Sentiment
-    # Needs pointer to Company
+    # yahoo id
+    # yahoo link or web page link
+    # slug line of title
+    # models.ForeignKey(Sentiment)
+    # models.ManyToManyField(Company)
