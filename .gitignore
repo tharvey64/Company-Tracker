@@ -2,8 +2,6 @@
 __pycache__/
 *.py[cod]
 *.pyc
-.env
-staticfiles
 
 # C extensions
 *.so
@@ -52,9 +50,7 @@ coverage.xml
 
 # Django stuff:
 *.log
-settings.py
-heroku_settings.py
-venv
+
 
 # Sphinx documentation
 docs/_build/
@@ -62,4 +58,9 @@ docs/_build/
 # PyBuilder
 target/
 
+api_key.txt
+settings.py
+venv
+staticfiles
+.DS_Store
 start.sh
