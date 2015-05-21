@@ -59,10 +59,8 @@ docs/_build/
 target/
 
 api_key.txt
-
 settings.py
 venv
-start.sh
 staticfiles
 .DS_Store
->>>>>>> thomas
+start.sh

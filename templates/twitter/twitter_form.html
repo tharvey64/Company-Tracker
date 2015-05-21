@@ -1,5 +1,7 @@
 <!-- make different form for logged in -->
 <script id='twitter-form' type='x-tmpl-mustache'>
+
+
     <form id="twitterForm" method="POST" action='/twitter/search/'>
         {% csrf_token %}
         {% verbatim %}
@@ -7,17 +9,27 @@
         {% endverbatim %}        
         <fieldset class="tweets">
             <legend>Twitter Look Up</legend>
+
+            <div id='tweetFill'>
+            <form id='tweetFill-form' >
+            <input type='color' id='colorTweetSelection'/>
+            <button id='colorTweetBut' class='btn btn-block btn-info' type="submit">Fill</button>
+            </form>
+            </div>
+
             <label for="query"># for hashtags, RT for retweets, etc.</label>
-                <input type="text" id="search" name="search">
+                <input type="search" id="search" name="search">
+            <div id=filterForm>
             <label for="filter">Filter</label>
             <select class="btn-info" id="filter" name="filter">
                 <option value="popular">Popular</option>
                 <option value="mixed">Mixed</option>
-            </select>                
+            </select>
+            </div>                
             {% if logged_in%}
             <div id='listForm'>
             <label for="list">Enter the name of your list</label>
-                <input type="text" id="listName" name="listName">
+                <input type="search" id="listName" name="listName">
                 </div>
                 <select class="btn-info" id="path" name="path">
                 <option value="lists">Your Twitter List</option>                

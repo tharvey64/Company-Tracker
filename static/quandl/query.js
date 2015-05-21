@@ -28,7 +28,9 @@ $(document).ready(function(){
     $("#backButton").on("click", function(event) { 
         $("#backButton").css("display", "none");       
         $(".returned").css("display", "none");  
-        $("#selectorButton").css("display", "none");                
+        $("#selectorButton").css("display", "none"); 
+        $('#fillSelector').css('display', 'none');
+        $('#tweetFill').css('display', 'none');               
         $("#stories, #graph").empty();
         $('#mariner h3').remove()
         $(".navButs").animate({
@@ -49,7 +51,8 @@ $(document).ready(function(){
     $("#graph").on("click", "button.search-result", function(event){
         $("#backButton").css("display", "none");  
         $(".returned").css("display", "none");  
-        $("#selectorButton").css("display", "none");           
+        $("#selectorButton").css("display", "none");    
+        $('#fillSelector').css('display', 'none')       
         $(".navButs").animate({
             opacity: 1
         }, 2000);            
@@ -59,7 +62,16 @@ $(document).ready(function(){
 
         $("[href='#tab1']").parent('li').addClass('active').siblings().removeClass('active');               
     });
-    
+    $("#color-form").on("submit", function(event){
+        event.preventDefault();
+        var color = $('#colorSelection').val()
+        $('.stock').css('fill', color);
+    });
+    $('#footer').on("click", '#colorTweetBut', function(event){
+        event.preventDefault();
+        var color = $('#colorTweetSelection').val()
+        $('.tweet').css('fill', color);
+    })
 });
 
 

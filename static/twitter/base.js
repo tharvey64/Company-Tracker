@@ -2,6 +2,7 @@ $(document).ready(function(){
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
         var startDate = $("#twitterForm input[name='start date']").val();
+        $('#tweetFill').css('display', 'block');
         
         $.post($(this).attr("action") + $("#path").val(),
             $("#twitterForm").serialize(),
@@ -29,10 +30,12 @@ $(document).ready(function(){
     });
     $('#footer').on("change", "#path", function(event){ 
         if (($("#path option:selected").val()) == 'random'){
-            $("#listForm").slideUp(1000);   
+            $("#listForm").slideUp(1000);
+            $("#filterForm").slideDown(1000);   
         }
         else{
-           $("#listForm").slideDown(1000);   
+           $("#listForm").slideDown(1000); 
+           $("#filterForm").slideUp(1000);  
         }
     });
 });

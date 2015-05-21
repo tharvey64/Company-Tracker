@@ -33,7 +33,6 @@ except ImportError:
     # Older versions of Python (i.e. 2.4) require simplejson instead of json
     import simplejson as json
 
-
 # if __name__ == '__main__':
 #     """
 #     Writes the API key to api_key.txt file. It will create the file if it doesn't exist.
@@ -58,7 +57,6 @@ except ImportError:
 #         else:
 #             print(
 #                 'The key appears to invalid. Please make sure to use the 40 character key assigned by AlchemyAPI')
-
 
 class AlchemyAPI:
     # Setup the endpoints
