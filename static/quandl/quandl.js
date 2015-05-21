@@ -64,6 +64,7 @@ $(document).ready(function(){
                 Mustache.parse(template);
                 var info = Mustache.render(template,{"result":data.stocks})
                 $("#graph").html(info);
+                $("body").trigger("dataLoad");
 
             }
             else if (data.close){
@@ -83,7 +84,9 @@ $(document).ready(function(){
                 $("#graph").css("display", "block"); 
                 $("#footer").css("display", "block");                
                 $("#selectorButton").css("display", "block");
-                $('#fillSelector').css('display', 'block')
+                $('#fillSelector').css('display', 'block');
+
+                $("body").trigger("dataLoad");
             }
         });
     });
@@ -116,7 +119,9 @@ $(document).ready(function(){
                         $("#graph").css("display", "block"); 
                         $("#footer").css("display", "block");                
                         $("#selectorButton").css("display", "block");
-                        $('#fillSelector').css('display', 'block')
+                        $('#fillSelector').css('display', 'block');
+                        
+                        $("body").trigger("dataLoad");
                     }
                     else{
                         console.log(data.error);

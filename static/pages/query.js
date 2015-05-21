@@ -1,30 +1,23 @@
 $(document).ready(function(){
     $("#tab2").on("submit", "#searchForm", function(event) {
-        $("#loading").css("display", "block");          
-        setTimeout(function(){      
+        $("#loading").css("display", "block"); 
+    });
+
+
+    $("body").on("dataLoad", function(){      
         $("#loading").css("display", "none");
-        $("#backButton").css("display", "block");       
+        $("#backButton").css("display", "block");             
+        $("#graph").css("display", "inline-block"); 
+        $("#forms").slideUp(1800);
         $(".navButs").animate({
             opacity: 0
-        }, 2000);       
-        $("#graph").css("display", "inline-block"); 
-        $("#results").css("display", "block");
-        $("#forms").slideUp(1800);
-        }, 3000);               
+        }, 2000);               
     });
+
     $("#tab1").on("submit", "#stockForm", function(event) {
-            $("#loading").css("display", "block");          
-        setTimeout(function(){ 
-            $("#loading").css("display", "none");              
-            $("#forms").slideUp(1800); 
-            $("#graph").css("display", "block"); 
-            $(".navButs").animate({
-                opacity: 0
-            }, 2000);                      
-            $("#backButton").css("display", "block")       
-            $("#graph").css("display", "inline-block"); 
-        }, 3000);       
+        $("#loading").css("display", "block"); 
     });
+
     $("#backButton").on("click", function(event) { 
         $("#backButton").css("display", "none");       
         $(".returned").css("display", "none");  
