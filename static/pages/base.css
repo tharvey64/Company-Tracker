@@ -36,3 +36,10 @@ body{
 	width: 5em;
 	height: 2em;
 }
+
+#super-secretDivBam{
+	display: none;
+	z-index: 1;
+	text-align: center;
+
+}
