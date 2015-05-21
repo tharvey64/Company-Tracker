@@ -24,6 +24,7 @@ $(document).ready(function(){
                 Mustache.parse(template);
                 var info = Mustache.render(template,{"result":data.list})
                 $("#graph").html(info);
+                $("body").trigger("dataLoad");
             }
         });
     });
