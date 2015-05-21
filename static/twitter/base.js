@@ -15,15 +15,13 @@ $(document).ready(function(){
                 $(".tweet").remove();
                 if (data.hasOwnProperty("tweets")){
                     
-                    // var tweets = new Qwarg("sentiment", data.tweets, ".tweet");
-                    // tweets.parseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
-                    // tweets.fill = "yellow";
-                    // tweets.raduisRange = [5,25];
-
-                    var parseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
+                    var tweets = new Qwarg("sentiment", data.tweets, ".tweet");
+                    tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
+                    tweets.fill = "yellow";
+                    tweets.radiusRange = [5,25];
+                    tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
-                    $("#graph").trigger("drawGraph",[data.tweets, parseDate, start, "tweet", "circle:not(.stock)", 3, [5,25], false]);
-                    d3.selectAll(".tweet").style("fill", "yellow");
+                    $("#graph").trigger("drawGraph",[start, tweets]);
                 }else{
                     console.log("twitter view error")
                 }

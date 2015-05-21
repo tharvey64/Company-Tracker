@@ -7,11 +7,23 @@ function Qwarg(qwargType, qwargData, qwargClassString){
     this.show;
     this.fill;
     this.radiusRange;
+    this.radiusScale = function(){
+        var scale = d3.scale.linear();
+        if (!this.radiusRange ||  !(this.radiusRange instanceof Array) || (this.radiusRange.length != 2)){
+            console.log(this.radiusRange);
+            throw "Invalid value for radiusRange. Must Be [min,max]"
+        }
+        else if (this.radiusRange[0] == this.radiusRange[1]){
+            scale.range(this.radiusRange);
+            return scale;
+        }
+        var radiusHigh = d3.max(this.qwargData,function(d){return parseFloat(d.radius);});
+        var radiusLow = d3.min(this.qwargData,function(d){return parseFloat(d.radius);});
+        scale.domain([radiusLow,radiusHigh]);
+        scale.range(this.radiusRange);
+        return scale;
+    }
 }
-// Make Functions That perform select alls on the element
-// Qwarg Type = 'price', 'sentiment' 
-// Qwarg Format
-// qwargData = {"date":, "height":, "radius":, "title":}
 
 function Graph(){
     // date range would require scaling the dateSet
@@ -19,17 +31,16 @@ function Graph(){
     this.endDate;
     this.highPrice;
     this.padding = 50;
-    // Set the below with a method so they can adjust
     this.graphHeight = parseInt($("#graph").css("height"));
     this.graphWidth = parseInt($("#graph").css("width"));
     this.priceScale;
     this.dateScale;
     this.qwargSet = {};
 }
+Graph.prototype.sentimentScale = function(){
+    return d3.scale.linear().domain([-1,1]).range([this.graphHeight - this.padding, this.padding]);
+}
 Graph.prototype.setDateScale = function(){
-    // adds date padding
-    // THERE SHOULD BE A FUNCTION TO RESET THE STARTDATE AND ENDDATE
-    // IF THE X SCALE CHANGES REDRAW THE GRAPH
     this.startDate.setDate(this.startDate.getDate()-1);
     this.endDate.setDate(this.endDate.getDate()+1);
     this.dateScale = d3.time.scale()
@@ -37,8 +48,6 @@ Graph.prototype.setDateScale = function(){
     this.dateScale.range([this.padding, this.graphWidth-this.padding]);
 }
 Graph.prototype.setPriceScale = function(qwarg){
-    // the range should be set after calling this function
-    // IF THE Y SCALE CHANGES REDRAW THE GRAPH
     var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height) * 1.2)});
     if (!this.priceScale){
         this.highPrice = high;
@@ -56,10 +65,8 @@ Graph.prototype.setPriceScale = function(qwarg){
         return false;
     }
 }
-Graph.prototype.sentimentScale = function(){
-    return d3.scale.linear().domain([-1,1]);
-}
 Graph.prototype.drawXAxis = function(translateString){
+    // Make Sure These are Drawn Once And Only Once
     var xAxis = d3.svg.axis();
     xAxis.scale(this.dateScale).orient("bottom");
 
@@ -76,7 +83,7 @@ Graph.prototype.drawXAxis = function(translateString){
         });
 }
 Graph.prototype.drawYAxis = function(currentScale,translateString){
-    // if you tag the axis you can delete it
+    // Make Sure These are Drawn Once And Only Once
     var yAxis = d3.svg.axis();
     yAxis.scale(currentScale).orient("left");
 
@@ -86,7 +93,11 @@ Graph.prototype.drawYAxis = function(currentScale,translateString){
         .call(yAxis);
 }
 Graph.prototype.createSvg = function(){
+    // Empty might be redundant
     $("#graph").empty();
+    $(".tooltip").remove();
+    this.graphHeight = parseInt($("#graph").css("height"));
+    this.graphWidth = parseInt($("#graph").css("width"));
 
     d3.select("#graph")
         .append("svg")
@@ -96,61 +107,63 @@ Graph.prototype.createSvg = function(){
     return d3.select("svg");
 }
 Graph.prototype.draw = function(){
-    // set Scales before plotting
+    // Remove Might be redundant
+    // createSvg() calls empty on #graph
+    $("svg").remove();
+    this.createSvg();
+    var price = false, 
+    sentiment = false;
+    // Setting Scales
     for (q in this.qwargSet){
         if (this.qwargSet[q].qwargType == "price"){
             this.setPriceScale(this.qwargSet[q]);
-        } 
+            price = true;
+        }
+        else if (this.qwargSet[q].qwargType == "sentiment"){
+            sentiment = true
+        }
     }
     this.setDateScale();
+    // Drawing Axis
+    if (sentiment){
+        this.drawYAxis(this.sentimentScale(), "translate(" + (this.graphWidth-this.padding) +",0)");
+    }
+    if (price){
+        this.drawYAxis(this.priceScale, "translate(" + this.padding +",0)");
+    }
+    this.drawXAxis("translate(0," + (this.graphHeight - this.padding) +")");
+    // Plotting Data
     for (q in this.qwargSet){
         this.plot(this.qwargSet[q]);
     }
     $("circle").tooltips();
 }
-Graph.prototype.clear =function(setString){
-    $(".tooltip").remove();
-    $(setString).remove();
-    $("circle").tooltips();
-}
 Graph.prototype.plot = function(qwarg){
-    // Determine the conditions underwhich one would have to 
-    // redraw the graph
     $(".tooltip").remove();
-    var translate,
+    
+    var start = this.startDate, 
+    end = this.endDate,
     yScale,
+    rScale = qwarg.radiusScale(),
     xScale = this.dateScale,
     checkDate = this.checkDate,
     svg = d3.select("svg");
 
     if (!svg[0][0]){
-        svg = this.createSvg();
-        // Drawing the xAxis here prevents duplication
-        this.drawXAxis("translate(0," + (this.graphHeight - this.padding) +")");
+        throw "No SVG";
     }
     if (qwarg.qwargType == "price"){
         yScale = this.priceScale;
-        translate = "translate(" + this.padding +",0)";
     }
     else if (qwarg.qwargType == "sentiment"){
         yScale = this.sentimentScale();
-        translate = "translate(" + (this.graphWidth-this.padding) +",0)";
     }
     else{
-        throw "Missing Qwarg Type";
+        // Should check qwarg to See that it has the needed properties
+        return "Missing Qwarg Type";
+        // throw "Missing Qwarg Type";
     }
     
-    this.drawYAxis(yScale, translate);
-
-    var radiusHigh = d3.max(qwarg.qwargData,function(d){return parseFloat(d.radius)});
-    var radiusLow = d3.min(qwarg.qwargData,function(d){return parseFloat(d.radius)});
-    var radiusScale = d3.scale.linear();
-    radiusScale.domain([radiusLow,radiusHigh]);
-    radiusScale.range(qwarg.radiusRange);
-
-    var start = this.startDate, 
-    end = this.endDate;
-
     svg.selectAll("circle" + qwarg.qwargClassString)
         .data(qwarg.qwargData)
         .enter()
@@ -158,16 +171,19 @@ Graph.prototype.plot = function(qwarg){
         .attr("class", qwarg.qwargClassString)
         .attr("cx", function(d){
             return xScale(qwarg.qwargParseDate(d.date));
-        }).attr("cy", function(d){
+        })
+        .attr("cy", function(d){
             return yScale(parseFloat(d.height));
-        }).attr("r", function(d){
-            return radiusScale(d.radius);
-        }).attr("title", function(d){
+        })
+        .attr("r", function(d){
+            return rScale(d.radius);
+        })
+        .attr("title", function(d){
             return d.title;
-        }).style("fill", qwarg.fill)
+        })
+        .style("fill", qwarg.fill)
         .style("display", function(d){
             date = qwarg.qwargParseDate(d.date);
-            start.valueOf();
             if ((date > start) && (date < end)){
                 return "initial";
             }
@@ -175,19 +191,27 @@ Graph.prototype.plot = function(qwarg){
                 return "none";
             }
         });
-    // Put tooltips somewhere else
 }
+Graph.prototype.clear = function(setString){
+    $(".tooltip").remove();
+    $(setString).remove();
+    $("circle").tooltips();
+}
+// All Date Adjustments Must Query the DB For All Stocks Selected
+// Construct Another table for Index Info
+
 $(document).ready(function(){
     var endDate = new Date();
     var graph = new Graph();
+    var stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        for (q in graph.qwargSet){
-            graph.clear(graph.qwargSet[q].qwargClassString)
+        if (stockQwarg && (qwarg.qwargType == "price")){
+            delete graph.qwargSet[stockQwarg]
         }
-        graph.clear(".AAPL");
         graph.endDate = endDate;
         graph.startDate = startDate;
         graph.qwargSet[qwarg.qwargClassString] = qwarg;
+        stockQwarg = qwarg.qwargClassString;
         graph.draw();
     });
 });

@@ -57,13 +57,16 @@ $(document).ready(function(){
 
                 $("#graph").empty();
 
-                var company = new Qwarg("price", data.close, symbol.toUpperCase());
+                var company = new Qwarg("price", data.close, "." + symbol.toUpperCase());
                 company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
                 company.fill = "red";
                 company.radiusRange = [5,5];
                 company.show = true;
                 $("#graph").trigger("drawGraph",[d3.time.format("%B-%e-%Y").parse(date), company]);
-                // d3.selectAll(".stock").style("fill", "red");
+
+                $("#graph").css("display", "block"); 
+                $("#footer").css("display", "block");                
+                $("#selectorButton").css("display", "block");
             }
         });
     });
@@ -78,7 +81,7 @@ $(document).ready(function(){
 
             if (data.company){
                 var companyInfo = data.company;
-                $.post("/quandl/stock_history/" + companyInfo.symbol + "/" +  date, input, function(data){
+                $.post("/quandl/stock_history/" + companyInfo.symbol + "/" + date, input, function(data){
                     if (data.close){
                         $("#stories").empty();
                         $("#stories").trigger("getStories", [companyInfo.symbol]);
@@ -90,8 +93,8 @@ $(document).ready(function(){
                         company.fill = "red";
                         company.radiusRange = [5,5];
                         company.show = true;
-                        $("#graph").trigger("drawGraph",[d3.time.format("%B-%e-%Y").parse(date), company]);
-                        // d3.selectAll(".stock").style("fill", "red");
+                        var start = d3.time.format("%B-%e-%Y").parse(date);
+                        $("#graph").trigger("drawGraph",[start, company]);
                     }
                     else{
                         console.log(data.error);

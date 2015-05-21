@@ -28,16 +28,7 @@ class Quandl:
     base_url = 'https://www.quandl.com/api/v1/datasets/'
     format =  'json'
     db = 'GOOG'
-    # ----------------------------------------------------#
-    #           DB        |         DB          |    DB   #
-    # --------------------|---------------------|---------#
-    #         YAHOO/      |        GOOG/        |  WIKI/  #
-    # --------------------|---------------------|---------#
-    #         Table       |        Table        |  Table  #
-    # --------------------|---------------------|---------#
-    # {EXCHANGE}_{TICKER} | {EXCHANGE}_{TICKER} | {TICKER}#
-    # ----------------------------------------------------#
-    
+
     @classmethod
     def get_dataset(cls, exchange, symbol, start_date):
         # yahoo and google format
@@ -52,3 +43,12 @@ class Quandl:
         if response.status_code == 200:
             return response.json()
         return {'error': response.status_code}
+    # ----------------------------------------------------#
+    #           DB        |         DB          |    DB   #
+    # --------------------|---------------------|---------#
+    #         YAHOO/      |        GOOG/        |  WIKI/  #
+    # --------------------|---------------------|---------#
+    #         Table       |        Table        |  Table  #
+    # --------------------|---------------------|---------#
+    # {EXCHANGE}_{TICKER} | {EXCHANGE}_{TICKER} | {TICKER}#
+    # ----------------------------------------------------#

@@ -9,7 +9,8 @@ import quandl.helper as help
 class QuandlHistoryView(View):
 
     def get(self, request, symbol, date_string):
-        # might just return all the stock data
+        # Might Add End Date
+        
         if not LastPrice.objects.filter(company__symbol__iexact=symbol): 
             return redirect('quandl:company-create', symbol=symbol)
 
@@ -19,7 +20,6 @@ class QuandlHistoryView(View):
         if stock_history:
             data = {'close': [dict(date=day.created_at, height=day.close_price, radius=day.volume, title=day.created_at) for day in stock_history]}
         else:
-            # Redirect to An Error?
             data = {'error': 'Stock Data Not Found'}
         return JsonResponse(data)
 
