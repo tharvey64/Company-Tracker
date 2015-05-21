@@ -83,6 +83,7 @@ $(document).ready(function(){
                 $("#graph").css("display", "block"); 
                 $("#footer").css("display", "block");                
                 $("#selectorButton").css("display", "block");
+                $('#fillSelector').css('display', 'block')
             }
         });
     });
@@ -115,6 +116,7 @@ $(document).ready(function(){
                         $("#graph").css("display", "block"); 
                         $("#footer").css("display", "block");                
                         $("#selectorButton").css("display", "block");
+                        $('#fillSelector').css('display', 'block')
                     }
                     else{
                         console.log(data.error);
