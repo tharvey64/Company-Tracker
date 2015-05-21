@@ -22,6 +22,7 @@
         <link rel="stylesheet" type="text/css" href='{% static "quandl/tabs.css" %}'/>
         <link rel="stylesheet" type="text/css" href='{% static "article_feeds/story.css" %}'/>
         <link rel="stylesheet" type="text/css" href='{% static "users/users.css" %}'/>
+        <link rel="stylesheet" type="text/css" href='{% static "pages/base.css" %}'/>
         <link rel="stylesheet" type="text/css" href='{%static "markit/markit.css"%}'></link>
     </head>
     <body>
@@ -40,7 +41,10 @@
             <li class="divider"></li>
             <a id='storyPath' href='#'>Stories</a>
          </ul>
-    </div>   
+    </div>  
+
+        <div id='fillSelector' class="btn-group">
+        </div>
 
         <div class ="container">
 
@@ -71,5 +75,6 @@
             {% include "twitter/twitter_form.html" %}  
             {% include "twitter/oauth_form.html" %} 
             {% include "users/login_form.html" %} 
+            {% include "pages/color_form.html" %}
         {% endblock %}
 </html>

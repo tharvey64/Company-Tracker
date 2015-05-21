@@ -111,6 +111,7 @@ $(document).ready(function(){
         $("#graph").css("display", "block"); 
         $("#footer").css("display", "block");                
         $("#selectorButton").css("display", "block");
+        $('#fillSelector').css('display', 'block')
         }, 3000);       
     });   
 });

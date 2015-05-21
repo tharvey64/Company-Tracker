@@ -1,0 +1,29 @@
+#colorSelection {
+	width: 8em;
+	height: 2em;
+}
+
+#fillSelector {
+    position: absolute;
+    margin-top: 30em;
+    height: 10em;
+    width: 5em;
+    text-align: center;
+    display: none;
+    float: right;
+}
+
+#colorTweetBut{
+	width: 5em;
+}
+
+#tweetFill{
+	float: right;
+	margin: 0 10em 0 0;
+	display: none;
+}
+
+#colorTweetSelection{
+	width: 8em;
+	height: 2em;
+}
