@@ -3,8 +3,9 @@ body{
     background-image: url("background_images/1.jpg");
 }
 #colorSelection {
-	width: 8em;
+	width: 3em;
 	height: 2em;
+	float: left;
 }
 
 #fillSelector {
@@ -15,6 +16,10 @@ body{
     text-align: center;
     display: none;
     float: right;
+}
+
+#colorBut{
+	width: 3em;
 }
 
 #colorTweetBut{
@@ -28,6 +33,13 @@ body{
 }
 
 #colorTweetSelection{
-	width: 8em;
+	width: 5em;
 	height: 2em;
+}
+
+#super-secretDivBam{
+	display: none;
+	z-index: 1;
+	text-align: center;
+
 }
