@@ -85,8 +85,14 @@ class SearchListView(View):
         user_query = request.POST['search'] 
         profile = Profile.objects.filter(user__pk=request.user.id)
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET, profile[0].token, profile[0].secret)
-        list_of_tweets = twitter.get_list_statuses(slug=request.POST['listName'], owner_screen_name=request.user.username, count=200)
-        print (list_of_tweets)
+        from twython.exceptions import TwythonError
+        try:
+            print("Twitter Call")
+            list_of_tweets = twitter.get_list_statuses(slug=request.POST['listName'], owner_screen_name=request.user.username, count=200)
+        except TwythonError:
+            print("Caught")
+            return JsonResponse({"error":"Twitter List Not Found."})
+        
         list_dataset = []
         for unique_tweet in list_of_tweets:
             if user_query.lower() in unique_tweet['text'].lower():

@@ -31,11 +31,13 @@ $(document).ready(function(){
     $('#footer').on("change", "#path", function(event){ 
         if (($("#path option:selected").val()) == 'random'){
             $("#listForm").slideUp(1000);
-            $("#filterForm").slideDown(1000);   
+            $("#filterForm").slideDown(1000); 
+            $('#listName').removeAttr( "required");
         }
         else{
            $("#listForm").slideDown(1000); 
-           $("#filterForm").slideUp(1000);  
+           $("#filterForm").slideUp(1000); 
+           $('#listName').attr("required", 'required');
         }
     });
 });

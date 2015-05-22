@@ -18,7 +18,7 @@
             </div>
 
             <label for="query"># for hashtags, RT for retweets, etc.</label>
-                <input type="search" id="search" name="search" required>
+                <input type="search" id="search" name="search" required='required'/>
             <div id=filterForm>
             <label for="filter">Filter</label>
             <select class="btn-info" id="filter" name="filter">
@@ -29,7 +29,7 @@
             {% if logged_in%}
             <div id='listForm'>
             <label for="list">Enter the name of your list</label>
-                <input type="search" id="listName" name="listName" required>
+                <input type="search" id="listName" name="listName" required='required'>
                 </div>
                 <select class="btn-info" id="path" name="path">
                 <option value="lists">Your Twitter List</option>                
