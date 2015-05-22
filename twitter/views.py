@@ -39,9 +39,7 @@ class SearchView(View):
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
-
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
-
         new_tweets = []
         for response in twython_results['statuses']: #iterating through each tweet
 
@@ -51,6 +49,12 @@ class SearchView(View):
                 old_tweet[0].favorites = response['favorite_count']
                 old_tweet[0].save()
             else:
+                # Speeding this up would require adding tweets that have not 
+                # recieved a score to the database.
+                # I Could add A Delete View to Tweets 
+                # So i could delete tweets that didnt get a score
+                # Pass Tweet id in dict
+                # Add article models to the DB instead
                 alchemy_result = self.alchemyapi.sentiment('text', response['text'])  
                 if alchemy_result.get('status', False) != 'OK':
                     continue
@@ -61,7 +65,6 @@ class SearchView(View):
                 )   
 
                 formatted_date = datetime.datetime.strptime(response['created_at'], "%a %B %d %X %z %Y")
-
                 tweet = Tweet.objects.create(
                     text=response['text'], 
                     tweet_id=response['id_str'], 
@@ -72,6 +75,7 @@ class SearchView(View):
                 new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
         all_tweets = new_tweets + list(stored_tweets_of_query)
+        # ADD TWEET ID
         tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
         data = {'tweets': tweet_dataset}
         if len(tweet_dataset) is 0:
@@ -85,14 +89,17 @@ class SearchListView(View):
         user_query = request.POST['search'] 
         profile = Profile.objects.filter(user__pk=request.user.id)
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET, profile[0].token, profile[0].secret)
-        from twython.exceptions import TwythonError
-        try:
-            print("Twitter Call")
-            list_of_tweets = twitter.get_list_statuses(slug=request.POST['listName'], owner_screen_name=request.user.username, count=200)
-        except TwythonError:
-            print("Caught")
-            return JsonResponse({"error":"Twitter List Not Found."})
-        
+
+        users_lists = twitter.show_owned_lists(screen_name=request.user.username)
+
+        owned_list_names = [item['name'].lower() for item in users_lists['lists']]
+
+        list_name = request.POST['listName']
+
+        if list_name.lower() not in owned_list_names: 
+            return JsonResponse({'error': 'List Not Found.'})
+
+        list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200)
         list_dataset = []
         for unique_tweet in list_of_tweets:
             if user_query.lower() in unique_tweet['text'].lower():
@@ -109,3 +116,16 @@ class SearchListView(View):
                     title=unique_tweet['text']
                 ))
         return JsonResponse({'tweets': list_dataset})
+
+# class DeleteTweet(View):
+
+#     def post(self, request, tweet_id):
+#         tweet = Tweet.objects.filter(tweet_id=tweet_id)
+#         if len(tweet) == 1:
+#             tweet.delete()
+#             data = {'success':'Successfully Deleted Tweet.'}
+#         else:
+#             data = {'error':'Tweet Not Found.'}
+#         return JsonResponse(data)
+
+

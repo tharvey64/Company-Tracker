@@ -1,4 +1,3 @@
-// NOW how to create this
 function Qwarg(qwargType, qwargData, qwargClassString){
     this.qwargType = qwargType;
     this.qwargData = qwargData;
@@ -26,7 +25,6 @@ function Qwarg(qwargType, qwargData, qwargClassString){
 }
 
 function Graph(){
-    // date range would require scaling the dateSet
     this.startDate;
     this.endDate;
     this.highPrice = 0;
@@ -93,7 +91,6 @@ Graph.prototype.drawYAxis = function(currentScale,translateString){
         .call(yAxis);
 }
 Graph.prototype.createSvg = function(){
-    // Empty might be redundant
     $("#graph").empty();
     $(".tooltip").remove();
     this.graphHeight = parseInt($("#graph").css("height"));
@@ -107,9 +104,6 @@ Graph.prototype.createSvg = function(){
     return d3.select("svg");
 }
 Graph.prototype.draw = function(){
-    // Remove Might be redundant
-    // createSvg() calls empty on #graph
-    $("svg").remove();
     this.createSvg();
     var price = false, 
     sentiment = false;
@@ -159,9 +153,7 @@ Graph.prototype.plot = function(qwarg){
         yScale = this.sentimentScale();
     }
     else{
-        // Should check qwarg to See that it has the needed properties
         return "Missing Qwarg Type";
-        // throw "Missing Qwarg Type";
     }
     
     svg.selectAll("circle" + (qwarg.qwargClassString ? "." + qwarg.qwargClassString:""))
@@ -201,12 +193,13 @@ Graph.prototype.clear = function(setString){
 // Construct Another table for Index Info
 
 $(document).ready(function(){
-    var endDate = new Date();
-    var graph = new Graph();
-    var stockQwarg;
+    var endDate = new Date(),
+    graph = new Graph(),
+    stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (stockQwarg && qwarg.qwargType == "price"){
+        if (stockQwarg != qwarg.qwargClassString){
             delete graph.qwargSet[stockQwarg]
+            delete graph.qwargSet["tweet"]
             graph.highPrice = 0; 
         }
         if(qwarg.qwargType == "price"){
@@ -227,4 +220,14 @@ $(document).ready(function(){
         var color = $('#colorTweetSelection').val()
         $('.tweet').css('fill', color);
     });
+    $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
+        if (graph.qwargSet[dataSetName]){
+            graph.qwargSet[dataSetName].push(dataToAdd);
+            graph.draw();
+        }
+        else{
+            console.log("Invalid dataSetName");
+        }
+    });
 });
+// ADD Event that Adds Data to a Specified dataset

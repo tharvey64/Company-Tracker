@@ -3,19 +3,17 @@ $(document).ready(function(){
         event.preventDefault();
         var startDate = $("#twitterForm input[name='start date']").val();
         $('#tweetFill').css('display', 'block');
-        
         $.post($(this).attr("action") + $("#path").val(),
             $("#twitterForm").serialize(),
-            function(data) {
+            function(data){
                 if (data['error']){
                     $('#mariner h3').remove()
-                    $('#mariner').append("<h3>"+data['error']+"<h3>");
+                    setTimeout(function(){
+                        $('#mariner').append("<h3>"+data['error']+"<h3>");
+                    },3000);
+                    $('#mariner h3').remove();
                 }
-                $('#mariner h3').remove();
-                $(".tooltip").remove();
-                $(".tweet").remove();
-                if (data.hasOwnProperty("tweets")){
-                    
+                else if (data.hasOwnProperty("tweets")){
                     var tweets = new Qwarg("sentiment", data.tweets, "tweet");
                     tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
                     tweets.fill = "yellow";
@@ -23,8 +21,11 @@ $(document).ready(function(){
                     tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
                     $("#graph").trigger("drawGraph",[start, tweets]);
-                }else{
-                    console.log("twitter view error")
+                }
+                else{
+                    $('#mariner h3').remove()
+                    $('#mariner').append("<h3>Search Error<h3>");
+                    // $("body").trigger("serverError",[{"error":"Your Tweeter Search Could Not Be Processed."}]);  
                 }
         });
     });
