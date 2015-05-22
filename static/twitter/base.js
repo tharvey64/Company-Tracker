@@ -18,7 +18,12 @@ $(document).ready(function(){
                     
                     var tweets = new Qwarg("sentiment", data.tweets, "tweet");
                     tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
-                    tweets.fill = "yellow";
+                    if ($('#colorTweetSelection').val() == undefined){
+                       tweets.fill = "yellow"; 
+                    }
+                    else{
+                       tweets.fill = $('#colorTweetSelection').val() 
+                    }
                     tweets.radiusRange = [5,25];
                     tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
