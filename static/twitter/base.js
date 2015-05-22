@@ -3,7 +3,6 @@ $(document).ready(function(){
         event.preventDefault();
         var startDate = $("#twitterForm input[name='start date']").val();
         $('#tweetFill').css('display', 'block');
-        console.log("POST MADE")
         $.post($(this).attr("action") + $("#path").val(),
             $("#twitterForm").serialize(),
             function(data){
