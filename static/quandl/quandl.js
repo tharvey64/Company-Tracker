@@ -69,7 +69,12 @@ $(document).ready(function(){
 
                 var company = new Qwarg("price", data.close, symbol.toUpperCase());
                 company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
-                company.fill = "red";
+                if ($('#colorSelection').val() == undefined){
+                       company.fill = "red"; 
+                    }
+                    else{
+                       company.fill = $('#colorSelection').val() 
+                    }
                 company.radiusRange = [5,5];
                 company.show = true;
                 $("#graph").trigger("drawGraph",[d3.time.format("%B-%e-%Y").parse(date), company]);
