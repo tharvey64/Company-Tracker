@@ -32,7 +32,7 @@ $(document).ready(function(){
         $('#fillSelector').css('display', 'none');
         $('#tweetFill').css('display', 'none');               
         $("#stories, #graph").empty();
-        $('#mariner h3').remove()
+        $('#mariner h3').remove();
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
@@ -46,7 +46,7 @@ $(document).ready(function(){
         $('#fillSelector').css('display', 'none');
         $('#tweetFill').css('display', 'none');               
         $("#stories, #graph").empty();
-        $('#mariner h3').remove()
+        $('#mariner h3').remove();
         $(".navButs").animate({
             opacity: 1
         }, 2000);  

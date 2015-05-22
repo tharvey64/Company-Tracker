@@ -13,7 +13,6 @@ $(document).ready(function(){
         $.getJSON("/markit/search/", {"input_string": company},function(data){
             $("#graph").empty();
             if (!data.list.length){
-                console.log("1")
                 $("body").trigger("serverError", [{"error":"No Search Results Were Found."}]);
             }
             else if (data.list.Error || data.list.Message){

@@ -85,7 +85,6 @@ class CompanyView(View):
                     exchange=company[0].exchange
                 )
             })
-        # Make this a Json
         return redirect('quandl:company-create', symbol=symbol)
 
 # class DeleteCompanyView(View):
