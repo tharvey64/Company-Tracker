@@ -35,9 +35,7 @@ $(document).ready(function(){
         var symbol = $("input[name='company_symbol']").val(),
         token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
-        if (symbol.length == 0){
-            $("body").trigger("serverError",[{"error":"No Symbol Input Found."}]);  
-        }
+        
         var template = $('#twitter-form').html();
         Mustache.parse(template);
         var info = Mustache.render(template, {'startDate' : date});
@@ -48,18 +46,19 @@ $(document).ready(function(){
                 if (data.stocks.length == 0){
                     $("body").trigger("serverError",[{"error":"Stock Data Not Found."}]);
                 }
+                else {
+                    $("#graph").empty();
+                    var template = $("#company-form").html();
+                    Mustache.parse(template);
+                    var info = Mustache.render(template,{"result":data.stocks})
+                    $("#graph").html(info);
+                    $("body").trigger("dataLoad");
+                }   
                 for (i in data.stocks){
                     // do this loop in python
                     data.stocks[i]['startDate'] = date;
                 }
-
-                $("#graph").empty();
-                var template = $("#company-form").html();
-                Mustache.parse(template);
-                var info = Mustache.render(template,{"result":data.stocks})
-                $("#graph").html(info);
-                $("body").trigger("dataLoad");
-
+               
             }
             else if (data.close){
                 $("#stories").empty();
