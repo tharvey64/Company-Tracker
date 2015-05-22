@@ -8,7 +8,6 @@ $(document).ready(function(){
         $("#backButton").css("display", "block");             
         $("#graph").css("display", "inline-block"); 
         $("#forms").slideUp(1800);
-        $(".navButs").css('display', 'none');
         $(".navButs").animate({
             opacity: 0
         }, 2000);               
@@ -33,11 +32,9 @@ $(document).ready(function(){
         $('#tweetFill').css('display', 'none');               
         $("#stories, #graph").empty();
         $('#mariner h3').remove()
-        $(".navButs").css('display', 'inline-block')
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
-        $(".navButs").css('display', 'none')
         $("#forms").slideDown(1800);  
         setTimeout(function(){ 
             $("#super-secretDivBam").css("display", "none"); 
@@ -53,7 +50,6 @@ $(document).ready(function(){
         $('#tweetFill').css('display', 'none');               
         $("#stories, #graph").empty();
         $('#mariner h3').remove()
-        $(".navButs").css('display', 'inline-block')
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
@@ -75,8 +71,7 @@ $(document).ready(function(){
         $("#backButton").css("display", "none");  
         $(".returned").css("display", "none");  
         $("#selectorButton").css("display", "none");    
-        $('#fillSelector').css('display', 'none')    
-        $(".navButs").css('display', 'inline-block')  
+        $('#fillSelector').css('display', 'none')      
         $(".navButs").animate({
             opacity: 1
         }, 2000);     

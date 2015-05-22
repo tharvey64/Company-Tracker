@@ -197,13 +197,14 @@ $(document).ready(function(){
     graph = new Graph(),
     stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (stockQwarg != qwarg.qwargClassString){
+        if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
             delete graph.qwargSet[stockQwarg]
             delete graph.qwargSet["tweet"]
+            stockQwarg = qwarg.qwargClassString;
             graph.highPrice = 0; 
         }
-        if(qwarg.qwargType == "price"){
-            stockQwarg = qwarg.qwargClassString;
+        if(qwarg.qwargType == "tweet"){
+            delete graph.qwargSet["tweet"]
         }
         graph.endDate = endDate;
         graph.startDate = startDate;

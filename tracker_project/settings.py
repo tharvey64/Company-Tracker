@@ -29,7 +29,7 @@ TWITTER_SECRET = os.environ['TWITTER_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #########################
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = []
@@ -102,9 +102,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'tracker',
-        'USER': os.environ['USER'],
-        'PASSWORD': os.environ['USER_PASSWORD'],
-        'HOST': '127.0.0.1',
+        'USER': 'postgres',
+        'PASSWORD': os.environ['DB_ENV_POSTGRES_PASSWORD'],
+        'HOST': os.environ['DB_PORT_5432_TCP_ADDR'],
         'PORT': '5432',
     }
 }
