@@ -15,7 +15,6 @@ $(document).ready(function(){
                     $('#mariner h3').remove();
                 }
                 else if (data.hasOwnProperty("tweets")){
-                    console.log("Data Returned")
                     var tweets = new Qwarg("sentiment", data.tweets, "tweet");
                     tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
                     tweets.fill = "yellow";
@@ -23,7 +22,6 @@ $(document).ready(function(){
                     tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
                     $("#graph").trigger("drawGraph",[start, tweets]);
-                    console.log("Data Graphed")
                 }
                 else{
                     $('#mariner h3').remove()

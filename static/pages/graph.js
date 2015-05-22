@@ -219,4 +219,14 @@ $(document).ready(function(){
         var color = $('#colorTweetSelection').val()
         $('.tweet').css('fill', color);
     });
+    $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
+        if (graph.qwargSet[dataSetName]){
+            graph.qwargSet[dataSetName].push(dataToAdd);
+            graph.draw();
+        }
+        else{
+            console.log("Invalid dataSetName");
+        }
+    });
 });
+// ADD Event that Adds Data to a Specified dataset

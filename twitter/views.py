@@ -34,20 +34,13 @@ class SearchView(View):
 
     def post(self, request):
         user_query = request.POST['search']   #the user searched for this  
-        print("In SearchView Route")
         if not user_query:
             return JsonResponse({"error" : "Please enter a search value"})
-        print("Making Twython Object")
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-        print("Searching Twitter Now....")
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
-        print("Twitter Results Returned")
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
-        print("Keyword Table Entry")
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
-        print("Filtered Keyword/Tweet M2M")
         new_tweets = []
-        print("Iterating Over Results")
         for response in twython_results['statuses']: #iterating through each tweet
 
             old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
@@ -56,7 +49,12 @@ class SearchView(View):
                 old_tweet[0].favorites = response['favorite_count']
                 old_tweet[0].save()
             else:
-                print("Getting Sentiment")
+                # Speeding this up would require adding tweets that have not 
+                # recieved a score to the database.
+                # I Could add A Delete View to Tweets 
+                # So i could delete tweets that didnt get a score
+                # Pass Tweet id in dict
+                # Add article models to the DB instead
                 alchemy_result = self.alchemyapi.sentiment('text', response['text'])  
                 if alchemy_result.get('status', False) != 'OK':
                     continue
@@ -67,7 +65,6 @@ class SearchView(View):
                 )   
 
                 formatted_date = datetime.datetime.strptime(response['created_at'], "%a %B %d %X %z %Y")
-
                 tweet = Tweet.objects.create(
                     text=response['text'], 
                     tweet_id=response['id_str'], 
@@ -76,16 +73,13 @@ class SearchView(View):
                     sentiment=tweet_sentiment_value
                 )
                 new_tweets.append(tweet)
-        print("Adding M2M List To Keyword")
         keyword.tweet.add(*new_tweets)
-        print("Merging Lists")
         all_tweets = new_tweets + list(stored_tweets_of_query)
-        print("Creating Dataset of Tweets")
+        # ADD TWEET ID
         tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
         data = {'tweets': tweet_dataset}
         if len(tweet_dataset) is 0:
             data = {'error': 'Please simplify your search'}
-        print("Returning Json")
         return JsonResponse(data)
 
 class SearchListView(View):
@@ -112,3 +106,16 @@ class SearchListView(View):
                     title=unique_tweet['text']
                 ))
         return JsonResponse({'tweets': list_dataset})
+
+class DeleteTweet(View):
+
+    def post(self, request, tweet_id):
+        tweet = Tweet.objects.filter(tweet_id=tweet_id)
+        if len(tweet) == 1:
+            tweet.delete()
+            data = {'success':'Successfully Deleted Tweet.'}
+        else:
+            data = {'error':'Tweet Not Found.'}
+        return JsonResponse(data)
+
+

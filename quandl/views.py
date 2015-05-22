@@ -9,8 +9,6 @@ import quandl.helper as help
 class QuandlHistoryView(View):
 
     def get(self, request, symbol, date_string):
-        # Might Add End Date
-        
         if not LastPrice.objects.filter(company__symbol__iexact=symbol): 
             return redirect('quandl:company-create', symbol=symbol)
 
@@ -25,26 +23,21 @@ class QuandlHistoryView(View):
 
     def post(self, request, symbol, date_string):
         last_close = LastPrice.objects.filter(company__symbol__iexact=symbol)
-
-        if not help.check_company(last_close): 
+        if not help.check_company(last_close):
             return redirect('quandl:company-create', symbol=symbol)
-
+        
         if not help.check_date(last_close):
             return redirect('quandl:history', symbol=symbol, date_string=date_string)
-
         company = last_close[0].company
         update_start = str(last_close[0].updated_at + datetime.timedelta(days=1))
         prices = Quandl.get_dataset(company.exchange, company.symbol, update_start)
-        
         if 'error' in prices:
             return JsonResponse(prices)
-
         if prices.get('data', False):
             stock_prices = help.stock_price_list(prices['data'], company)
             StockPrice.objects.bulk_create(stock_prices)  
             last_close[0].updated_at = prices['data'][0][0]
             last_close[0].save()
-
         if not date_string:
             date_string = 'January-1-2005'
         return redirect('quandl:history', symbol=symbol, date_string=date_string)
@@ -52,7 +45,10 @@ class QuandlHistoryView(View):
 class CreateCompanyView(View):
 
     def get(self, request, symbol):
+        print(6)
+        print(Markit.find_company(symbol))
         companies = [company for company in Markit.find_company(symbol) if not company['Exchange'].startswith('BAT')]
+        print(companies)
         return JsonResponse({'stocks': companies})
 
     def post(self, request, symbol):
