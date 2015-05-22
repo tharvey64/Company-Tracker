@@ -16,7 +16,7 @@ $(document).ready(function(){
                 $(".tweet").remove();
                 if (data.hasOwnProperty("tweets")){
                     
-                    var tweets = new Qwarg("sentiment", data.tweets, ".tweet");
+                    var tweets = new Qwarg("sentiment", data.tweets, "tweet");
                     tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
                     tweets.fill = "yellow";
                     tweets.radiusRange = [5,25];

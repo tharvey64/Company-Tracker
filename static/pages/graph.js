@@ -164,7 +164,7 @@ Graph.prototype.plot = function(qwarg){
         // throw "Missing Qwarg Type";
     }
     
-    svg.selectAll("circle" + qwarg.qwargClassString)
+    svg.selectAll("circle" + (qwarg.qwargClassString ? "." + qwarg.qwargClassString:""))
         .data(qwarg.qwargData)
         .enter()
         .append("circle")

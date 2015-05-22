@@ -38,6 +38,7 @@ class QuandlHistoryView(View):
         
         if 'error' in prices:
             # Redirect to An Error View
+            print(prices)
             return JsonResponse(prices)
 
         if prices.get('data', False):

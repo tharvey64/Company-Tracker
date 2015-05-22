@@ -74,7 +74,7 @@ $(document).ready(function(){
 
                 $("#graph").empty();
 
-                var company = new Qwarg("price", data.close, "." + symbol.toUpperCase());
+                var company = new Qwarg("price", data.close, symbol.toUpperCase());
                 company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
                 company.fill = "red";
                 company.radiusRange = [5,5];
@@ -108,7 +108,7 @@ $(document).ready(function(){
 
                         $("#graph").empty();
 
-                        var company = new Qwarg("price", data.close, "." + companyInfo.symbol);
+                        var company = new Qwarg("price", data.close, companyInfo.symbol);
                         company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
                         company.fill = "red";
                         company.radiusRange = [5,5];
@@ -124,11 +124,13 @@ $(document).ready(function(){
                         $("body").trigger("dataLoad");
                     }
                     else{
+                        // HERE
                         console.log(data.error);
                     }
                 });
             }
             else{
+                // HERE
                 console.log(data)
             }
         });
