@@ -6,12 +6,12 @@
         <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:company-create' %}" method="POST">
             {% csrf_token %}
             {% verbatim %}
-            <input type="hidden" name="start date" value="{{startDate}}" readonly>
+            <input type="hidden" name="start date" value="{{startDate}}" readonly/>
             <button class='companyForm btn btn-Primary'form="{{Exchange}}_{{Symbol}}" type="submit">
                 <ul class="company-info">
-                    <li><strong>Name: </strong><input type="text" name="name" value="{{Name}}" readonly></li>
-                    <li><strong>Symbol: </strong><input type="text" name="symbol" value="{{Symbol}}" readonly></li>
-                    <li><strong>Exchange: </strong><input type="text" name="exchange" value="{{Exchange}}" readonly></li>
+                    <li><strong>Name: </strong><input type="text" name="name" value="{{Name}}" readonly/></li>
+                    <li><strong>Symbol: </strong><input type="text" name="symbol" value="{{Symbol}}" readonly/></li>
+                    <li><strong>Exchange: </strong><input type="text" name="exchange" value="{{Exchange}}" readonly/></li>
                 </ul>
             </button>
         </form>
