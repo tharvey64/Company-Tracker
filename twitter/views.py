@@ -100,7 +100,6 @@ class SearchListView(View):
             return JsonResponse({'error': 'List Not Found.'})
 
         list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200)
-
         list_dataset = []
         for unique_tweet in list_of_tweets:
             if user_query.lower() in unique_tweet['text'].lower():
