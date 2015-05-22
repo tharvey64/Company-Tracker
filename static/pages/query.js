@@ -18,6 +18,27 @@ $(document).ready(function(){
         $("#loading").css("display", "block"); 
     });
 
+    $("body").on("serverError", function(event, message){
+        var template = $("#error-template").html();
+        Mustache.parse(template);
+        var info = Mustache.render(template, message);
+        $("#super-secretDivBam").html(info);
+
+        $("#super-secretDivBam").css("display", "block");
+        $("#loading").css("display", "none");
+        $("#backButton").css("display", "none");       
+        $(".returned").css("display", "none");  
+        $("#selectorButton").css("display", "none"); 
+        $('#fillSelector').css('display', 'none');
+        $('#tweetFill').css('display', 'none');               
+        $("#stories, #graph").empty();
+        $('#mariner h3').remove()
+        $(".navButs").animate({
+            opacity: 1
+        }, 2000);  
+        $("#forms").slideDown(1800);  
+    });
+    // Clear #super-secretDivBam Here
     $("#backButton").on("click", function(event) { 
         $("#backButton").css("display", "none");       
         $(".returned").css("display", "none");  
@@ -55,16 +76,6 @@ $(document).ready(function(){
 
         $("[href='#tab1']").parent('li').addClass('active').siblings().removeClass('active');               
     });
-    $("#color-form").on("submit", function(event){
-        event.preventDefault();
-        var color = $('#colorSelection').val()
-        $('.stock').css('fill', color);
-    });
-    $('#footer').on("click", '#colorTweetBut', function(event){
-        event.preventDefault();
-        var color = $('#colorTweetSelection').val()
-        $('.tweet').css('fill', color);
-    })
 });
 
 

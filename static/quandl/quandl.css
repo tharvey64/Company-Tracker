@@ -8,10 +8,6 @@
     display: none;
 }
 
-h3 {
-    margin-left: 7.375em;
-}
-
 .navButs p, #backbutton p, #selector p{
     color: white;
     font-size: 1.1em;

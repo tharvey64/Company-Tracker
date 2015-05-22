@@ -12,12 +12,12 @@ $(document).ready(function(){
         var company = $("input[name=company_name]").val()
         $.getJSON("/markit/search/", {"input_string": company},function(data){
             $("#graph").empty();
-            if (!data.list.length || data.list.Error){
-                console.log("" + (!data.list.length ? "Error" : data.list.Error));
-                $('#mariner h3').remove()
-                setTimeout(function(){ 
-                return $('#mariner').append("<h3>No results found</h3>");
-                }, 2800); 
+            if (!data.list.length){
+                console.log("1")
+                $("body").trigger("serverError", [{"error":"No Search Results Were Found."}]);
+            }
+            else if (data.list.Error || data.list.Message){
+                $("body").trigger("serverError", [{"error":"No Search Results Were Found."}]);
             }
             else {
                 var template = $("#search-result").html();

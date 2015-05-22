@@ -37,8 +37,6 @@ class QuandlHistoryView(View):
         prices = Quandl.get_dataset(company.exchange, company.symbol, update_start)
         
         if 'error' in prices:
-            # Redirect to An Error View
-            print(prices)
             return JsonResponse(prices)
 
         if prices.get('data', False):

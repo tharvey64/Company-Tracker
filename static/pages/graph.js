@@ -205,14 +205,26 @@ $(document).ready(function(){
     var graph = new Graph();
     var stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (stockQwarg && (qwarg.qwargType == "price")){
+        if (stockQwarg && qwarg.qwargType == "price"){
             delete graph.qwargSet[stockQwarg]
-            graph.highPrice = 0;
+            graph.highPrice = 0; 
+        }
+        if(qwarg.qwargType == "price"){
+            stockQwarg = qwarg.qwargClassString;
         }
         graph.endDate = endDate;
         graph.startDate = startDate;
         graph.qwargSet[qwarg.qwargClassString] = qwarg;
-        stockQwarg = qwarg.qwargClassString;
         graph.draw();
+    });
+    $("#fillSelector").on("submit", "#color-form",function(event){
+        event.preventDefault();
+        var color = $('#colorSelection').val()
+        $("."+ stockQwarg).css('fill', color);
+    });
+    $('#footer').on("click", '#colorTweetBut', function(event){
+        event.preventDefault();
+        var color = $('#colorTweetSelection').val()
+        $('.tweet').css('fill', color);
     });
 });

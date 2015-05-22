@@ -36,10 +36,7 @@ $(document).ready(function(){
         token = $("input[name='csrfmiddlewaretoken']").val(),
         date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
         if (symbol.length == 0){
-            $('#mariner h3').remove()
-            setTimeout(function(){ 
-            return $('#mariner').append("<h3>No results found</h3>"); 
-            }, 2800);       
+            $("body").trigger("serverError",[{"error":"No Symbol Input Found."}]);  
         }
         var template = $('#twitter-form').html();
         Mustache.parse(template);
@@ -49,10 +46,7 @@ $(document).ready(function(){
         $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
             if (data.stocks){
                 if (data.stocks.length == 0){
-                    $('#mariner h3').remove()
-                    setTimeout(function(){ 
-                    return $('#mariner').append("<h3>No results found</h3>");
-                }, 2800);
+                    $("body").trigger("serverError",[{"error":"Stock Data Not Found."}]);
                 }
                 for (i in data.stocks){
                     // do this loop in python
@@ -87,6 +81,9 @@ $(document).ready(function(){
                 $('#fillSelector').css('display', 'block');
 
                 $("body").trigger("dataLoad");
+            }
+            else{
+                $("body").trigger("serverError",[{"error":"Stock Search Failed"}]);
             }
         });
     });
@@ -123,15 +120,18 @@ $(document).ready(function(){
                         
                         $("body").trigger("dataLoad");
                     }
-                    else{
-                        // HERE
-                        console.log(data.error);
+                    else if (data.error){
+                        console.log(companyInfo)
+                        if (companyInfo.symbol == "NYXBT"){
+                            $("body").trigger("serverError",[{"error":"Ken, Stop."}]);
+                        }
+                        $("body").trigger("serverError",[{"error":"Quote Not Found. Please Try Again."}]);
                     }
                 });
             }
             else{
-                // HERE
-                console.log(data)
+
+                $("body").trigger("serverError",[{"error":"Company Not Found."}]);
             }
         });
     });
@@ -140,27 +140,4 @@ $(document).ready(function(){
             $('#login').addClass('open');
         }, 1);               
     });
-    // more thought required
-    // var dataset = []
-    // setInterval(function(){
-    //     $.getJSON("/markit/live_stock/",function(data){
-    //         if (data["Error"]){
-    //             console.log(data["Error"]);
-    //         }
-    //         else{
-
-    //             dataset.push([timestamp(data["Timestamp"]),data["LastPrice"]]);
-    //             var parseTimestamp = d3.time.format("%a %B %e %X %Z %Y").parse 
-    //         }       
-    //     });
-    // },50000);
 });
-
-// $("#graph").on("mouseenter","circle", function(){
-//     console.log($(this)[0].__data__[1])
-// });
-
-// $("#graph").on("mouseleave","circle", function(){
-//     console.log($(this).attr("class")+"Leave");
-// });
-
