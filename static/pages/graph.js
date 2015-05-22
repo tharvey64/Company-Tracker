@@ -197,8 +197,9 @@ $(document).ready(function(){
     graph = new Graph(),
     stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (stockQwarg && qwarg.qwargType == "price"){
+        if (stockQwarg != qwarg.qwargClassString){
             delete graph.qwargSet[stockQwarg]
+            delete graph.qwargSet["tweet"]
             graph.highPrice = 0; 
         }
         if(qwarg.qwargType == "price"){
