@@ -11,7 +11,7 @@ from tracker_project.settings import TWITTER_KEY, TWITTER_SECRET
 class AppView(View):
     twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
     auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
-
+    
     def get(self, request):
         request.session['OAUTH_TOKEN'] = self.auth['oauth_token']
         request.session['OAUTH_TOKEN_SECRET'] = self.auth['oauth_token_secret']
@@ -89,7 +89,18 @@ class SearchListView(View):
         user_query = request.POST['search'] 
         profile = Profile.objects.filter(user__pk=request.user.id)
         twitter = Twython(TWITTER_KEY, TWITTER_SECRET, profile[0].token, profile[0].secret)
-        list_of_tweets = twitter.get_list_statuses(slug=request.POST['listName'], owner_screen_name=request.user.username, count=200)
+
+        users_lists = twitter.show_owned_lists(screen_name=request.user.username)
+
+        owned_list_names = [item['name'].lower() for item in users_lists['lists']]
+
+        list_name = request.POST['listName']
+
+        if list_name.lower() not in owned_list_names: 
+            return JsonResponse({'error': 'List Not Found.'})
+
+        list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200)
+
         list_dataset = []
         for unique_tweet in list_of_tweets:
             if user_query.lower() in unique_tweet['text'].lower():
@@ -107,15 +118,15 @@ class SearchListView(View):
                 ))
         return JsonResponse({'tweets': list_dataset})
 
-class DeleteTweet(View):
+# class DeleteTweet(View):
 
-    def post(self, request, tweet_id):
-        tweet = Tweet.objects.filter(tweet_id=tweet_id)
-        if len(tweet) == 1:
-            tweet.delete()
-            data = {'success':'Successfully Deleted Tweet.'}
-        else:
-            data = {'error':'Tweet Not Found.'}
-        return JsonResponse(data)
+#     def post(self, request, tweet_id):
+#         tweet = Tweet.objects.filter(tweet_id=tweet_id)
+#         if len(tweet) == 1:
+#             tweet.delete()
+#             data = {'success':'Successfully Deleted Tweet.'}
+#         else:
+#             data = {'error':'Tweet Not Found.'}
+#         return JsonResponse(data)
 
 

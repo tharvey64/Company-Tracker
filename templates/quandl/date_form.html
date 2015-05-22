@@ -6,7 +6,7 @@
             <legend>Stock Look Up</legend>
             <label for="company_symbol">Symbol: </label>
             {% verbatim %}
-                <input type="search" name="company_symbol" value="{{ticker}}">
+                <input type="search" name="company_symbol" value="{{ticker}}" required>
             {% endverbatim %}
             <label for="month_start">Month</label>
             <select id="month_start" name="month_start">

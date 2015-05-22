@@ -37,6 +37,10 @@ $(document).ready(function(){
             opacity: 1
         }, 2000);  
         $("#forms").slideDown(1800);  
+        setTimeout(function(){ 
+            $("#super-secretDivBam").css("display", "none"); 
+            $("#super-secretDivBam").css("display", "none"); 
+        }, 3000);
     });
     // Clear #super-secretDivBam Here
     $("#backButton").on("click", function(event) { 
