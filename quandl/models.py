@@ -43,6 +43,7 @@ class Quandl:
         if response.status_code == 200:
             return response.json()
         return {'error': response.status_code}
+        # Use other formats to get data
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #
     # --------------------|---------------------|---------#

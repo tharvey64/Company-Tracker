@@ -130,6 +130,7 @@ $(document).ready(function(){
                 });
             }
             else{
+
                 $("body").trigger("serverError",[{"error":"Company Not Found."}]);
             }
         });
@@ -139,27 +140,4 @@ $(document).ready(function(){
             $('#login').addClass('open');
         }, 1);               
     });
-    // more thought required
-    // var dataset = []
-    // setInterval(function(){
-    //     $.getJSON("/markit/live_stock/",function(data){
-    //         if (data["Error"]){
-    //             console.log(data["Error"]);
-    //         }
-    //         else{
-
-    //             dataset.push([timestamp(data["Timestamp"]),data["LastPrice"]]);
-    //             var parseTimestamp = d3.time.format("%a %B %e %X %Z %Y").parse 
-    //         }       
-    //     });
-    // },50000);
 });
-
-// $("#graph").on("mouseenter","circle", function(){
-//     console.log($(this)[0].__data__[1])
-// });
-
-// $("#graph").on("mouseleave","circle", function(){
-//     console.log($(this).attr("class")+"Leave");
-// });
-

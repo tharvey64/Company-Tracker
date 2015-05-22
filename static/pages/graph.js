@@ -205,9 +205,11 @@ $(document).ready(function(){
     var graph = new Graph();
     var stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (stockQwarg || (qwarg.qwargType == "price")){
+        if (stockQwarg && qwarg.qwargType == "price"){
             delete graph.qwargSet[stockQwarg]
-            graph.highPrice = 0;
+            graph.highPrice = 0; 
+        }
+        if(qwarg.qwargType == "price"){
             stockQwarg = qwarg.qwargClassString;
         }
         graph.endDate = endDate;
