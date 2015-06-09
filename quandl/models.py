@@ -1,7 +1,7 @@
 import datetime
+import os
 from django.db import models
 import requests
-from tracker_project.settings import QUANDL_KEY
 
 # Move Company to Markit
 class Company(models.Model):
@@ -24,7 +24,7 @@ class LastPrice(models.Model):
     company = models.ForeignKey(Company)
 
 class Quandl:
-    api_key = QUANDL_KEY
+    api_key = os.environ['QUANDL_KEY']
     base_url = 'https://www.quandl.com/api/v1/datasets/'
     format =  'json'
     db = 'GOOG'

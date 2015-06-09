@@ -1,4 +1,5 @@
 import datetime
+import os
 from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
@@ -6,22 +7,22 @@ from twython import Twython
 from sentiment.alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
 from twitter.models import Tweet, Keyword, Profile
-from tracker_project.settings import TWITTER_KEY, TWITTER_SECRET 
 
 class AppView(View):
-    twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
-    auth = twitter.get_authentication_tokens(callback_url='http://127.0.0.1:8000/twitter/callback')
-    
+    twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'])
+
     def get(self, request):
-        request.session['OAUTH_TOKEN'] = self.auth['oauth_token']
-        request.session['OAUTH_TOKEN_SECRET'] = self.auth['oauth_token_secret']
-        return redirect(self.auth['auth_url'])
+        callback_url = request.META['HTTP_REFERER'] + 'twitter/callback'
+        auth = self.twitter.get_authentication_tokens(callback_url=callback_url)
+        request.session['OAUTH_TOKEN'] = auth['oauth_token']
+        request.session['OAUTH_TOKEN_SECRET'] = auth['oauth_token_secret']
+        return redirect(auth['auth_url'])
 
 class CallbackView(View):
 
     def get(self, request):
         oauth_verifier = request.GET['oauth_verifier']
-        twitter = Twython(TWITTER_KEY, TWITTER_SECRET,
+        twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'],
             request.session['OAUTH_TOKEN'], request.session['OAUTH_TOKEN_SECRET'])
         final_step = twitter.get_authorized_tokens(oauth_verifier)
         request.session['OAUTH_TOKEN'] = final_step['oauth_token']
@@ -36,7 +37,7 @@ class SearchView(View):
         user_query = request.POST['search']   #the user searched for this  
         if not user_query:
             return JsonResponse({"error" : "Please enter a search value"})
-        twitter = Twython(TWITTER_KEY, TWITTER_SECRET)
+        twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'])
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
@@ -49,12 +50,6 @@ class SearchView(View):
                 old_tweet[0].favorites = response['favorite_count']
                 old_tweet[0].save()
             else:
-                # Speeding this up would require adding tweets that have not 
-                # recieved a score to the database.
-                # I Could add A Delete View to Tweets 
-                # So i could delete tweets that didnt get a score
-                # Pass Tweet id in dict
-                # Add article models to the DB instead
                 alchemy_result = self.alchemyapi.sentiment('text', response['text'])  
                 if alchemy_result.get('status', False) != 'OK':
                     continue
@@ -88,7 +83,7 @@ class SearchListView(View):
     def post(self, request):
         user_query = request.POST['search'] 
         profile = Profile.objects.filter(user__pk=request.user.id)
-        twitter = Twython(TWITTER_KEY, TWITTER_SECRET, profile[0].token, profile[0].secret)
+        twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'], profile[0].token, profile[0].secret)
 
         users_lists = twitter.show_owned_lists(screen_name=request.user.username)
 

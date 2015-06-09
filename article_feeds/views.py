@@ -11,7 +11,7 @@ class YahooArticleListView(View):
     site = "http://finance.yahoo.com/rss/headline?s="
 
     def get(self, request, symbol):
-        feed_response = feedparser.parse(self.site + symbol)
+        feed_response = feedparser.parse(str(self.site) + symbol)
         entries = feed_response['entries']
         return JsonResponse({'articles': entries})
 
