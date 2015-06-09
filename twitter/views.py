@@ -59,7 +59,7 @@ class SearchView(View):
                     value=alchemy_result['docSentiment']['type']
                 )   
 
-                formatted_date = datetime.datetime.strptime(response['created_at'], "%a %B %d %X %z %Y")
+                formatted_date = datetime.datetime.strptime(response['created_at'], "%a %b %d %X %z %Y")
                 tweet = Tweet.objects.create(
                     text=response['text'], 
                     tweet_id=response['id_str'], 
