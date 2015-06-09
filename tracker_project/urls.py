@@ -7,6 +7,6 @@ urlpatterns = [
     url(r'^twitter/', include('twitter.urls', namespace='twitter')),
     url(r'^article_feeds/', include('article_feeds.urls', namespace='article_feeds')),
     url(r'^users/', include('users.urls', namespace='users')),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', include('pages.urls', namespace='pages'))   
+    url(r'^$', include('pages.urls', namespace='pages')),  
+    url(r'^admin/', include(admin.site.urls)), 
 ]
