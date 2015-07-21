@@ -103,7 +103,7 @@ class SearchListView(View):
                 if not alchemy_result.get('docSentiment', False):
                     continue
                 unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
-                unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %B %d %X %z %Y")
+                unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %b %d %X %z %Y")
                 list_dataset.append(dict(
                     date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
                     height=unique_tweet['sentiment'], 
