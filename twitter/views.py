@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
@@ -53,7 +54,6 @@ class SearchView(View):
                 alchemy_result = self.alchemyapi.sentiment('text', response['text'])  
                 if alchemy_result.get('status', False) != 'OK':
                     continue
-
                 tweet_sentiment_value = Sentiment.objects.create(
                     score=alchemy_result['docSentiment'].get('score', 0), 
                     value=alchemy_result['docSentiment']['type']
@@ -78,6 +78,7 @@ class SearchView(View):
         return JsonResponse(data)
 
 class SearchListView(View):
+    # Do This SomeWhere Else
     alchemyapi = AlchemyAPI()
 
     def post(self, request):
@@ -94,7 +95,7 @@ class SearchListView(View):
         if list_name.lower() not in owned_list_names: 
             return JsonResponse({'error': 'List Not Found.'})
 
-        list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200)
+        list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=500)
         list_dataset = []
         for unique_tweet in list_of_tweets:
             if user_query.lower() in unique_tweet['text'].lower():

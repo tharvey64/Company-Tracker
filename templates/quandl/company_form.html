@@ -3,15 +3,19 @@
     <ul class="company-list">
         {{#result}}
         <li>
-        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:company-create' %}" method="POST">
+        <p class="test">NEW API TEST: ROUTE CHANGED</p>
+        // This Form ID Is Stupid 
+        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:history' %}" method="GET">
             {% csrf_token %}
             {% verbatim %}
-            <input type="hidden" name="start date" value="{{startDate}}" readonly/>
+            <input type="hidden" name="start date" value="{{startDate}}">
+            <input type="hidden" name="symbol" value="{{Symbol}}">
+            <input type="hidden" name="exchange" value="{{Exchange}}">
             <button class='companyForm btn btn-Primary'form="{{Exchange}}_{{Symbol}}" type="submit">
                 <ul class="company-info">
-                    <li><strong>Name: </strong><input type="text" name="name" value="{{Name}}" readonly/></li>
-                    <li><strong>Symbol: </strong><input type="text" name="symbol" value="{{Symbol}}" readonly/></li>
-                    <li><strong>Exchange: </strong><input type="text" name="exchange" value="{{Exchange}}" readonly/></li>
+                    <li><p><strong>Name: </strong>{{Name}}</p></li>
+                    <li><p><strong>Symbol: </strong>{{Symbol}}</p></li>
+                    <li><p><strong>Exchange: </strong>{{Exchange}}</p></li>
                 </ul>
             </button>
         </form>

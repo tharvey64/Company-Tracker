@@ -3,26 +3,6 @@ import os
 from django.db import models
 import requests
 
-# Move Company to Markit
-class Company(models.Model):
-    name = models.CharField(max_length=60)
-    symbol = models.CharField(max_length=15,unique=True)
-    exchange = models.CharField(max_length=30)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class StockPrice(models.Model):
-    open_price = models.DecimalField(decimal_places=2, max_digits=8)
-    close_price = models.DecimalField(decimal_places=2, max_digits=8)
-    high_price = models.DecimalField(decimal_places=2, max_digits=8) 
-    low_price = models.DecimalField(decimal_places=2, max_digits=8)
-    volume = models.DecimalField(decimal_places=2, max_digits=12)
-    company = models.ForeignKey(Company)
-    created_at = models.DateField()
-
-class LastPrice(models.Model):
-    updated_at = models.DateField(default=datetime.date(2004,12,31))
-    company = models.ForeignKey(Company)
-
 class Quandl:
     api_key = os.environ['QUANDL_KEY']
     base_url = 'https://www.quandl.com/api/v1/datasets/'
@@ -32,6 +12,7 @@ class Quandl:
     @classmethod
     def get_dataset(cls, exchange, symbol, start_date):
         # yahoo and google format
+        print("2")
         code = "{}/{}_{}".format(cls.db,exchange,symbol)
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}'.format(
             db_code=code,
