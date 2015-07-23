@@ -1,6 +1,5 @@
 import datetime
 import os
-import re
 from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
@@ -33,7 +32,8 @@ class CallbackView(View):
 
 class SearchView(View):
     alchemyapi = AlchemyAPI()
-
+    # To Do This Somewhere else I Need To Send The Data to Do 
+    # So What Do I Need To Send Back To The HTML 
     def post(self, request):
         user_query = request.POST['search']   #the user searched for this  
         if not user_query:
@@ -51,6 +51,7 @@ class SearchView(View):
                 old_tweet[0].favorites = response['favorite_count']
                 old_tweet[0].save()
             else:
+                # DO NOT DO THIS HERE
                 alchemy_result = self.alchemyapi.sentiment('text', response['text'])  
                 if alchemy_result.get('status', False) != 'OK':
                     continue
@@ -58,8 +59,16 @@ class SearchView(View):
                     score=alchemy_result['docSentiment'].get('score', 0), 
                     value=alchemy_result['docSentiment']['type']
                 )   
-
+                # ------------------------------------------
+                # OOOORRRR I CAN CHANGE THE MODEL
                 formatted_date = datetime.datetime.strptime(response['created_at'], "%a %b %d %X %z %Y")
+                #tweet = dict(new='True',
+                    # keyword=
+                    # text=response['text'], 
+                    # tweet_id=response['id_str'], 
+                    # favorites=response['favorite_count'],
+                    # tweet_date=formatted_date
+                    #)
                 tweet = Tweet.objects.create(
                     text=response['text'], 
                     tweet_id=response['id_str'], 
@@ -69,7 +78,10 @@ class SearchView(View):
                 )
                 new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
-        all_tweets = new_tweets + list(stored_tweets_of_query)
+        # Process Tweet Objects
+        # stored = [dict(new=False, date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in stored_tweets_of_query]
+        # all_tweets = new_tweets + stored
+        all_tweets = new_tweets + stored_tweets_of_query
         # ADD TWEET ID
         tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
         data = {'tweets': tweet_dataset}
@@ -98,19 +110,19 @@ class SearchListView(View):
         list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=500)
         list_dataset = []
         for unique_tweet in list_of_tweets:
-            if user_query.lower() in unique_tweet['text'].lower():
-
-                alchemy_result = self.alchemyapi.sentiment("text", unique_tweet['text'])
-                if not alchemy_result.get('docSentiment', False):
-                    continue
-                unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
-                unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %b %d %X %z %Y")
-                list_dataset.append(dict(
-                    date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
-                    height=unique_tweet['sentiment'], 
-                    radius=unique_tweet['favorite_count'], 
-                    title=unique_tweet['text']
-                ))
+            if user_query.lower() not in unique_tweet['text'].lower():
+                continue
+            alchemy_result = self.alchemyapi.sentiment("text", unique_tweet['text'])
+            if not alchemy_result.get('docSentiment', False):
+                continue
+            unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
+            unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %b %d %X %z %Y")
+            list_dataset.append(dict(
+                date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
+                height=unique_tweet['sentiment'], 
+                radius=unique_tweet['favorite_count'], 
+                title=unique_tweet['text']
+            ))
         return JsonResponse({'tweets': list_dataset})
 
 # class DeleteTweet(View):
@@ -123,5 +135,3 @@ class SearchListView(View):
 #         else:
 #             data = {'error':'Tweet Not Found.'}
 #         return JsonResponse(data)
-
-

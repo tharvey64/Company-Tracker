@@ -84,7 +84,7 @@ $(document).ready(function(){
             }
         });
     });
-    // What Is This 
+
     $('#loginEmail, #loginPassword').on('click', function(event){
         setTimeout(function(){      
             $('#login').addClass('open');
