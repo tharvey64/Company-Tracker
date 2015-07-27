@@ -47,12 +47,14 @@ Graph.prototype.setDateScale = function(){
     this.dateScale.range([this.padding, this.graphWidth-this.padding]);
 }
 Graph.prototype.setPriceScale = function(qwarg){
-    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height) * 1.2)});
+    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height)*1.05)});
+    var low = d3.min(qwarg.qwargData, function(d){return (parseFloat(d.height)*0.95)});
     if (!this.priceScale){
         this.highPrice = high;
         this.priceScale = d3.scale.linear();
         this.priceScale.range([this.graphHeight - this.padding, this.padding]);
-        this.priceScale.domain([0 ,high]);
+        // add low price
+        this.priceScale.domain([low ,high]);
         return true;
     }
     else{
@@ -118,8 +120,6 @@ Graph.prototype.draw = function(){
             sentiment = true;
         }
     }
-    // Fixes Rescaling Issue 
-    // Breaks New Stock Search
     if (!this.dateScale){
         this.setDateScale();
     }
@@ -203,10 +203,9 @@ $(document).ready(function(){
     stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
         if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
+            // Evaluate If This Is Needed 
             delete graph.qwargSet[stockQwarg]
             delete graph.qwargSet["tweet"]
-            // Hack For dateScale
-            // Does Not Work on Research of Same Stock
             graph.dateScale = false;
             stockQwarg = qwarg.qwargClassString;
             graph.highPrice = 0; 
