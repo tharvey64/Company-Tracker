@@ -2,6 +2,7 @@ $(document).ready(function(){
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
         var startDate = $("#twitterForm input[name='start date']").val();
+        var token = $(this).children('input[name="csrfmiddlewaretoken"]').val();
         $('#tweetFill').css('display', 'block');
         $.post($(this).attr("action") + $("#path").val(),
             $("#twitterForm").serialize(),
@@ -14,6 +15,17 @@ $(document).ready(function(){
                     $('#mariner h3').remove();
                 }
                 else if (data.hasOwnProperty("tweets")){
+                    // Add reviver
+                    tweetsFound = JSON.parse(data.tweets);
+                    console.log(data.tweets.length);
+                    var tweetsLength = tweetsFound.length;
+                    for (i = 0; i < 1; i++){
+                        // send tweet to sentiment eval
+                        tweetsFound[i]['csrfmiddlewaretoken'] = token;
+                        $.post('/sentiment/text/',tweetsFound[i],function(data){
+                            console.log(data);
+                        });
+                    }
                     var tweets = new Qwarg("sentiment", data.tweets, "tweet");
                     tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
                     if ($('#colorTweetSelection').val() == undefined){

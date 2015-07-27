@@ -1,12 +1,21 @@
 import datetime
 import os
+import json
 from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
+from django.core import serializers
 from twython import Twython
 from sentiment.alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
 from twitter.models import Tweet, Keyword, Profile
+
+def tweet_to_json(python_object):
+    if isinstance(python_object, datetime.datetime):
+        return {'__class__': 'datetime.datetime',
+            '__value__': python_object.strftime("%Y-%m-%d %H:%M:%S%z")}
+    raise TypeError(repr(python_object) + ' is not JSON serializable')
+
 
 class AppView(View):
     twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'])
@@ -35,56 +44,46 @@ class SearchView(View):
     # To Do This Somewhere else I Need To Send The Data to Do 
     # So What Do I Need To Send Back To The HTML 
     def post(self, request):
-        user_query = request.POST['search']   #the user searched for this  
+        user_query = request.POST['search']  #the user searched for this  
         if not user_query:
             return JsonResponse({"error" : "Please enter a search value"})
         twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'])
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
+        
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
         new_tweets = []
         for response in twython_results['statuses']: #iterating through each tweet
 
             old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
-            
+            # maybe do this in place
             if old_tweet and len(old_tweet) == 1:
                 old_tweet[0].favorites = response['favorite_count']
                 old_tweet[0].save()
             else:
-                # DO NOT DO THIS HERE
-                alchemy_result = self.alchemyapi.sentiment('text', response['text'])  
-                if alchemy_result.get('status', False) != 'OK':
-                    continue
-                tweet_sentiment_value = Sentiment.objects.create(
-                    score=alchemy_result['docSentiment'].get('score', 0), 
-                    value=alchemy_result['docSentiment']['type']
-                )   
-                # ------------------------------------------
-                # OOOORRRR I CAN CHANGE THE MODEL
                 formatted_date = datetime.datetime.strptime(response['created_at'], "%a %b %d %X %z %Y")
-                #tweet = dict(new='True',
-                    # keyword=
-                    # text=response['text'], 
-                    # tweet_id=response['id_str'], 
-                    # favorites=response['favorite_count'],
-                    # tweet_date=formatted_date
-                    #)
                 tweet = Tweet.objects.create(
                     text=response['text'], 
                     tweet_id=response['id_str'], 
                     favorites=response['favorite_count'],
-                    tweet_date=formatted_date, 
-                    sentiment=tweet_sentiment_value
+                    tweet_date=formatted_date
                 )
                 new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
         # Process Tweet Objects
         # stored = [dict(new=False, date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in stored_tweets_of_query]
         # all_tweets = new_tweets + stored
-        all_tweets = new_tweets + stored_tweets_of_query
-        # ADD TWEET ID
-        tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
-        data = {'tweets': tweet_dataset}
+        all_tweets = new_tweets + list(stored_tweets_of_query)
+        raw_tweets = serializers.serialize("python", all_tweets,fields=('text','tweet_id','favorites','tweet_date'))
+        
+        # tweet_dataset = [json.JSONEncoder(default=to_json).encode(row) for row in all_tweets]
+        # tweets = keyword.tweet.all().value('text','tweet_id','favorites','tweet_date')
+        tweet_dataset = [t['fields'] for t in raw_tweets]
+        # print(json.dumps(list(tweet_dataset),default=to_json))
+        # print(tweet_dataset)
+        # tweet_dataset = [dict(date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in all_tweets]
+        # print(m)
+        data = {'tweets': json.dumps(list(tweet_dataset),default=tweet_to_json)}
         if len(tweet_dataset) is 0:
             data = {'error': 'Please simplify your search'}
         return JsonResponse(data)
