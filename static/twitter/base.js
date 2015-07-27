@@ -1,7 +1,7 @@
 $(document).ready(function(){    
     $("#footer").on("submit", "#twitterForm", function(event){
         event.preventDefault();
-        var startDate = $("#twitterForm input[name='start date']").val();
+        var startDate = $(this).children("input[name='start date']").val();
         var token = $(this).children('input[name="csrfmiddlewaretoken"]').val();
         $('#tweetFill').css('display', 'block');
         $.post($(this).attr("action") + $("#path").val(),
