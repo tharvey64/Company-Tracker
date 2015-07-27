@@ -8,7 +8,6 @@ class Tweet(models.Model):
     tweet_id = models.CharField(max_length=30)
     favorites = models.IntegerField()
     tweet_date = models.DateTimeField()    
-    # sentiment = models.ForeignKey(Sentiment)
 
 class Keyword(models.Model):
     search =  models.CharField(max_length=40)

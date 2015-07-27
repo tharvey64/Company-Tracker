@@ -12,7 +12,6 @@ class Quandl:
     @classmethod
     def get_dataset(cls, exchange, symbol, start_date):
         # yahoo and google format
-        print("2")
         code = "{}/{}_{}".format(cls.db,exchange,symbol)
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}'.format(
             db_code=code,

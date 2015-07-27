@@ -15,18 +15,8 @@ $(document).ready(function(){
                     $('#mariner h3').remove();
                 }
                 else if (data.hasOwnProperty("tweets")){
-                    // Add reviver
-                    tweetsFound = JSON.parse(data.tweets);
-                    console.log(data.tweets.length);
-                    var tweetsLength = tweetsFound.length;
-                    for (i = 0; i < 1; i++){
-                        // send tweet to sentiment eval
-                        tweetsFound[i]['csrfmiddlewaretoken'] = token;
-                        $.post('/sentiment/text/',tweetsFound[i],function(data){
-                            console.log(data);
-                        });
-                    }
-                    var tweets = new Qwarg("sentiment", data.tweets, "tweet");
+                    // Graph Data Setup
+                    var tweets = new Qwarg("sentiment", [], "tweet");
                     tweets.qwargParseDate = d3.time.format("%Y-%m-%d %X%Z").parse;
                     if ($('#colorTweetSelection').val() == undefined){
                        tweets.fill = "yellow"; 
@@ -37,7 +27,21 @@ $(document).ready(function(){
                     tweets.radiusRange = [5,25];
                     tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
-                    $("#graph").trigger("drawGraph",[start, tweets]);
+
+                    var tweetsFound = JSON.parse(data.tweets);
+                    var tweetsLength = tweetsFound.length;
+                    for (i = 0; i < tweetsLength; i++){
+                        // send tweet to sentiment eval
+                        tweetsFound[i]['csrfmiddlewaretoken'] = token;
+                        $.post('/sentiment/text/',tweetsFound[i],function(data){
+                            if (!data.hasOwnProperty('error')){
+                                tweets.qwargData.push(data);
+                                $("#graph").trigger("drawGraph",[start, tweets]);
+                                // $("#graph").trigger("addToDataSet",["tweet",data]);
+                            }
+                        });
+                    }
+                    // $("#graph").trigger("drawGraph",[start, tweets]);
                 }
                 else{
                     $('#mariner h3').remove()

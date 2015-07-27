@@ -39,6 +39,7 @@ Graph.prototype.sentimentScale = function(){
     return d3.scale.linear().domain([-1,1]).range([this.graphHeight - this.padding, this.padding]);
 }
 Graph.prototype.setDateScale = function(){
+    // This Is Causes an Error When Run More Than Once
     this.startDate.setDate(this.startDate.getDate()-1);
     this.endDate.setDate(this.endDate.getDate()+1);
     this.dateScale = d3.time.scale()
@@ -117,7 +118,9 @@ Graph.prototype.draw = function(){
             sentiment = true;
         }
     }
-    this.setDateScale();
+    if (!this.dateScale){
+        this.setDateScale();
+    }
     // Drawing Axis
     if (sentiment){
         this.drawYAxis(this.sentimentScale(), "translate(" + (this.graphWidth-this.padding) +",0)");

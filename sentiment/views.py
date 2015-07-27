@@ -37,13 +37,13 @@ class TextSentimentView(View):
     def get(self, request):
         tweet_id = request.GET.get('tweet_id',False)
         if not tweet_id:
-            return JsonResponse(dict(message='Empty Sentiment Get'))
+            return JsonResponse(dict(error='Empty Sentiment Get'))
         obj = Tweet.objects.get(tweet_id=tweet_id)
         tweet_type = ContentType.objects.get_for_model(obj)
         sentiment = Sentiment.objects.filter(content_type__pk=tweet_type.id,object_id=obj.id)
         # This Should Check If Sentiment Returns Anything other Than 1
         if len(sentiment) == 0:
-            return JsonResponse(dict(message='No Sentiment In DB'))
+            return JsonResponse(dict(error='No Sentiment In DB'))
         q = dict(date=obj.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), 
             height=sentiment[0].score, radius=obj.favorites, title=obj.text)
         return JsonResponse(q)
