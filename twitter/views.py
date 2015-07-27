@@ -41,14 +41,13 @@ class CallbackView(View):
 
 class SearchView(View):
     alchemyapi = AlchemyAPI()
-    # To Do This Somewhere else I Need To Send The Data to Do 
-    # So What Do I Need To Send Back To The HTML 
     def post(self, request):
         user_query = request.POST['search']  #the user searched for this  
         if not user_query:
             return JsonResponse({"error" : "Please enter a search value"})
         twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'])
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
+        
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
         
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
@@ -66,6 +65,7 @@ class SearchView(View):
                 previous_tweet = Tweet.objects.filter(tweet_id=response['id_str'])
                 if len(previous_tweet) == 0:
                     formatted_date = datetime.datetime.strptime(response['created_at'], "%a %b %d %X %z %Y")
+                    
                     tweet = Tweet.objects.create(
                         text=response['text'], 
                         tweet_id=response['id_str'], 
@@ -85,7 +85,6 @@ class SearchView(View):
         all_tweets = new_tweets + list(stored_tweets_of_query)
         raw_tweets = serializers.serialize("python", all_tweets,fields=('text','tweet_id','favorites','tweet_date'))
         
-        # tweet_dataset = [json.JSONEncoder(default=to_json).encode(row) for row in all_tweets]
         # tweets = keyword.tweet.all().value('text','tweet_id','favorites','tweet_date')
         tweet_dataset = [t['fields'] for t in raw_tweets]
         # print(json.dumps(list(tweet_dataset),default=to_json))

@@ -3,8 +3,6 @@
     <ul class="company-list">
         {{#result}}
         <li>
-        <p class="test">NEW API TEST: ROUTE CHANGED</p>
-        // This Form ID Is Stupid 
         <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:history' %}" method="GET">
             {% csrf_token %}
             {% verbatim %}
