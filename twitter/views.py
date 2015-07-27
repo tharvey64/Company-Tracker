@@ -61,14 +61,23 @@ class SearchView(View):
                 old_tweet[0].favorites = response['favorite_count']
                 old_tweet[0].save()
             else:
-                formatted_date = datetime.datetime.strptime(response['created_at'], "%a %b %d %X %z %Y")
-                tweet = Tweet.objects.create(
-                    text=response['text'], 
-                    tweet_id=response['id_str'], 
-                    favorites=response['favorite_count'],
-                    tweet_date=formatted_date
-                )
-                new_tweets.append(tweet)
+                # look this over
+                tweet = None
+                previous_tweet = Tweet.objects.filter(tweet_id=response['id_str'])
+                if len(previous_tweet) == 0:
+                    formatted_date = datetime.datetime.strptime(response['created_at'], "%a %b %d %X %z %Y")
+                    tweet = Tweet.objects.create(
+                        text=response['text'], 
+                        tweet_id=response['id_str'], 
+                        favorites=response['favorite_count'],
+                        tweet_date=formatted_date
+                    )
+                elif len(previous_tweet) == 1:
+                    previous_tweet[0].favorites = response['favorite_count']
+                    previous_tweet[0].save()
+                    tweet = previous_tweet
+                if tweet:
+                    new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
         # Process Tweet Objects
         # stored = [dict(new=False, date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in stored_tweets_of_query]

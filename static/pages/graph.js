@@ -118,6 +118,8 @@ Graph.prototype.draw = function(){
             sentiment = true;
         }
     }
+    // Fixes Rescaling Issue 
+    // Breaks New Stock Search
     if (!this.dateScale){
         this.setDateScale();
     }
@@ -203,6 +205,9 @@ $(document).ready(function(){
         if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
             delete graph.qwargSet[stockQwarg]
             delete graph.qwargSet["tweet"]
+            // Hack For dateScale
+            // Does Not Work on Research of Same Stock
+            graph.dateScale = false;
             stockQwarg = qwarg.qwargClassString;
             graph.highPrice = 0; 
         }
@@ -232,6 +237,9 @@ $(document).ready(function(){
         else{
             console.log("Invalid dataSetName");
         }
+    });
+    $("body").on("click", "#backButton", function(event){
+        graph = new Graph();
     });
 });
 // ADD Event that Adds Data to a Specified dataset
