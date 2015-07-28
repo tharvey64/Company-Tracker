@@ -20,7 +20,7 @@ class QuandlHistoryView(View):
         # ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         # Date = 'YYYY-MM-DD' << month and Day are zero padded
         # print(stock_history)
-        if stock_history:
+        if stock_history and 'data' in stock_history:
             processed_data = [dict(date=day[0], height=day[4], radius=day[5], title=day[0]) for day in stock_history['data']]
             data = {'symbol': symbol,'close': processed_data}
         else:
