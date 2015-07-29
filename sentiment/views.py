@@ -16,10 +16,12 @@ class TextSentimentView(View):
         tweet_id = request.POST.get('tweet_id',False)
         if not tweet_id:
             return redirect('sentiment:text')
+        
         # Get Tweet And Check If It Has Sentiment In DB
         obj = Tweet.objects.get(tweet_id=tweet_id)
         tweet_type = ContentType.objects.get_for_model(obj)
         sentiment = Sentiment.objects.filter(content_type__pk=tweet_type.id,object_id=obj.id)
+        
         if len(sentiment) == 0:
             alchemy_result = self.alchemy.sentiment('text', obj.text)  
             if alchemy_result.get('status', False) != 'OK':
@@ -30,6 +32,7 @@ class TextSentimentView(View):
                 value=alchemy_result['docSentiment']['type'],
                 content_object=obj
             )
+        
         # Build the Redirect Route
         route = '/sentiment/text/?tweet_id={}'.format(tweet_id)
         return redirect(route)
@@ -41,6 +44,7 @@ class TextSentimentView(View):
         obj = Tweet.objects.get(tweet_id=tweet_id)
         tweet_type = ContentType.objects.get_for_model(obj)
         sentiment = Sentiment.objects.filter(content_type__pk=tweet_type.id,object_id=obj.id)
+        
         # This Should Check If Sentiment Returns Anything other Than 1
         if len(sentiment) == 0:
             return JsonResponse(dict(error='No Sentiment In DB'))

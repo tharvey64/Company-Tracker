@@ -47,13 +47,14 @@ class SearchView(View):
             return JsonResponse({"error" : "Please enter a search value"})
         twitter = Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'])
         twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
-        
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
         
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
         new_tweets = []
         for response in twython_results['statuses']: #iterating through each tweet
-
+            # print('entities:',response['entities'])
+            # Use hashtags
+            # All Information For Other Keywords is in entities
             old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
             # maybe do this in place
             if old_tweet and len(old_tweet) == 1:
@@ -82,6 +83,7 @@ class SearchView(View):
         # Process Tweet Objects
         # stored = [dict(new=False, date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in stored_tweets_of_query]
         # all_tweets = new_tweets + stored
+        # CHANGE THIS TO BE TWEET_ID ONLY!!!!!!!!!!
         all_tweets = new_tweets + list(stored_tweets_of_query)
         raw_tweets = serializers.serialize("python", all_tweets,fields=('text','tweet_id','favorites','tweet_date'))
         
