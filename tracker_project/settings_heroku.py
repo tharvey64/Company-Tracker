@@ -22,17 +22,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
 
-QUANDL_KEY = os.environ['QUANDL_KEY']
-
-TWITTER_KEY = os.environ['TWITTER_KEY']
-TWITTER_SECRET = os.environ['TWITTER_SECRET']
-
 # SECURITY WARNING: don't run with debug turned on in production!
 #########################
-DEBUG = True
+DEBUG = False
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 #########################
 # Application definition
 
@@ -75,6 +71,8 @@ PASSWORD_HASHERS = (
 
 ROOT_URLCONF = 'tracker_project.urls'
 
+WSGI_APPLICATION = 'rpg.wsgi.application'
+
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 TEMPLATES = [
     {
@@ -98,16 +96,9 @@ WSGI_APPLICATION = 'tracker_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'tracker',
-        'USER': os.environ['USER'],
-        'PASSWORD': os.environ['USER_PASSWORD'],
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
+import dj_database_url
+DATABASES = {}
+DATABASES['default'] =  dj_database_url.config()
 
 
 # Internationalization
@@ -126,5 +117,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ( os.path.join(BASE_DIR, 'static'),)

@@ -39,6 +39,7 @@ Graph.prototype.sentimentScale = function(){
     return d3.scale.linear().domain([-1,1]).range([this.graphHeight - this.padding, this.padding]);
 }
 Graph.prototype.setDateScale = function(){
+    // This Is Causes an Error When Run More Than Once
     this.startDate.setDate(this.startDate.getDate()-1);
     this.endDate.setDate(this.endDate.getDate()+1);
     this.dateScale = d3.time.scale()
@@ -46,12 +47,14 @@ Graph.prototype.setDateScale = function(){
     this.dateScale.range([this.padding, this.graphWidth-this.padding]);
 }
 Graph.prototype.setPriceScale = function(qwarg){
-    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height) * 1.2)});
+    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height)*1.05)});
+    var low = d3.min(qwarg.qwargData, function(d){return (parseFloat(d.height)*0.95)});
     if (!this.priceScale){
         this.highPrice = high;
         this.priceScale = d3.scale.linear();
         this.priceScale.range([this.graphHeight - this.padding, this.padding]);
-        this.priceScale.domain([0 ,high]);
+        // add low price
+        this.priceScale.domain([low ,high]);
         return true;
     }
     else{
@@ -117,7 +120,9 @@ Graph.prototype.draw = function(){
             sentiment = true;
         }
     }
-    this.setDateScale();
+    if (!this.dateScale){
+        this.setDateScale();
+    }
     // Drawing Axis
     if (sentiment){
         this.drawYAxis(this.sentimentScale(), "translate(" + (this.graphWidth-this.padding) +",0)");
@@ -197,13 +202,16 @@ $(document).ready(function(){
     graph = new Graph(),
     stockQwarg;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (stockQwarg != qwarg.qwargClassString){
+        if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
+            // Evaluate If This Is Needed 
             delete graph.qwargSet[stockQwarg]
             delete graph.qwargSet["tweet"]
+            graph.dateScale = false;
+            stockQwarg = qwarg.qwargClassString;
             graph.highPrice = 0; 
         }
-        if(qwarg.qwargType == "price"){
-            stockQwarg = qwarg.qwargClassString;
+        if(qwarg.qwargType == "tweet"){
+            delete graph.qwargSet["tweet"]
         }
         graph.endDate = endDate;
         graph.startDate = startDate;
@@ -229,5 +237,7 @@ $(document).ready(function(){
             console.log("Invalid dataSetName");
         }
     });
+    $("body").on("click", "#backButton", function(event){
+        graph = new Graph();
+    });
 });
-// ADD Event that Adds Data to a Specified dataset

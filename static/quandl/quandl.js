@@ -26,112 +26,57 @@ function renderForms(){
 }
 
 $(document).ready(function(){
-    var stockPrices = [];
-
     renderForms()
 
     $("#tab1").on("submit", "#stockForm",function(event){
         event.preventDefault();
         var symbol = $("input[name='company_symbol']").val(),
-        token = $("input[name='csrfmiddlewaretoken']").val(),
-        date = $("#month_start").val() + "-" + $("#day_start").val() + "-" + $("#year_start").val();
-        
-        var template = $('#twitter-form').html();
-        Mustache.parse(template);
-        var info = Mustache.render(template, {'startDate' : date});
-        $('#footer').html(info);   
+        date = [$("#month_start").val(),$("#day_start").val(),$("#year_start").val()].join("-");
 
-        $.post("/quandl/stock_history/" + symbol + "/" + date,{'csrfmiddlewaretoken':token},function(data){
-            if (data.stocks){
-                if (data.stocks.length == 0){
-                    $("body").trigger("serverError",[{"error":"Stock Data Not Found."}]);
-                }
-                else {
-                    $("#graph").empty();
-                    var template = $("#company-form").html();
-                    Mustache.parse(template);
-                    var info = Mustache.render(template,{"result":data.stocks})
-                    $("#graph").html(info);
-                    $("body").trigger("dataLoad");
-                }   
-                for (i in data.stocks){
-                    // do this loop in python
-                    data.stocks[i]['startDate'] = date;
-                }
-               
+        $.getJSON("/markit/search/",{'input_string': symbol},function(data){
+            // console.log(data);
+            var resultLength = data.list.length
+            for (var i = 0; i < resultLength; i++){
+            // do this loop in python
+                data.list[i]['startDate'] = date;
             }
-            else if (data.close){
-                $("#stories").empty();
-                // Symbol needs to be Capital
-                $("#stories").trigger("getStories", [symbol]);
-
-                $("#graph").empty();
-
-                var company = new Qwarg("price", data.close, symbol.toUpperCase());
-                company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
-                if ($('#colorSelection').val() == undefined){
-                       company.fill = "red"; 
-                    }
-                    else{
-                       company.fill = $('#colorSelection').val() 
-                    }
-                company.radiusRange = [5,5];
-                company.show = true;
-                $("#graph").trigger("drawGraph",[d3.time.format("%B-%e-%Y").parse(date), company]);
-
-                $("#graph").css("display", "block"); 
-                $("#footer").css("display", "block");                
-                $("#selectorButton").css("display", "block");
-                $('#fillSelector').css('display', 'block');
-
-                $("body").trigger("dataLoad");
-            }
-            else{
-                $("body").trigger("serverError",[{"error":"Stock Search Failed"}]);
-            }
+            $("#graph").empty();
+            var template = $("#company-form").html();
+            Mustache.parse(template);
+            var info = Mustache.render(template,{"result":data.list})
+            $("#graph").html(info);
+            $("body").trigger("dataLoad");
         });
     });
 
     $("#graph").on("submit", ".company-list form", function(event){
         event.preventDefault();
-        var url = $(this).attr("action"),
-        tag = $(this).attr("id"),
-        date = $("#"+tag+" input[name='start date']").val(),
-        input = $(this).serialize()
-        $.post(url, input, function(data){
+        var date = $(this).children('input[name="start date"]').val();
 
-            if (data.company){
-                var companyInfo = data.company;
-                $.post("/quandl/stock_history/" + companyInfo.symbol + "/" + date, input, function(data){
-                    if (data.close){
-                        $("#stories").empty();
-                        $("#stories").trigger("getStories", [companyInfo.symbol]);
+        $.getJSON($(this).attr("action"), $(this).serialize(), function(data){
+            // console.log(data);
+            if (data.close){
+                $("#stories").empty();
+                $("#stories").trigger("getStories", [data.symbol]);
 
-                        $("#graph").empty();
+                $("#graph").empty();
+                // Creates DataSet
+                var company = new Qwarg("price", data.close, data.symbol);
+                company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
+                company.fill = "red";
+                company.radiusRange = [5,5];
+                company.show = true;
+                var start = d3.time.format("%B-%e-%Y").parse(date);
+                $("#graph").trigger("drawGraph",[start, company]);
 
-                        var company = new Qwarg("price", data.close, companyInfo.symbol);
-                        company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
-                        company.fill = "red";
-                        company.radiusRange = [5,5];
-                        company.show = true;
-                        var start = d3.time.format("%B-%e-%Y").parse(date);
-                        $("#graph").trigger("drawGraph",[start, company]);
-
-                        $("#graph").css("display", "block"); 
-                        $("#footer").css("display", "block");                
-                        $("#selectorButton").css("display", "block");
-                        $('#fillSelector').css('display', 'block');
-                        
-                        $("body").trigger("dataLoad");
-                    }
-                    else if (data.error){
-                        console.log(companyInfo)
-                        if (companyInfo.symbol == "NYXBT"){
-                            $("body").trigger("serverError",[{"error":"Ken, Stop."}]);
-                        }
-                        $("body").trigger("serverError",[{"error":"Quote Not Found. Please Try Again."}]);
-                    }
-                });
+                $("#graph, #footer, #selectorButton, #fillSelector").css("display", "block"); 
+                // This Adds The Twitter Form
+                var template = $('#twitter-form').html();
+                Mustache.parse(template);
+                var info = Mustache.render(template, {'startDate' : date});
+                $('#footer').html(info);
+                // --------------------------------------------------
+                $("body").trigger("dataLoad");
             }
             else{
 
@@ -139,6 +84,7 @@ $(document).ready(function(){
             }
         });
     });
+
     $('#loginEmail, #loginPassword').on('click', function(event){
         setTimeout(function(){      
             $('#login').addClass('open');
