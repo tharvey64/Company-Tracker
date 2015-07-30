@@ -52,7 +52,7 @@ class SearchView(View):
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
         new_tweets = []
         for response in twython_results['statuses']: #iterating through each tweet
-            # print('entities:',response['entities'])
+            print('entities:',response['entities'])
             # Use hashtags
             # All Information For Other Keywords is in entities
             old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
@@ -73,6 +73,9 @@ class SearchView(View):
                         favorites=response['favorite_count'],
                         tweet_date=formatted_date
                     )
+                    for tag in response['entities']['hashtags']:
+                        k, created = Keyword.objects.get_or_create(search='#' + tag['text'])
+                        k.tweet.add(tweet)
                 elif len(previous_tweet) == 1:
                     previous_tweet[0].favorites = response['favorite_count']
                     previous_tweet[0].save()
@@ -83,9 +86,8 @@ class SearchView(View):
         # Process Tweet Objects
         # stored = [dict(new=False, date=row.tweet_date.strftime("%Y-%m-%d %H:%M:%S%z"), height=row.sentiment.score, radius=row.favorites, title=row.text) for row in stored_tweets_of_query]
         # all_tweets = new_tweets + stored
-        # CHANGE THIS TO BE TWEET_ID ONLY!!!!!!!!!!
         all_tweets = new_tweets + list(stored_tweets_of_query)
-        raw_tweets = serializers.serialize("python", all_tweets,fields=('text','tweet_id','favorites','tweet_date'))
+        raw_tweets = serializers.serialize("python", all_tweets,fields=('tweet_id'))
         
         # tweets = keyword.tweet.all().value('text','tweet_id','favorites','tweet_date')
         tweet_dataset = [t['fields'] for t in raw_tweets]
