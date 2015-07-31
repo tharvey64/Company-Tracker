@@ -133,11 +133,17 @@ Graph.prototype.draw = function(){
     this.drawXAxis("translate(0," + (this.graphHeight - this.padding) +")");
     // Plotting Data
     for (q in this.qwargSet){
-        this.plot(this.qwargSet[q]);
+        // Move this to upper function
+        if (this.qwargSet[q].qwargType == "price"){
+            this.plotPrices(this.qwargSet[q]);
+        }
+        else if (this.qwargSet[q].qwargType == "sentiment"){
+            this.plotTweets(this.qwargSet[q]);
+        }
     }
     $("circle").tooltips();
 }
-Graph.prototype.plot = function(qwarg){
+Graph.prototype.plotTweets = function(qwarg){
     $(".tooltip").remove();
     
     var start = this.startDate, 
@@ -188,6 +194,44 @@ Graph.prototype.plot = function(qwarg){
                 return "none";
             }
         });
+}
+Graph.prototype.plotPrices = function(qwarg){
+
+    var start = this.startDate, 
+    end = this.endDate,
+    yScale,
+    rScale = qwarg.radiusScale(),
+    xScale = this.dateScale,
+    checkDate = this.checkDate,
+    svg = d3.select("svg");
+    
+    var yScale = this.priceScale;
+
+    // .attr("cx", function(d){
+    //     return xScale(qwarg.qwargParseDate(d.date));
+    // })
+    // .attr("cy", function(d){
+    //     return yScale(parseFloat(d.height));
+    // })
+
+    var line = d3.svg.line()
+        .interpolate("monotone")
+        .x(function(d){return xScale(qwarg.qwargParseDate(d.date));})
+        .y(function(d){return yScale(parseFloat(d.height));});
+
+    var path = svg.append("path")
+        .attr("d", line(qwarg.qwargData))
+        .attr("stroke", "crimson")
+        .attr("stroke-width", "5")
+        .attr("fill", "ivory");
+    var totalLength = path.node().getTotalLength();
+    path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+            .duration(0)
+            .ease("linear")
+            .attr("stroke-dashoffset", 0);
 }
 Graph.prototype.clear = function(setString){
     $(".tooltip").remove();
