@@ -42,7 +42,7 @@ Graph.prototype.sentimentScale = function(){
 Graph.prototype.setDateScale = function(){
     // This Is Causes an Error When Run More Than Once
     this.startDate.setHours(this.startDate.getHours());
-    this.endDate.setHours(this.endDate.getHours());
+    this.endDate.setHours(this.endDate.getHours()+24);
     this.dateScale = d3.time.scale()
     this.dateScale.domain([this.startDate, this.endDate]);
     this.dateScale.range([this.padding, this.graphWidth-this.padding]);
@@ -126,7 +126,6 @@ Graph.prototype.draw = function(){
             sentiment = true;
         }
     }
-    console.log(price);
     if (!this.dateScale){
         this.setDateScale();
     }
@@ -144,17 +143,16 @@ Graph.prototype.draw = function(){
         // Move this to upper function
         if (this.qwargSet[q].qwargType == "price"){
             this.plotPrices(this.qwargSet[q]);
-            // this.plotTweets(this.qwargSet[q]);
         }
         else if (this.qwargSet[q].qwargType == "sentiment"){
             this.plotTweets(this.qwargSet[q]);
         }
     }
+
     $("circle").tooltips();
 }
 Graph.prototype.plotTweets = function(qwarg){
     $(".tooltip").remove();
-    
     var start = this.startDate, 
     end = this.endDate,
     yScale,
@@ -205,7 +203,13 @@ Graph.prototype.plotTweets = function(qwarg){
         });
 }
 Graph.prototype.plotPrices = function(qwarg){
-
+    // console.log(arguments);
+    // if (arguments.length == 2){
+    //     dataset = arguments[0].qwargData.concat(arguments[1].qwargData);
+    // } 
+    // else {
+    //     dataset = qwarg.qwargData;
+    // }
     var start = this.startDate, 
     end = this.endDate,
     yScale,
@@ -231,8 +235,8 @@ Graph.prototype.plotPrices = function(qwarg){
     var path = svg.append("path")
         .attr("d", line(qwarg.qwargData))
         .attr("stroke", qwarg.fill)
-        .attr("stroke-width", "2");
-        // .attr("fill", "ivory");
+        .attr("stroke-width", "2")
+        .attr("fill", "none");
     var totalLength = path.node().getTotalLength();
     path
         .attr("stroke-dasharray", totalLength + " " + totalLength)
@@ -251,20 +255,8 @@ Graph.prototype.clear = function(setString){
 
 function intraDay(ticker, graph){
     $.get('/quandl/current/',{'ticker':ticker},function(data){
-        console.log(arguments);
-        // console.log(data);
-        // prices comes in oldest to newest
-        var company = new Qwarg("price", data.prices, "intraDay");
-        company.qwargParseDate = d3.time.format("%Y-%m-%d %X").parse;
-        company.fill = "yellow";
-        company.radiusRange = [5,5];
-        company.show = true;
-        graph.qwargSet["intraDay"] = company;
-
-        graph.qwargSet[ticker].qwargData[graph.qwargSet[ticker].qwargData.length] = company.qwargData[0];
-        // graph.qwargSet[ticker].qwargData.reverse();
-        // console.log(graph.qwargSet[ticker].qwargData);
-        // console.log(graph.qwargSet[ticker].qwargData);
+        graph.qwargSet[ticker].qwargData[graph.qwargSet[ticker].qwargData.length] = data.prices[0];
+        graph.qwargSet[ticker].qwargData = graph.qwargSet[ticker].qwargData.concat(data.prices);
         graph.draw();
     });
 }
@@ -307,7 +299,7 @@ $(document).ready(function(){
     $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
         // Add this for intraday
         if (graph.qwargSet[dataSetName]){
-            graph.qwargSet[dataSetName].push(dataToAdd);
+            graph.qwargSet[dataSetName].qwargData.push(dataToAdd);
             graph.draw();
         }
         else{

@@ -52,7 +52,6 @@ class SearchView(View):
         stored_tweets_of_query = keyword.tweet.all()#tweets in the database
         new_tweets = []
         for response in twython_results['statuses']: #iterating through each tweet
-            print('entities:',response['entities'])
             # Use hashtags
             # All Information For Other Keywords is in entities
             old_tweet = stored_tweets_of_query.filter(tweet_id=response['id_str'])
@@ -79,7 +78,7 @@ class SearchView(View):
                 elif len(previous_tweet) == 1:
                     previous_tweet[0].favorites = response['favorite_count']
                     previous_tweet[0].save()
-                    tweet = previous_tweet
+                    tweet = previous_tweet[0]
                 if tweet:
                     new_tweets.append(tweet)
         keyword.tweet.add(*new_tweets)
