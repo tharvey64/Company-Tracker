@@ -2,7 +2,7 @@ import datetime
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic.base import View
-from quandl.models import Quandl
+from quandl.models import Quandl,Google
 from markit.models import Markit
 
 class QuandlHistoryView(View):
@@ -26,3 +26,22 @@ class QuandlHistoryView(View):
         else:
             data = {'error': 'Stock Data Not Found'}
         return JsonResponse(data)
+
+class IntraDayView(View):
+
+    def get(self,request):
+        ticker = request.GET.get("ticker",False)
+        prices = Google.get_intra_day_prices(60,1,ticker)
+        # no client yet
+        return JsonResponse({"prices": prices})
+
+# INTRA DAY DATA
+# 
+# http://www.google.com/finance/getprices?i=[INTERVAL]&p=[PERIOD]&f=d,o,h,l,c,v&df=cpct&q=[TICKER]
+# 
+# f=d,o,h,l,c,v
+# 
+#  d=dateTime,o=open,h=high,l=low,c=close,v=volume
+# [INTERVAL] = Interval or frequency in seconds
+# [PERIOD] = the historical data period
+# [TICKER] = Stock Ticker
