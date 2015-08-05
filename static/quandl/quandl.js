@@ -62,7 +62,7 @@ $(document).ready(function(){
                 $("#graph").empty();
                 // Creates DataSet
                 var company = new Qwarg("price", data.close, data.symbol);
-                company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
+                company.qwargParseDate = d3.time.format("%Y-%m-%d %X").parse;
                 company.fill = "red";
                 company.radiusRange = [5,5];
                 company.show = true;
@@ -84,7 +84,6 @@ $(document).ready(function(){
             }
         });
     });
-
     $('#loginEmail, #loginPassword').on('click', function(event){
         setTimeout(function(){      
             $('#login').addClass('open');

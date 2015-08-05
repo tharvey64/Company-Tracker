@@ -21,8 +21,8 @@ class QuandlHistoryView(View):
         # Date = 'YYYY-MM-DD' << month and Day are zero padded
         # print(stock_history)
         if stock_history and 'data' in stock_history:
-            processed_data = [dict(date=day[0], height=day[4], radius=day[5], title=day[0]) for day in stock_history['data']]
-            data = {'symbol': symbol,'close': processed_data}
+            processed_data = [dict(date=day[0]+' 16:00:00', height=day[4], radius=day[5], title=day[0]) for day in stock_history['data']]
+            data = {'symbol': symbol,'close': processed_data[::-1]}
         else:
             data = {'error': 'Stock Data Not Found'}
         return JsonResponse(data)
@@ -33,7 +33,7 @@ class IntraDayView(View):
         ticker = request.GET.get("ticker",False)
         prices = Google.get_intra_day_prices(60,1,ticker)
         # no client yet
-        return JsonResponse({"prices": prices})
+        return JsonResponse(prices)
 
 # INTRA DAY DATA
 # 
