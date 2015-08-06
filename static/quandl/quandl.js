@@ -52,7 +52,8 @@ $(document).ready(function(){
     $("#graph").on("submit", ".company-list form", function(event){
         event.preventDefault();
         var date = $(this).children('input[name="start date"]').val();
-
+        var dateObj = new Date(date);
+        // check date
         $.getJSON($(this).attr("action"), $(this).serialize(), function(data){
             // console.log(data);
             if (data.close){

@@ -3,7 +3,7 @@
     <ul class="company-list">
         {{#result}}
         <li>
-        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:history' %}" method="GET">
+        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:full-range' %}" method="GET">
             {% csrf_token %}
             {% verbatim %}
             <input type="hidden" name="start date" value="{{startDate}}">

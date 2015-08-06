@@ -283,8 +283,8 @@ $(document).ready(function(){
         // qwarg.qwargData is newest to oldest
         graph.qwargSet[qwarg.qwargClassString] = qwarg;
         // Might be a bad way to do this
-        intraDay(stockQwarg, graph);
-        // graph.draw();
+        // intraDay(stockQwarg, graph);
+        graph.draw();
     });
     $("#fillSelector").on("submit", "#color-form",function(event){
         event.preventDefault();
