@@ -41,11 +41,12 @@ li.active a, li.active a:hover {
 }
 
 .tab-content {
-    padding: 0.5em;
+    padding: 1em;
     box-shadow: -0.1em 0.1em 0.1em rgba(0,0,0,0.15);
     background: white;
     border-radius: 3em;
     background-color: white;
+    height: 10em;
 }
 
 .tab{

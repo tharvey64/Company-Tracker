@@ -1,21 +1,12 @@
 $(document).ready(function(){
-    $("#tab2").on("submit", "#searchForm", function(event) {
-        $("#loading").css("display", "block"); 
-    });
-
     $("body").on("dataLoad", function(){      
-        $("#loading").css("display", "none");
         $("#backButton").css("display", "block");             
         $("#graph").css("display", "inline-block"); 
-        $("#forms").slideUp(1800);
+        $("#forms, #intro").slideUp(1800);
         $(".navButs").animate({
             opacity: 0
-        }, 2000);               
-    });
-
-    $("#tab1").on("submit", "#stockForm", function(event) {
-        $("#loading").css("display", "block"); 
-    });
+        }, 2000);
+        });
 
     $("body").on("serverError", function(event, message){
         var template = $("#error-template").html();
@@ -24,7 +15,6 @@ $(document).ready(function(){
         $("#super-secretDivBam").html(info);
 
         $("#super-secretDivBam").css("display", "block");
-        $("#loading").css("display", "none");
         $("#backButton").css("display", "none");       
         $(".returned").css("display", "none");  
         $("#selectorButton").css("display", "none"); 
@@ -35,7 +25,7 @@ $(document).ready(function(){
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
-        $("#forms").slideDown(1800);  
+        $("#forms, #intro").slideDown(1800);  
         setTimeout(function(){ 
             $("#super-secretDivBam").css("display", "none"); 
             $("#super-secretDivBam").css("display", "none"); 
@@ -53,7 +43,7 @@ $(document).ready(function(){
         $(".navButs").animate({
             opacity: 1
         }, 2000);  
-        $("#forms").slideDown(1800);    
+        $("#forms, #intro").slideDown(1800);    
     }); 
     $("#twitterPath").on("click", function(event){
         $("#stories").css("display", "none");
@@ -75,7 +65,7 @@ $(document).ready(function(){
         $(".navButs").animate({
             opacity: 1
         }, 2000);     
-        $("#forms").slideDown(1800); 
+        $("#forms, #intro").slideDown(1800); 
 
         $('.tabs #tab1').show().siblings().hide();
 
