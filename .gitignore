@@ -64,4 +64,3 @@ venv
 staticfiles
 .DS_Store
 start.sh
-xTest_html

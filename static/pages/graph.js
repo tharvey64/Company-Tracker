@@ -40,9 +40,8 @@ Graph.prototype.sentimentScale = function(){
     return d3.scale.linear().domain([-1,1]).range([this.graphHeight - this.padding, this.padding]);
 }
 Graph.prototype.setDateScale = function(){
-    // This Is Causes an Error When Run More Than Once
-    this.startDate.setHours(this.startDate.getHours());
-    this.endDate.setHours(this.endDate.getHours()+24);
+    this.startDate.setHours(this.startDate.getHours()+9);
+    this.endDate.setHours(this.endDate.getHours()+2);
     this.dateScale = d3.time.scale()
     this.dateScale.domain([this.startDate, this.endDate]);
     this.dateScale.range([this.padding, this.graphWidth-this.padding]);
