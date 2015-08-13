@@ -27,18 +27,22 @@ $(document).ready(function(){
                     tweets.radiusRange = [5,25];
                     tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
-                    var tweetsFound = JSON.parse(data.tweets);
-                    var tweetsLength = tweetsFound.length;
-                    for (i = 0; i < tweetsLength; i++){
-                        // send tweet to sentiment eval
-                        tweetsFound[i]['csrfmiddlewaretoken'] = token;
-                        $.post('/sentiment/text/',tweetsFound[i],function(data){
-                            if (!data.hasOwnProperty('error')){
-                                tweets.qwargData.push(data);
-                                $("#graph").trigger("drawGraph",[start, tweets]);
-                                // $("#graph").trigger("addToDataSet",["tweet",data]);
-                            }
-                        });
+                    if (data.search_type == 'list'){
+                        tweets.qwargData = data.tweets;
+                        $("#graph").trigger("drawGraph",[start, tweets]);
+                    }
+                    else{
+                        var tweetsLength = data.tweets.length;
+                        for (i = 0; i < tweetsLength; i++){
+                            // send tweet to sentiment eval
+                            $.post('/sentiment/text/',data.tweets[i],function(data){
+                                if (!data.hasOwnProperty('error')){
+                                    tweets.qwargData.push(data);
+                                    $("#graph").trigger("drawGraph",[start, tweets]);
+                                    // $("#graph").trigger("addToDataSet",["tweet",data]);
+                                }
+                            });
+                        }
                     }
                     // $("#graph").trigger("drawGraph",[start, tweets]);
                 }
