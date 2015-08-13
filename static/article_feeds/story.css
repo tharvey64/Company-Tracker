@@ -12,3 +12,8 @@
 p, a {
 	color: black;
 }
+
+#backButton p{
+    color: white;
+
+}

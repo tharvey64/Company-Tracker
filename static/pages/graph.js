@@ -288,7 +288,7 @@ $(document).ready(function(){
     $("#fillSelector").on("submit", "#color-form",function(event){
         event.preventDefault();
         var color = $('#colorSelection').val()
-        $("."+ stockQwarg).css('fill', color);
+        $('path').css('stroke', color);
     });
     $('#footer').on("click", '#colorTweetBut', function(event){
         event.preventDefault();

@@ -27,7 +27,6 @@ $(document).ready(function(){
                     tweets.radiusRange = [5,25];
                     tweets.show = true;
                     var start = d3.time.format("%B-%e-%Y").parse(startDate);
-
                     var tweetsFound = JSON.parse(data.tweets);
                     var tweetsLength = tweetsFound.length;
                     for (i = 0; i < tweetsLength; i++){
