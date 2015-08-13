@@ -52,7 +52,8 @@ $(document).ready(function(){
     $("#graph").on("submit", ".company-list form", function(event){
         event.preventDefault();
         var date = $(this).children('input[name="start date"]').val();
-
+        var dateObj = new Date(date);
+        // check date
         $.getJSON($(this).attr("action"), $(this).serialize(), function(data){
             // console.log(data);
             if (data.close){
@@ -62,7 +63,7 @@ $(document).ready(function(){
                 $("#graph").empty();
                 // Creates DataSet
                 var company = new Qwarg("price", data.close, data.symbol);
-                company.qwargParseDate = d3.time.format("%Y-%m-%d").parse;
+                company.qwargParseDate = d3.time.format("%Y-%m-%d %X").parse;
                 company.fill = "red";
                 company.radiusRange = [5,5];
                 company.show = true;
@@ -84,7 +85,6 @@ $(document).ready(function(){
             }
         });
     });
-
     $('#loginEmail, #loginPassword').on('click', function(event){
         setTimeout(function(){      
             $('#login').addClass('open');

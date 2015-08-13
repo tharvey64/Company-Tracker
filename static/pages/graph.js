@@ -28,6 +28,7 @@ function Graph(){
     this.startDate;
     this.endDate;
     this.highPrice = 0;
+    this.lowPrice = 0;
     this.padding = 50;
     this.graphHeight = parseInt($("#graph").css("height"));
     this.graphWidth = parseInt($("#graph").css("width"));
@@ -39,32 +40,35 @@ Graph.prototype.sentimentScale = function(){
     return d3.scale.linear().domain([-1,1]).range([this.graphHeight - this.padding, this.padding]);
 }
 Graph.prototype.setDateScale = function(){
-    // This Is Causes an Error When Run More Than Once
-    this.startDate.setDate(this.startDate.getDate()-1);
-    this.endDate.setDate(this.endDate.getDate()+1);
+    this.startDate.setHours(this.startDate.getHours()+9);
+    this.endDate.setHours(this.endDate.getHours()+2);
     this.dateScale = d3.time.scale()
     this.dateScale.domain([this.startDate, this.endDate]);
     this.dateScale.range([this.padding, this.graphWidth-this.padding]);
 }
 Graph.prototype.setPriceScale = function(qwarg){
-    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height)*1.05)});
-    var low = d3.min(qwarg.qwargData, function(d){return (parseFloat(d.height)*0.95)});
+    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height)*1.01)});
+    var low = d3.min(qwarg.qwargData, function(d){return (parseFloat(d.height)*0.99)});
     if (!this.priceScale){
         this.highPrice = high;
+        this.lowPrice = low;
         this.priceScale = d3.scale.linear();
         this.priceScale.range([this.graphHeight - this.padding, this.padding]);
         // add low price
         this.priceScale.domain([low ,high]);
         return true;
     }
-    else{
+    else if (high > this.highPrice || low < this.lowPrice){
         if (high > this.highPrice){
-            this.priceScale.domain([0, high]);
             this.highPrice = high;
-            return true;
         }
-        return false;
+        if (low < this.lowPrice){
+            this.lowPrice = low;   
+        }
+        this.priceScale.domain([this.lowPrice, this.highPrice]);
+        return true;
     }
+    return false;
 }
 Graph.prototype.drawXAxis = function(translateString){
     // Make Sure These are Drawn Once And Only Once
@@ -111,6 +115,7 @@ Graph.prototype.draw = function(){
     var price = false, 
     sentiment = false;
     // Setting Scales
+    // console.log(this.qwargSet)
     for (q in this.qwargSet){
         if (this.qwargSet[q].qwargType == "price"){
             this.setPriceScale(this.qwargSet[q]);
@@ -131,15 +136,22 @@ Graph.prototype.draw = function(){
         this.drawYAxis(this.priceScale, "translate(" + this.padding +",0)");
     }
     this.drawXAxis("translate(0," + (this.graphHeight - this.padding) +")");
+    // console.log(this.priceScale)
     // Plotting Data
     for (q in this.qwargSet){
-        this.plot(this.qwargSet[q]);
+        // Move this to upper function
+        if (this.qwargSet[q].qwargType == "price"){
+            this.plotPrices(this.qwargSet[q]);
+        }
+        else if (this.qwargSet[q].qwargType == "sentiment"){
+            this.plotTweets(this.qwargSet[q]);
+        }
     }
+
     $("circle").tooltips();
 }
-Graph.prototype.plot = function(qwarg){
+Graph.prototype.plotTweets = function(qwarg){
     $(".tooltip").remove();
-    
     var start = this.startDate, 
     end = this.endDate,
     yScale,
@@ -189,18 +201,70 @@ Graph.prototype.plot = function(qwarg){
             }
         });
 }
+Graph.prototype.plotPrices = function(qwarg){
+    // console.log(arguments);
+    // if (arguments.length == 2){
+    //     dataset = arguments[0].qwargData.concat(arguments[1].qwargData);
+    // } 
+    // else {
+    //     dataset = qwarg.qwargData;
+    // }
+    var start = this.startDate, 
+    end = this.endDate,
+    yScale,
+    rScale = qwarg.radiusScale(),
+    xScale = this.dateScale,
+    checkDate = this.checkDate,
+    svg = d3.select("svg");
+    
+    var yScale = this.priceScale;
+
+    // .attr("cx", function(d){
+    //     return xScale(qwarg.qwargParseDate(d.date));
+    // })
+    // .attr("cy", function(d){
+    //     return yScale(parseFloat(d.height));
+    // })
+
+    var line = d3.svg.line()
+        .interpolate("monotone")
+        .x(function(d){return xScale(qwarg.qwargParseDate(d.date));})
+        .y(function(d){return yScale(parseFloat(d.height));});
+
+    var path = svg.append("path")
+        .attr("d", line(qwarg.qwargData))
+        .attr("stroke", qwarg.fill)
+        .attr("stroke-width", "2")
+        .attr("fill", "none");
+    var totalLength = path.node().getTotalLength();
+    path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+            .duration(0)
+            .ease("linear")
+            .attr("stroke-dashoffset", 0);
+}
 Graph.prototype.clear = function(setString){
+    // This does not do anything to the Path
     $(".tooltip").remove();
     $(setString).remove();
     $("circle").tooltips();
 }
-// All Date Adjustments Must Query the DB For All Stocks Selected
-// Construct Another table for Index Info
+
+function intraDay(ticker, graph){
+    $.get('/quandl/current/',{'ticker':ticker},function(data){
+        graph.qwargSet[ticker].qwargData[graph.qwargSet[ticker].qwargData.length] = data.prices[0];
+        graph.qwargSet[ticker].qwargData = graph.qwargSet[ticker].qwargData.concat(data.prices);
+        graph.draw();
+    });
+}
 
 $(document).ready(function(){
     var endDate = new Date(),
     graph = new Graph(),
-    stockQwarg;
+    stockQwarg,
+    currentInterval;
     $("#graph").on("drawGraph", function(event, startDate, qwarg){
         if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
             // Evaluate If This Is Needed 
@@ -215,7 +279,10 @@ $(document).ready(function(){
         }
         graph.endDate = endDate;
         graph.startDate = startDate;
+        // qwarg.qwargData is newest to oldest
         graph.qwargSet[qwarg.qwargClassString] = qwarg;
+        // Might be a bad way to do this
+        // intraDay(stockQwarg, graph);
         graph.draw();
     });
     $("#fillSelector").on("submit", "#color-form",function(event){
@@ -229,8 +296,9 @@ $(document).ready(function(){
         $('.tweet').css('fill', color);
     });
     $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
+        // Add this for intraday
         if (graph.qwargSet[dataSetName]){
-            graph.qwargSet[dataSetName].push(dataToAdd);
+            graph.qwargSet[dataSetName].qwargData.push(dataToAdd);
             graph.draw();
         }
         else{
