@@ -6,3 +6,12 @@
 	margin: auto;
 	width: 16.3em;
 }
+
+.dropdown-menu{
+	padding: 1em;
+	width: 40em;
+}
+
+#signUp {
+	background-color: #34495e;
+}

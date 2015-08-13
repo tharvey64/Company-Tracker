@@ -42,3 +42,26 @@ body{
 	text-align: center;
 	margin-bottom: 4em;
 }
+
+#intro {
+	background-color: #5bc0de;
+	height:10em;
+	width:100%;
+	font-family: 'Libre Baskerville', serif;
+	padding: 0 2em 0 5em;
+	color: white;
+	text-align: center;
+}
+
+#intro > div {
+	display:inline-block;
+	margin-top: 2em;
+}
+
+#logo{
+	background-image: url('Drawing.png');
+	width: 6em;
+	height: 5.5em;
+	background-size: cover;
+	float:right;
+}

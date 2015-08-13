@@ -28,12 +28,12 @@
 
 .navButs{   
     display:inline-block;
-    float: right;
+    float: left;
     margin: .5em 0 0 0;
 }
 
 #loginDrop{
-    height: 3.2em;
+    height: 3.5em;
 }
 
 h1 {
@@ -44,17 +44,11 @@ h1 {
     font-size:3em;
 }
 
-#backButton{
-    display:none;
-    font-size: 2em;
-    color: white;
-}
-
 #forms {
     height: 25%;
     width: 52.5%;
     /*max-height: 8em;*/
-    margin: 17em auto;    
+    margin: 12em auto 0 auto;    
 }
 
 #graph {
@@ -140,4 +134,9 @@ button {
 #footer{
     clear: both;
     text-align: center;
+}
+
+#backButton{
+    display:none;
+    font-size: 2em;
 }
