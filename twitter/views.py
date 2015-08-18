@@ -4,18 +4,11 @@ import json
 from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
-from django.core import serializers
 from twython import Twython
 from sentiment.alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
 from twitter.models import Tweet, Keyword, Profile
-from twitter.helper import process_tweets, filter_tweets_by_keyword, process_list_tweets, alchemy_text_sentiment
-
-def tweet_to_json(python_object):
-    if isinstance(python_object, datetime.datetime):
-        return {'__class__': 'datetime.datetime',
-            '__value__': python_object.strftime("%Y-%m-%d %H:%M:%S%z")}
-    raise TypeError(repr(python_object) + ' is not JSON serializable')
+from twitter.helper import process_tweets, process_list_tweets, alchemy_text_sentiment
 
 def make_twython(profile_token=None, profile_secret=None):
     return Twython(
@@ -53,11 +46,25 @@ class SearchView(View):
             return JsonResponse(dict(error="Please enter a search value"))
         
         twitter = make_twython()
-        twython_results = twitter.search(q=user_query, 
-                            result_type=request.POST['filter'], lang='en')
-        stored_tweets_of_query = filter_tweets_by_keyword(user_query.lower())
+        max_id = None
+        twython_results = []
+        for i in range(4):
+            list_of_tweets = twitter.search(q=user_query, 
+                                result_type=request.POST['filter'], 
+                                lang='en',max_id=max_id)
+            # print(list_of_tweets)
+            if len(list_of_tweets['statuses']) == 0:
+                break
+            twython_results+=list_of_tweets['statuses']
+            max_id = list_of_tweets['statuses'][-1]['id']-1
+        keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
+        if not created:
+            stored_tweets_of_query = keyword.tweet.all()#tweets in the database
+        else:
+            stored_tweets_of_query = []
+        # stored_tweets_of_query = filter_tweets_by_keyword(user_query.lower())
         
-        new_tweets = process_tweets(twython_results['statuses'], stored_tweets_of_query)
+        new_tweets = process_tweets(twython_results, stored_tweets_of_query)
 
         keyword.tweet.add(*new_tweets)
         # Pull Tweet_id out of Tweet object
@@ -79,13 +86,9 @@ class SearchListView(View):
 
     def post(self, request):
         user_query = request.POST.get('search') 
-
         profile = Profile.objects.filter(user__pk=request.user.id)
-
         twitter = make_twython(profile[0].token, profile[0].secret)
-
         users_lists = twitter.show_owned_lists(screen_name=request.user.username)
-
         # owned_list_names = (item['name'].lower()==list_name.lower() for item in users_lists['lists'])
 
         list_name = request.POST.get('listName')

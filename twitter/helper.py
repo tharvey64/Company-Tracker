@@ -36,13 +36,7 @@ def process_list_tweets(user_query,alchemy,timeline):
         ))
     return list_dataset
 # ----------------------------------------------------------------------
-def filter_tweets_by_keyword(search):
-    keyword, created = Keyword.objects.get_or_create(search=search)
-    if not created:
-        stored_tweets = keyword.tweet.all()#tweets in the database
-    else:
-        stored_tweets = []
-    return stored_tweets
+
 
 def stored_tweet(query_set, current_tweet):
     old_tweet = query_set.filter(tweet_id=current_tweet['id_str'])
