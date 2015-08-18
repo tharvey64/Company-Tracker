@@ -1,6 +1,41 @@
 import datetime
 from twitter.models import Tweet,Keyword
 
+def check_tweet_text(text, query):
+    if query.lower() not in text.lower():
+        return False
+    else:
+        return True
+
+def alchemy_text_sentiment(alchemy, text):
+    alchemy_result = alchemy.sentiment("text", text)
+    sentiment = alchemy_result.get('docSentiment')
+    return sentiment
+
+def process_list_tweets(user_query,alchemy,timeline):
+    list_dataset = []
+    for unique_tweet in timeline:
+        # check if query is in tweet
+        if not check_tweet_text(unique_tweet['text'], user_query):
+            continue
+        # -----------------------------------------------------
+        # alchemy_result is a dictionary
+        docSentiment = alchemy_text_sentiment(alchemy, unique_tweet['text'])
+        if not docSentiment:
+            continue
+        # set value
+        unique_tweet['sentiment'] = docSentiment.get('score', 0)
+        # converting to and from datetime 
+        unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %b %d %X %z %Y")
+        
+        list_dataset.append(dict(
+            date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
+            height=unique_tweet['sentiment'], 
+            radius=unique_tweet['favorite_count'], 
+            title=unique_tweet['text']
+        ))
+    return list_dataset
+# ----------------------------------------------------------------------
 def filter_tweets_by_keyword(search):
     keyword, created = Keyword.objects.get_or_create(search=search)
     if not created:
@@ -44,6 +79,7 @@ def process_tweets(twitter_results, db_results):
         if db_results and stored_tweet(db_results,response):
             continue
         else:
+            # custom db search here
             tweet = stored_tweet(Tweet.objects, response)
             if not tweet:
                 tweet = make_tweet(response)

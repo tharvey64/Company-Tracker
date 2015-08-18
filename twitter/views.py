@@ -9,7 +9,7 @@ from twython import Twython
 from sentiment.alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
 from twitter.models import Tweet, Keyword, Profile
-from twitter.helper import process_tweets, filter_tweets_by_keyword
+from twitter.helper import process_tweets, filter_tweets_by_keyword, process_list_tweets, alchemy_text_sentiment
 
 def tweet_to_json(python_object):
     if isinstance(python_object, datetime.datetime):
@@ -96,50 +96,17 @@ class SearchListView(View):
         max_id = None
         # get_specific_list
         timeline = []
-        for i in range(6):
+        # This Should be a View
+        # Add more option so users can look back through the timeline
+        for i in range(2):
             list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200,max_id=max_id)
             if len(list_of_tweets) == 0:
                 break
             timeline+=list_of_tweets
             max_id = list_of_tweets[-1]['id']-1
-        # print("length", len(timeline))
-        # last id_str is the lowest of the set of ids
-        # Need to use list_of_tweets[0]['id']-1 
         # --------------------------------------------------------------------      
-        list_dataset = []
-        print(timeline)
-        for unique_tweet in timeline:
-            # check if query is in tweet
-            if not check_tweet_text(unique_tweet['text'], user_query):
-                continue
-            # -----------------------------------------------------
-            # alchemy_result is a dictionary
-            docSentiment = alchemy_text_sentiment(self.alchemyapi, unique_tweet['text'])
-            if not docSentiment:
-                continue
-            # set value
-            unique_tweet['sentiment'] = docSentiment.get('score', 0)
-            # converting to and from datetime 
-            unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %b %d %X %z %Y")
-            
-            list_dataset.append(dict(
-                date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
-                height=unique_tweet['sentiment'], 
-                radius=unique_tweet['favorite_count'], 
-                title=unique_tweet['text']
-            ))
+        list_dataset = process_list_tweets(user_query,self.alchemyapi,timeline)
         return JsonResponse(dict(tweets=list_dataset,search_type='list'))
-
-def check_tweet_text(text, query):
-    if query.lower() not in text.lower():
-        return False
-    else:
-        return True
-
-def alchemy_text_sentiment(alchemy, text):
-    alchemy_result = alchemy.sentiment("text", text)
-    sentiment = alchemy_result.get('docSentiment')
-    return sentiment
 
 # class DeleteTweet(View):
 
