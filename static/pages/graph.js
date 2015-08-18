@@ -288,7 +288,7 @@ $(document).ready(function(){
     $("#fillSelector").on("submit", "#color-form",function(event){
         event.preventDefault();
         var color = $('#colorSelection').val()
-        $('path').css('stroke', color);
+        $('path').attr('stroke', color);
     });
     $('#footer').on("click", '#colorTweetBut', function(event){
         event.preventDefault();

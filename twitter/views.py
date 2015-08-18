@@ -9,7 +9,7 @@ from twython import Twython
 from sentiment.alchemyapi import AlchemyAPI
 from sentiment.models import Sentiment
 from twitter.models import Tweet, Keyword, Profile
-from twitter.helper import process_tweets
+from twitter.helper import process_tweets, filter_tweets_by_keyword
 
 def tweet_to_json(python_object):
     if isinstance(python_object, datetime.datetime):
@@ -18,7 +18,10 @@ def tweet_to_json(python_object):
     raise TypeError(repr(python_object) + ' is not JSON serializable')
 
 def make_twython(profile_token=None, profile_secret=None):
-    return Twython(os.environ['TWITTER_KEY'], os.environ['TWITTER_SECRET'], profile_token, profile_secret)
+    return Twython(
+        os.environ['TWITTER_KEY'], 
+        os.environ['TWITTER_SECRET'], 
+        profile_token, profile_secret)
 
 class AppView(View):
 
@@ -43,22 +46,25 @@ class CallbackView(View):
 
 class SearchView(View):
     alchemyapi = AlchemyAPI()
+
     def post(self, request):
-        user_query = request.POST.get('search')  #the user searched for this  
+        user_query = request.POST.get('search')  
         if not user_query:
-            return JsonResponse({"error" : "Please enter a search value"})
+            return JsonResponse(dict(error="Please enter a search value"))
         
         twitter = make_twython()
-        twython_results = twitter.search(q=user_query, result_type=request.POST['filter'], lang='en') #twitter search results
+        twython_results = twitter.search(q=user_query, 
+                            result_type=request.POST['filter'], lang='en')
+        stored_tweets_of_query = filter_tweets_by_keyword(user_query.lower())
         
-        keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
-        
-        stored_tweets_of_query = keyword.tweet.all()#tweets in the database
         new_tweets = process_tweets(twython_results['statuses'], stored_tweets_of_query)
 
         keyword.tweet.add(*new_tweets)
         # Pull Tweet_id out of Tweet object
-        all_tweets = new_tweets + list(stored_tweets_of_query)
+        if stored_tweets_of_query:
+            all_tweets = new_tweets + list(stored_tweets_of_query)
+        else:
+            all_tweets = new_tweets
         tweet_dataset = [dict(tweet_id=t.tweet_id) for t in all_tweets]
         
         if len(tweet_dataset) is 0:
@@ -72,22 +78,25 @@ class SearchListView(View):
     alchemyapi = AlchemyAPI()
 
     def post(self, request):
-        user_query = request.POST['search'] 
+        user_query = request.POST.get('search') 
+
         profile = Profile.objects.filter(user__pk=request.user.id)
+
         twitter = make_twython(profile[0].token, profile[0].secret)
 
         users_lists = twitter.show_owned_lists(screen_name=request.user.username)
 
-        owned_list_names = [item['name'].lower() for item in users_lists['lists']]
+        # owned_list_names = (item['name'].lower()==list_name.lower() for item in users_lists['lists'])
 
-        list_name = request.POST['listName']
-
-        if list_name.lower() not in owned_list_names: 
-            return JsonResponse({'error': 'List Not Found.'})
+        list_name = request.POST.get('listName')
+        if not any(item['name'].lower()==list_name.lower() for item in users_lists['lists']): 
+            return JsonResponse(dict(error='List Not Found.'))
+        # --------------------------------------------------------------------
+        # Read In The Timeline
         max_id = None
         # get_specific_list
         timeline = []
-        for i in range(5):
+        for i in range(6):
             list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200,max_id=max_id)
             if len(list_of_tweets) == 0:
                 break
@@ -96,23 +105,41 @@ class SearchListView(View):
         # print("length", len(timeline))
         # last id_str is the lowest of the set of ids
         # Need to use list_of_tweets[0]['id']-1 
-
+        # --------------------------------------------------------------------      
         list_dataset = []
+        print(timeline)
         for unique_tweet in timeline:
-            if user_query.lower() not in unique_tweet['text'].lower():
+            # check if query is in tweet
+            if not check_tweet_text(unique_tweet['text'], user_query):
                 continue
-            alchemy_result = self.alchemyapi.sentiment("text", unique_tweet['text'])
-            if not alchemy_result.get('docSentiment', False):
+            # -----------------------------------------------------
+            # alchemy_result is a dictionary
+            docSentiment = alchemy_text_sentiment(self.alchemyapi, unique_tweet['text'])
+            if not docSentiment:
                 continue
-            unique_tweet['sentiment'] = alchemy_result['docSentiment'].get('score', 0)
+            # set value
+            unique_tweet['sentiment'] = docSentiment.get('score', 0)
+            # converting to and from datetime 
             unique_tweet['created_at'] = datetime.datetime.strptime(unique_tweet['created_at'], "%a %b %d %X %z %Y")
+            
             list_dataset.append(dict(
                 date=unique_tweet['created_at'].strftime("%Y-%m-%d %H:%M:%S%z"), 
                 height=unique_tweet['sentiment'], 
                 radius=unique_tweet['favorite_count'], 
                 title=unique_tweet['text']
             ))
-        return JsonResponse({'tweets': list_dataset, 'search_type':'list'})
+        return JsonResponse(dict(tweets=list_dataset,search_type='list'))
+
+def check_tweet_text(text, query):
+    if query.lower() not in text.lower():
+        return False
+    else:
+        return True
+
+def alchemy_text_sentiment(alchemy, text):
+    alchemy_result = alchemy.sentiment("text", text)
+    sentiment = alchemy_result.get('docSentiment')
+    return sentiment
 
 # class DeleteTweet(View):
 

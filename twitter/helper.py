@@ -1,6 +1,14 @@
 import datetime
 from twitter.models import Tweet,Keyword
 
+def filter_tweets_by_keyword(search):
+    keyword, created = Keyword.objects.get_or_create(search=search)
+    if not created:
+        stored_tweets = keyword.tweet.all()#tweets in the database
+    else:
+        stored_tweets = []
+    return stored_tweets
+
 def stored_tweet(query_set, current_tweet):
     old_tweet = query_set.filter(tweet_id=current_tweet['id_str'])
     # ensure 'id_str' is unique
@@ -16,7 +24,7 @@ def create_keywords(list_of_keywords, obj):
         k, created = Keyword.objects.get_or_create(search=word)
         k.tweet.add(obj)
 
-def new_tweet(current_tweet):
+def make_tweet(current_tweet):
     formatted_date = datetime.datetime.strptime(current_tweet['created_at'], "%a %b %d %X %z %Y")
     
     tweet_obj = Tweet.objects.create(
@@ -33,13 +41,12 @@ def new_tweet(current_tweet):
 def process_tweets(twitter_results, db_results):
     new_tweets = []
     for response in twitter_results: #iterating through each tweet
-        if stored_tweet(db_results,response):
+        if db_results and stored_tweet(db_results,response):
             continue
         else:
-            # look this over
             tweet = stored_tweet(Tweet.objects, response)
             if not tweet:
-                new_tweet(response)
+                tweet = make_tweet(response)
             if tweet:
                 # can't i use the list i am iterating over
                 new_tweets.append(tweet)
