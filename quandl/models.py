@@ -48,6 +48,7 @@ class Google:
             processing.append(stage)
         return dict(error=None,prices=processing)
 
+# Build API to get db codes
 class Quandl:
     api_key = os.environ['QUANDL_KEY']
     base_url = 'https://www.quandl.com/api/v1/datasets/'

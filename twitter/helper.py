@@ -1,5 +1,6 @@
 import datetime
 from twitter.models import Tweet,Keyword
+from sentiment.alchemyapi import AlchemyAPI
 
 def check_tweet_text(text, query):
     if query.lower() not in text.lower():
@@ -12,7 +13,8 @@ def alchemy_text_sentiment(alchemy, text):
     sentiment = alchemy_result.get('docSentiment')
     return sentiment
 
-def process_list_tweets(user_query,alchemy,timeline):
+def process_list_tweets(user_query,timeline):
+    alchemy = AlchemyAPI()
     list_dataset = []
     for unique_tweet in timeline:
         # check if query is in tweet
