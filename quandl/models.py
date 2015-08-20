@@ -17,8 +17,10 @@ class Google:
     @staticmethod
     def process_csv(text):
         data = text.split("\n")[:-1]
+        print(data)
         if len(data) == 6:
-            return dict(error='Invalid Ticker',prices=None)
+            # prices should be empty list
+            return dict(error='Intraday Data Not Found',prices=None)
         
         interval = data[3].split("=")[1]
         key = data[4][8:].split(",")
@@ -53,12 +55,11 @@ class Quandl:
     api_key = os.environ['QUANDL_KEY']
     base_url = 'https://www.quandl.com/api/v1/datasets/'
     format =  'json'
-    db = 'GOOG'
 
     @classmethod
-    def get_dataset(cls, exchange, symbol, start_date):
+    def get_dataset(cls, source_code, code, start_date):
         # yahoo and google format
-        code = "{}/{}_{}".format(cls.db,exchange,symbol)
+        code = "{}/{}".format(source_code,code)
         end_date = datetime.date.today()-datetime.timedelta(days=1)
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}&end_date={end}'.format(
             db_code=code,
@@ -69,8 +70,16 @@ class Quandl:
         )
         response = requests.get(cls.base_url + command)
         if response.status_code == 200:
-            return response.json()
-        return {'error': response.status_code}
+            return cls.process_json(response.json())
+        return dict(error=response.status_code)
+    @staticmethod
+    def process_json(stock_info):
+        if 'data' in stock_info:
+            # Yahoo Data Format
+            processed_data = [dict(date=day[0]+' 16:00:00', height=day[6], radius=day[5], title=day[0]) for day in stock_info['data']]
+            return dict(error=None,prices=processed_data)
+        else:
+            return dict(error='Historical Data Not Found.',prices=None)
         # Use other formats to get data
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #
@@ -81,3 +90,11 @@ class Quandl:
     # --------------------|---------------------|---------#
     # {EXCHANGE}_{TICKER} | {EXCHANGE}_{TICKER} | {TICKER}#
     # ----------------------------------------------------#
+    # GOOG
+    # ["Date","Open","High","Low","Close","Volume"]
+    # WIKI
+    # ["Date","Open","High","Low","Close","Volume","Ex-Dividend","Split Ratio","Adj. Open","Adj. High","Adj. Low","Adj. Close","Adj. Volume"]
+    # YAHOO
+    # ["Date","Open","High","Low","Close","Volume","Adjusted Close"]
+
+

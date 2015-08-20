@@ -111,29 +111,29 @@ class SearchListView(View):
         list_dataset = process_list_tweets(user_query,timeline)
         return JsonResponse(dict(tweets=list_dataset,search_type='list'))
 
-def parse_user_query(query):
-    if query[0] == '"' and query[-1] == '"':
-        # exact phrase match
-    else:
-        partitioned = query.split(" ")
-        check_or = partitioned.index("OR")
-        if check_or == 1:
-            # two filters
-        elif check_or != -1:
-            return "Error"
+# def parse_user_query(query):
+#     if query[0] == '"' and query[-1] == '"':
+#         # exact phrase match
+#     else:
+#         partitioned = query.split(" ")
+#         check_or = partitioned.index("OR")
+#         if check_or == 1:
+#             # two filters
+#         elif check_or != -1:
+#             return "Error"
 
-        if partitioned:
-            queries = []
-            for idx in range(len(partitioned)):
-                if word[idx][0] == "-":
-                    # results do not contain this word
-                    # filter last
-                    # results contain either the previous word or the preceding word
-                else:
-                    # results contain this word[idx]
-            queries.sort(key=len,reverse=True)
-        else:
-            return "Error" 
+#         if partitioned:
+#             queries = []
+#             for idx in range(len(partitioned)):
+#                 if word[idx][0] == "-":
+#                     # results do not contain this word
+#                     # filter last
+#                     # results contain either the previous word or the preceding word
+#                 else:
+#                     # results contain this word[idx]
+#             queries.sort(key=len,reverse=True)
+#         else:
+#             return "Error" 
 # class DeleteTweet(View):
 
 #     def post(self, request, tweet_id):
