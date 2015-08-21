@@ -17,7 +17,7 @@ class Google:
     @staticmethod
     def process_csv(text):
         data = text.split("\n")[:-1]
-        print(data)
+        # print(data)
         if len(data) == 6:
             # prices should be empty list
             return dict(error='Intraday Data Not Found',prices=None)
