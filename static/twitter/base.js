@@ -26,7 +26,7 @@ $(document).ready(function(){
                     }
                     tweets.radiusRange = [5,25];
                     tweets.show = true;
-                    var start = d3.time.format("%B-%e-%Y").parse(startDate);
+                    var start = d3.time.format("%Y-%m-%d").parse(startDate);
                     if (data.search_type == 'list'){
                         tweets.qwargData = data.tweets;
                         $("#graph").trigger("drawGraph",[start, tweets]);

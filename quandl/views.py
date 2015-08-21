@@ -11,7 +11,6 @@ def get_variables(query_dict):
             source_code=query_dict.get('source_code'),
             start_date=query_dict.get('start date'),
             company_name=query_dict.get('company_name'))
-    print(variables.values())
     if not all(variables.values()):
         variables['error'] = 'Missing Input'
     return variables
@@ -25,7 +24,7 @@ class QuandlHistoryView(View):
         if 'error' in query_dict:
             return JsonResponse(dict(error='Missing Input'))
 
-        start_date = datetime.datetime.strptime(query_dict['start_date'], "%B-%d-%Y").date()
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%Y-%m-%d").date()
         stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
         if stock_history['error']:
             return JsonResponse(stock_history)
@@ -50,7 +49,7 @@ class FullRangeView(View):
         if 'error' in query_dict:
             return JsonResponse(dict(error='Missing Input'))
 
-        start_date = datetime.datetime.strptime(query_dict['start_date'], "%B-%d-%Y").date()
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%Y-%m-%d").date()
         stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
         if stock_history['error']:
              return JsonResponse(stock_history)

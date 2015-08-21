@@ -19,7 +19,7 @@ class LiveStock(View):
 class CompanySearch(View):
 
     def get(self, request):
-        search_result = Markit.find_company(request.GET.get('input_string',False))
+        search_result = Markit.find_company(request.GET.get('input_string'))
         # print(search_result)
         # Move This View To Quandl App
         return JsonResponse({'list': search_result})
