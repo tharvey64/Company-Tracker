@@ -59,6 +59,14 @@ class Quandl:
     @classmethod
     def get_dataset(cls, source_code, code, start_date):
         # yahoo and google format
+        group = code.split('_')
+        # Do This In The Model
+        if len(group) == 1:
+            symbol = group[0]
+        elif len(group) == 2 and (group[0]=="FUND" or group[0]=="INDEX"):
+            symbol = group[1]
+        else:
+            return JsonResponse(dict(error=group))
         code = "{}/{}".format(source_code,code)
         end_date = datetime.date.today()-datetime.timedelta(days=1)
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}&end_date={end}'.format(
@@ -70,14 +78,14 @@ class Quandl:
         )
         response = requests.get(cls.base_url + command)
         if response.status_code == 200:
-            return cls.process_json(response.json())
+            return cls.process_json(response.json(),symbol)
         return dict(error=response.status_code)
     @staticmethod
-    def process_json(stock_info):
+    def process_json(stock_info,symbol):
         if 'data' in stock_info:
             # Yahoo Data Format
             processed_data = [dict(date=day[0]+' 16:00:00', height=day[6], radius=day[5], title=day[0]) for day in stock_info['data']]
-            return dict(error=None,prices=processed_data)
+            return dict(error=None,prices=processed_data,symbol=symbol)
         else:
             return dict(error='Historical Data Not Found.',prices=None)
         # Use other formats to get data

@@ -6,72 +6,59 @@ from quandl.models import Quandl,Google
 from markit.models import Markit
 
 # Change This View To Get Historic Only
+def get_variables(query_dict):
+    variables = dict(code=query_dict.get('code'),
+            source_code=query_dict.get('source_code'),
+            start_date=query_dict.get('start date'),
+            company_name=query_dict.get('company_name'))
+    print(variables.values())
+    if not all(variables.values()):
+        variables['error'] = 'Missing Input'
+    return variables
+
 class QuandlHistoryView(View):
 
     def get(self, request):
-        source_code = request.GET.get('source_code',False)
-        code = request.GET.get('code',False)
-        date_string = request.GET.get('start date',False)
-        company_name = request.GET.get('company_name',False)
-        if not (source_code and code and company_name and date_string):
-            data = dict(error='Missing Input')
-            return JsonResponse(data)
-        group = code.split('_')
-        # Do This In The Model
-        if len(group) == 1:
-            symbol = group[0]
-        elif len(group) == 2 and (group[0]=="FUND" or group[0]=="INDEX"):
-            symbol = group[1]
-        else:
-            # print(group)
-            return JsonResponse(dict(error=group))
-        start_date = datetime.datetime.strptime(date_string, "%B-%d-%Y").date()
-        stock_history = Quandl.get_dataset(source_code,code,str(start_date))
+        # These 6 lines Check Input NOT DRY
+        # Could Try all(request.GET.values())
+        query_dict = get_variables(request.GET)
+        if 'error' in query_dict:
+            return JsonResponse(dict(error='Missing Input'))
+
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%B-%d-%Y").date()
+        stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
         if stock_history['error']:
-            data = dict(symbol=symbol,close=processed_data[::-1])
+            return JsonResponse(stock_history)
         else:
-            data = dict(error=stock_history['error'])
-        return JsonResponse(data)
+            return JsonResponse(dict(symbol=stock_history['symbol'],close=processed_data[::-1]))
 
 # Todays Prices Only
 class IntraDayView(View):
 
     def get(self,request):
-        ticker = request.GET.get("ticker",False)
+        ticker = request.GET.get("ticker")
+        # Find New Source
         prices = Google.get_intra_day_prices(60,1,ticker)
-        # no client yet
         return JsonResponse(prices)
 
 # start date to current minute prices
 class FullRangeView(View):
     def get(self, request):
-        source_code = request.GET.get('source_code',False)
-        code = request.GET.get('code',False)
-        date_string = request.GET.get('start date',False)
-        company_name = request.GET.get('company_name',False)
-        if not (source_code and code and company_name and date_string):
-            data = dict(error='Missing Input')
-            return JsonResponse(data)
-        
-        group = code.split('_')
-        # Do This In The Model
-        if len(group) == 1:
-            symbol = group[0]
-        elif len(group) == 2 and (group[0]=="FUND" or group[0]=="INDEX"):
-            symbol = group[1]
-        else:
-            # print(group)
-            return JsonResponse(dict(error=group))
-        start_date = datetime.datetime.strptime(date_string, "%B-%d-%Y").date()
-        stock_history = Quandl.get_dataset(source_code,code,str(start_date))
+        # These 6 lines Check Input NOT DRY
+        # Could Try all(request.GET.values())
+        query_dict = get_variables(request.GET)
+        if 'error' in query_dict:
+            return JsonResponse(dict(error='Missing Input'))
+
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%B-%d-%Y").date()
+        stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
         if stock_history['error']:
              return JsonResponse(stock_history)
-        daily = Google.get_intra_day_prices(60,1,symbol)
+        daily = Google.get_intra_day_prices(60,1,stock_history['symbol'])
         if daily['error']:
-            data = dict(symbol=symbol,close=stock_history['prices'][::-1])
+            return JsonResponse(dict(symbol=stock_history['symbol'],close=stock_history['prices'][::-1]))
         else:
-            data = dict(symbol=symbol,close=stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices'])
-        return JsonResponse(data)
+            return JsonResponse(dict(symbol=stock_history['symbol'],close=stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices']))
 
 # INTRA DAY DATA
 # 
