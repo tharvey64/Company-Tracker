@@ -26,6 +26,7 @@ class RegisterView(View):
                 secret=secret, 
                 user=user
             )
+            # add session expire
             request.session.flush()
             return redirect('/')
         else:

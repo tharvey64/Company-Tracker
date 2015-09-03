@@ -20,7 +20,7 @@ class Google:
         # print(data)
         if len(data) == 6:
             # prices should be empty list
-            return dict(error='Intraday Data Not Found',prices=None)
+            return dict(error='Intraday Data Not Found', prices=None)
         
         interval = data[3].split("=")[1]
         key = data[4][8:].split(",")
@@ -50,7 +50,6 @@ class Google:
             processing.append(stage)
         return dict(error=None,prices=processing)
 
-# Build API to get db codes
 class Quandl:
     api_key = os.environ['QUANDL_KEY']
     base_url = 'https://www.quandl.com/api/v1/datasets/'
@@ -80,6 +79,7 @@ class Quandl:
         if response.status_code == 200:
             return cls.process_json(response.json(),symbol)
         return dict(error=response.status_code)
+    
     @staticmethod
     def process_json(stock_info,symbol):
         if 'data' in stock_info:

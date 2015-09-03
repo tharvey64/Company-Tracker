@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block scripts %}
+    <script src="{% static 'd3.min.js' %}"></script>
+    <script src="{% static 'graph.js' %}"></script>
+    <script src="{% static 'quandl/index.js' %}"></script>
+    {% include "quandl/stock_search.html" %}
+{% endblock %}
+
+{% block cssLink %}
+{% endblock cssLink %}
+
+{% block header %}
+    <div id="intro"><h1>Market Tracker</h1></div><div id="logo"></div><hr>
+{% endblock header %}
+
+{% block topBox %}
+{% endblock topBox %}
+
+{% block middleBox %}
+{% endblock middleBox %}
+
+{% block bottomBox %}
+{% endblock bottomBox %}
+
+{% block rightContent %}
+{% endblock rightContent %}

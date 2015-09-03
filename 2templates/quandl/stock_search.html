@@ -1,0 +1,16 @@
+<!-- Defer This -->
+<script id="stock-search" type="x-tmpl-mustache">
+    <form id="stockForm" class="form" action="{% url 'markit:search' %}" method="GET">
+        {% csrf_token %}
+        <fieldset class="date">
+            <legend>Stock Look Up</legend>
+            <label for="input_string">Search</label>
+            {% verbatim %}
+            <input type="search" class="form-control" name="input_string" value="{{ticker}}" required>
+            <label for="start date">Date</label>
+            <input type="date" class="form-control" name="start date" max={{today}} value={{today}}>
+            {% endverbatim %}
+            <input id="companyButton" class="btn-block" type="submit" value="Search">
+        </fieldset>
+    </form>
+</script>

@@ -23,14 +23,15 @@ function Qwarg(qwargType, qwargData, qwargClassString){
     }
 }
 
-function Graph(){
+function Graph(container){
+    this.container = container
     this.startDate;
     this.endDate;
     this.highPrice = 0;
     this.lowPrice = 0;
     this.padding = 50;
-    this.graphHeight = parseInt($("#graph").css("height"));
-    this.graphWidth = parseInt($("#graph").css("width"));
+    this.graphHeight = parseInt($(this.container).css("height"));
+    this.graphWidth = parseInt($(this.container).css("width"));
     this.priceScale;
     this.dateScale;
     this.qwargSet = {};
@@ -97,12 +98,12 @@ Graph.prototype.drawYAxis = function(currentScale,translateString){
         .call(yAxis);
 }
 Graph.prototype.createSvg = function(){
-    $("#graph").empty();
+    $(this.container).empty();
     $(".tooltip").remove();
-    this.graphHeight = parseInt($("#graph").css("height"));
-    this.graphWidth = parseInt($("#graph").css("width"));
+    this.graphHeight = parseInt($(this.container).css("height"));
+    this.graphWidth = parseInt($(this.container).css("width"));
 
-    d3.select("#graph")
+    d3.select(this.container)
         .append("svg")
         .attr("width",this.graphWidth)
         .attr("height",this.graphHeight);
@@ -147,7 +148,7 @@ Graph.prototype.draw = function(){
         }
     }
 
-    $("circle").tooltips();
+    // $("circle").tooltips(); 
 }
 Graph.prototype.plotTweets = function(qwarg){
     $(".tooltip").remove();
@@ -246,65 +247,65 @@ Graph.prototype.plotPrices = function(qwarg){
 }
 Graph.prototype.clear = function(setString){
     // This does not do anything to the Path
-    $(".tooltip").remove();
+    // $(".tooltip").remove();
     $(setString).remove();
-    $("circle").tooltips();
+    // $("circle").tooltips();
 }
 
-function intraDay(ticker, graph){
-    $.get('/quandl/current/',{'ticker':ticker},function(data){
-        graph.qwargSet[ticker].qwargData[graph.qwargSet[ticker].qwargData.length] = data.prices[0];
-        graph.qwargSet[ticker].qwargData = graph.qwargSet[ticker].qwargData.concat(data.prices);
-        graph.draw();
-    });
-}
+// function intraDay(ticker, graph){
+//     $.get('/quandl/current/',{'ticker':ticker},function(data){
+//         graph.qwargSet[ticker].qwargData[graph.qwargSet[ticker].qwargData.length] = data.prices[0];
+//         graph.qwargSet[ticker].qwargData = graph.qwargSet[ticker].qwargData.concat(data.prices);
+//         graph.draw();
+//     });
+// }
 
-$(document).ready(function(){
-    var endDate = new Date(),
-    graph = new Graph(),
-    stockQwarg,
-    currentInterval;
-    $("#graph").on("drawGraph", function(event, startDate, qwarg){
-        if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
-            // Evaluate If This Is Needed 
-            delete graph.qwargSet[stockQwarg]
-            delete graph.qwargSet["tweet"]
-            graph.dateScale = false;
-            stockQwarg = qwarg.qwargClassString;
-            graph.highPrice = 0; 
-        }
-        if(qwarg.qwargType == "tweet"){
-            delete graph.qwargSet["tweet"]
-        }
-        graph.endDate = endDate;
-        graph.startDate = startDate;
-        // qwarg.qwargData is newest to oldest
-        graph.qwargSet[qwarg.qwargClassString] = qwarg;
-        // Might be a bad way to do this
-        // intraDay(stockQwarg, graph);
-        graph.draw();
-    });
-    $("#fillSelector").on("submit", "#color-form",function(event){
-        event.preventDefault();
-        var color = $('#colorSelection').val()
-        $('path').attr('stroke', color);
-    });
-    $('#footer').on("click", '#colorTweetBut', function(event){
-        event.preventDefault();
-        var color = $('#colorTweetSelection').val()
-        $('.tweet').css('fill', color);
-    });
-    $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
-        // Add this for intraday
-        if (graph.qwargSet[dataSetName]){
-            graph.qwargSet[dataSetName].qwargData.push(dataToAdd);
-            graph.draw();
-        }
-        else{
-            console.log("Invalid dataSetName");
-        }
-    });
-    $("body").on("click", "#backButton", function(event){
-        graph = new Graph("#graph");
-    });
-});
+// $(document).ready(function(){
+//     var endDate = new Date(),
+//     graph = new Graph(),
+//     stockQwarg,
+//     currentInterval;
+//     $(this.container).on("drawGraph", function(event, startDate, qwarg){
+//         if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
+//             // Evaluate If This Is Needed 
+//             delete graph.qwargSet[stockQwarg]
+//             delete graph.qwargSet["tweet"]
+//             graph.dateScale = false;
+//             stockQwarg = qwarg.qwargClassString;
+//             graph.highPrice = 0; 
+//         }
+//         if(qwarg.qwargType == "tweet"){
+//             delete graph.qwargSet["tweet"]
+//         }
+//         graph.endDate = endDate;
+//         graph.startDate = startDate;
+//         // qwarg.qwargData is newest to oldest
+//         graph.qwargSet[qwarg.qwargClassString] = qwarg;
+//         // Might be a bad way to do this
+//         // intraDay(stockQwarg, graph);
+//         graph.draw();
+//     });
+//     $("#fillSelector").on("submit", "#color-form",function(event){
+//         event.preventDefault();
+//         var color = $('#colorSelection').val()
+//         $('path').attr('stroke', color);
+//     });
+//     $('#footer').on("click", '#colorTweetBut', function(event){
+//         event.preventDefault();
+//         var color = $('#colorTweetSelection').val()
+//         $('.tweet').css('fill', color);
+//     });
+//     $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
+//         // Add this for intraday
+//         if (graph.qwargSet[dataSetName]){
+//             graph.qwargSet[dataSetName].qwargData.push(dataToAdd);
+//             graph.draw();
+//         }
+//         else{
+//             console.log("Invalid dataSetName");
+//         }
+//     });
+//     $("body").on("click", "#backButton", function(event){
+//         graph = new Graph();
+//     });
+// });
