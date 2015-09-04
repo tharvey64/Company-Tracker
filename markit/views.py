@@ -22,7 +22,7 @@ class CompanySearch(View):
         search_result = Markit.find_company(request.GET.get('input_string'))
         # print(search_result)
         # Move This View To Quandl App
-        return JsonResponse({'list': search_result})
+        return JsonResponse({'list': search_result,'ajaxCount':request.GET.get('ajaxCount')})
 
 # INTRA DAY DATA
 # 

@@ -11,11 +11,17 @@ $(document).ready(function(){
         return this || (1, eval)('this');
     }());
     renderForms();
-
+    // Tracks Ajax Requests for stock search
+    var ajaxCount = 0;
+    var lastAjax = 0;
     $('#topBox').on('input', 'input[name="input_string"]', function(event){
         var url = $(this).parents('#stockForm').attr('action');
+
         // Searches for results
-        $.get(url,$(this).serialize(),function(data){
+        ajaxCount += 1;
+        $.get(url,$(this).serialize()+"&ajaxCount="+ajaxCount,function(data){
+            if (ajaxCount > data.ajaxCount && data.ajaxCount < lastAjax) return;
+            lastAjax = data.ajaxCount;
             // Find A Way to Filter Results
             // Add A More Button to Load Next Page Of Results
             var code, name;
@@ -51,7 +57,7 @@ $(document).ready(function(){
             stockPrices.fill = "blue";
             stockPrices.radiusRange = [5,5]
             stockPrices.show = true;
-            
+
             graph = new global.Graph(".rightContent");
             graph.endDate = new Date();
             graph.startDate = d3.time.format("%Y-%m-%d").parse(startDate);

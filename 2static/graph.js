@@ -99,7 +99,7 @@ Graph.prototype.drawYAxis = function(currentScale,translateString){
 }
 Graph.prototype.createSvg = function(){
     $(this.container).empty();
-    $(".tooltip").remove();
+    // $(".tooltip").remove();
     this.graphHeight = parseInt($(this.container).css("height"));
     this.graphWidth = parseInt($(this.container).css("width"));
 
