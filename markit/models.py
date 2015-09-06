@@ -21,7 +21,7 @@ class Markit:
 
         if response.status_code == 200:
             page = response.json()
-            if 'docs' not in page:
+            if 'docs' not in page or not page['docs']:
                 results = dict(list=[])
             else:
                 results = dict(

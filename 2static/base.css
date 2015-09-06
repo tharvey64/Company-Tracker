@@ -1,3 +1,4 @@
+/*This Css File Is For Basic Layout*/
 body{
     opacity: 0.8; 
     background-image: url("images/1.jpg");
@@ -63,9 +64,11 @@ hr {
     background-size: cover;
     float:right;
 }
-#searchResultsNavigation {
-    display: inline-block;
-}
+/*Move To Index Css*/
+/*#searchResultButtons{
+    max-height: 6em;
+    overflow: scroll;
+}*/
 /*Graph CSS*/
 .axis path,
 .axis line {

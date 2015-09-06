@@ -12,6 +12,7 @@ $( document ).ready(function(){
     }());
     renderForms();
     // Tracks Ajax Requests for stock search
+    // add that to the name stockSearchAjaxCount and stockSearchLastAjax
     var ajaxCount = 0;
     var lastAjax = 0;
 
@@ -27,6 +28,8 @@ $( document ).ready(function(){
     $('#topBox, #middleBox').on('input submit', 'input[name="input_string"], #stockForm, #previousResults, #nextResults', function(event){
         event.preventDefault();
         // Start Animation Here
+        $('#middleBox').addClass('loading');
+
         var url, search;
         var $el = $(this);
         if (this.nodeName==='FORM'){
@@ -45,6 +48,9 @@ $( document ).ready(function(){
             if (ajaxCount > data.ajaxCount && data.ajaxCount < lastAjax) return;
             // Stop Animation Here
             lastAjax = data.ajaxCount;
+
+            $('#middleBox').removeClass('loading');
+
             // -Find A Way to Filter Results
             // -Currently The Next Option Wont be available if the list length is 0
             // -provide some amount of handling for errors
@@ -69,6 +75,8 @@ $( document ).ready(function(){
 
     $('#middleBox').on('click', 'button', function(event){
         // Start Animation Here
+        $('.rightContent').addClass('loading');
+
         var input = {};
         var $el = $(this);
         var fullCode = $el.val().split("/");
@@ -81,6 +89,8 @@ $( document ).ready(function(){
         $.get('quandl/current/', input,function(data){
             // Stop Animation
             // Wrap this in a function
+            $('.rightContent').removeClass('loading');
+            
             if (!data.close.length){
                 // Trigger something here
                 // Return to Prevent Graph from Drawing when No prices are returned

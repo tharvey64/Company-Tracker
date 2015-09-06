@@ -1,0 +1,5 @@
+.loading {
+    background-image: url('/2static/images/default.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+}
