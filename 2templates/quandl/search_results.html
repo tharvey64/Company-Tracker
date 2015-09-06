@@ -3,7 +3,7 @@
     {% verbatim %}
     {{#previous}}
         <div class="pull-left">
-        <form id="previousResults" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+        <form id="previousResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
             <input type="hidden" name="input_string" value="{{search}}" required>
             <input type="hidden" name="page_number" value="{{page}}">
             <input type="submit" value="Previous">
@@ -12,7 +12,7 @@
     {{/previous}}
     {{#next}}
         <div class="pull-right">
-        <form id="nextResults" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+        <form id="nextResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
             <input type="hidden" name="input_string" value="{{search}}" required>
             <input type="hidden" name="page_number" value="{{page}}">
             <input type="submit" value="Next">

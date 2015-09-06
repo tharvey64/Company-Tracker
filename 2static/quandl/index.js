@@ -5,30 +5,24 @@ function renderForms(){
     var rendered = Mustache.render(stockSearchTemplate,{'today': today.toJSON().substring(0,10)});
     $('#topBox').html(rendered);
 };
-
+// REFACTOR BEFORE YOU ADD ANYTHING ELSE
+// use more objects
+// Move date out of search form
 $( document ).ready(function(){
     var global = (function () {
         return this || (1, eval)('this');
     }());
+    
     renderForms();
-    // Tracks Ajax Requests for stock search
-    // add that to the name stockSearchAjaxCount and stockSearchLastAjax
-    var ajaxCount = 0;
-    var lastAjax = 0;
 
-    // Load Animation
-    $( document ).ajaxStart(function(){
-        console.log(arguments[0]);
-        console.log(arguments[0]);
-    });
-    $( document ).ajaxStop(function(){
-        console.log("done");
-    });
-
-    $('#topBox, #middleBox').on('input submit', 'input[name="input_string"], #stockForm, #previousResults, #nextResults', function(event){
+    var stockSearchAjaxTracker = {
+        'count': 0,
+        'last': 0
+    };
+    // This Event Is Expecting One of these Four
+    //'input[name="input_string"], #stockForm, #previousResults, #nextResults'
+    $('#topBox, #middleBox').on('input submit', '.companySearch', function(event){
         event.preventDefault();
-        // Start Animation Here
-        $('#middleBox').addClass('loading');
 
         var url, search;
         var $el = $(this);
@@ -42,18 +36,23 @@ $( document ).ready(function(){
             // Dont Make The Ajax Request if this is not a form or input tag
             return;
         };
+        // Start Animation Here
+        $('#middleBox').addClass('loading');
         // Searches for results
-        ajaxCount += 1;
-        $.get(url,$el.serialize()+"&ajaxCount="+ajaxCount,function(data){
-            if (ajaxCount > data.ajaxCount && data.ajaxCount < lastAjax) return;
+        stockSearchAjaxTracker['count'] += 1;
+        $.get(url,$el.serialize()+"&ajaxCount="+stockSearchAjaxTracker['count'],function(data){
+            if (stockSearchAjaxTracker['count'] > data.ajaxCount && data.ajaxCount < stockSearchAjaxTracker['last']) return;
+            
+            stockSearchAjaxTracker['last'] = data.ajaxCount;
             // Stop Animation Here
-            lastAjax = data.ajaxCount;
-
             $('#middleBox').removeClass('loading');
 
             // -Find A Way to Filter Results
+            // ^^^^^ Each Result Has A from_date And to_date prop that says the date range of the info 
+            // ^^^^^ I should Include these with the buttons and have the buttons respond based on that
             // -Currently The Next Option Wont be available if the list length is 0
             // -provide some amount of handling for errors
+            console.log(data);
             if (data['list'].length && data['start']+data['per_page']-1 < data['total_count']){
                 data['next'] = {
                     'search':search,
@@ -75,7 +74,10 @@ $( document ).ready(function(){
 
     $('#middleBox').on('click', 'button', function(event){
         // Start Animation Here
+        // This Needs an Id or another div
         $('.rightContent').addClass('loading');
+        // Build out right side of page
+        // Add Tabs to Right or Left side
 
         var input = {};
         var $el = $(this);
@@ -90,7 +92,7 @@ $( document ).ready(function(){
             // Stop Animation
             // Wrap this in a function
             $('.rightContent').removeClass('loading');
-            
+
             if (!data.close.length){
                 // Trigger something here
                 // Return to Prevent Graph from Drawing when No prices are returned

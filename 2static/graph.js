@@ -1,6 +1,7 @@
 function Qwarg(qwargType, qwargData, qwargClassString){
-    // Change The Parameter to options
+    // Change The Parameters to options
     // something = options.something || default
+    // Tweets should be stored with some reference to their Query
     this.qwargType = qwargType;
     this.qwargData = qwargData;
     this.qwargClassString = qwargClassString;
