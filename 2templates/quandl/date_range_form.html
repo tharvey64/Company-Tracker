@@ -1,0 +1,12 @@
+<script id="date-range" type="x-tmpl-mustache">
+    <form id="dateRangeForm" class="form" method="GET">
+        {% verbatim %} 
+        <fieldset class="date">
+            <label for="start date">Start Date</label>
+            <input type="date" class="form-control" name="start date" max={{today}} value={{today}}>
+            <label for="end date">NOT ACTIVE End Date</label>
+            <input type="date" class="form-control" name="end date" max={{today}} value={{today}}>
+            {% endverbatim %}
+        </fieldset>
+    </form>
+</script>

@@ -1,10 +1,37 @@
 function renderForms(){
     var stockSearchTemplate = $("#stock-search").html();
     Mustache.parse(stockSearchTemplate);
+    var stockFormRendered = Mustache.render(stockSearchTemplate);
+    $('#topBox').html(stockFormRendered);
+    
     var today = new Date();
-    var rendered = Mustache.render(stockSearchTemplate,{'today': today.toJSON().substring(0,10)});
-    $('#topBox').html(rendered);
+    var dateRangeTemplate = $("#date-range").html();
+    Mustache.parse(dateRangeTemplate);
+    var dateRangeFormRendered = Mustache.render(dateRangeTemplate,{'today': today.toJSON().substring(0,10)});
+    $('#bottomBox').html(dateRangeFormRendered);
 };
+
+function buttonDateValidation(tag){
+    var to_date, $el;
+    var $collection = $(tag);
+    var startDate = new Date($('input[name="start date"]').val());
+    var endDate = new Date($('input[name="end date"]').val());
+    // console.log($('input[name="end date"]').val() instanceof Date);
+    $collection.each(function(index, el){
+        $el = $(el);
+        to_date = new Date(el.dataset.to_date);
+        if (to_date.getTime() < startDate.getTime()){
+            $el.removeClass('list-group-item-success');
+            $el.addClass('list-group-item-danger disabled');
+            $el.attr("disabled","disabled");
+        }else{
+            $el.addClass('list-group-item-success');
+            $el.removeClass('list-group-item-danger disabled');
+            $el.removeAttr("disabled");
+        }
+    });
+};
+
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
 // use more objects
 // Move date out of search form
@@ -23,7 +50,7 @@ $( document ).ready(function(){
     //'input[name="input_string"], #stockForm, #previousResults, #nextResults'
     $('#topBox, #middleBox').on('input submit', '.companySearch', function(event){
         event.preventDefault();
-
+        event.stopPropagation();
         var url, search;
         var $el = $(this);
         if (this.nodeName==='FORM'){
@@ -52,7 +79,7 @@ $( document ).ready(function(){
             // ^^^^^ I should Include these with the buttons and have the buttons respond based on that
             // -Currently The Next Option Wont be available if the list length is 0
             // -provide some amount of handling for errors
-            console.log(data);
+            // console.log(data);
             if (data['list'].length && data['start']+data['per_page']-1 < data['total_count']){
                 data['next'] = {
                     'search':search,
@@ -69,6 +96,8 @@ $( document ).ready(function(){
             Mustache.parse(template);
             var rendered = Mustache.render(template,data);
             $('#middleBox').html(rendered);
+            // Check Buttons
+            buttonDateValidation('.companyButton');
         });
     });
 
@@ -112,5 +141,8 @@ $( document ).ready(function(){
             graph.draw();
         });
     });
-
+    
+    $('#bottomBox').on('input', 'input[type="date"]', function(event){
+        buttonDateValidation('.companyButton');
+    });
 });

@@ -22,7 +22,7 @@
     </div>
     <div id="searchResultButtons" class='list-group'>
     {{#list}}
-        <button type='button' class='list-group-item btn-block' value='{{source_code}}/{{code}}'>{{name}}</button>
+        <button type='button' class='list-group-item btn-block list-group-item-primary companyButton' value='{{source_code}}/{{code}}' data-from_date="{{from_date}}" data-to_date="{{to_date}}">{{name}}</button>
     {{/list}}
     {% endverbatim %}
     </div>
