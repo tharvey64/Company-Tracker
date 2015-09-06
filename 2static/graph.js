@@ -1,4 +1,6 @@
 function Qwarg(qwargType, qwargData, qwargClassString){
+    // Change The Parameter to options
+    // something = options.something || default
     this.qwargType = qwargType;
     this.qwargData = qwargData;
     this.qwargClassString = qwargClassString;

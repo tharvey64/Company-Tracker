@@ -4,9 +4,9 @@ function renderForms(){
     var today = new Date();
     var rendered = Mustache.render(stockSearchTemplate,{'today': today.toJSON().substring(0,10)});
     $('#topBox').html(rendered);
-}
+};
 
-$(document).ready(function(){
+$( document ).ready(function(){
     var global = (function () {
         return this || (1, eval)('this');
     }());
@@ -14,43 +14,78 @@ $(document).ready(function(){
     // Tracks Ajax Requests for stock search
     var ajaxCount = 0;
     var lastAjax = 0;
-    $('#topBox').on('input', 'input[name="input_string"]', function(event){
-        var url = $(this).parents('#stockForm').attr('action');
 
+    // Load Animation
+    $( document ).ajaxStart(function(){
+        console.log(arguments[0]);
+        console.log(arguments[0]);
+    });
+    $( document ).ajaxStop(function(){
+        console.log("done");
+    });
+
+    $('#topBox, #middleBox').on('input submit', 'input[name="input_string"], #stockForm, #previousResults, #nextResults', function(event){
+        event.preventDefault();
+        // Start Animation Here
+        var url, search;
+        var $el = $(this);
+        if (this.nodeName==='FORM'){
+            url = $el.attr('action');
+            search = $el.children('input[name="input_string"]').val();
+        }else if (this.nodeName==='INPUT'){
+            url = $el.parents('#stockForm').attr('action');
+            search = $el.val();
+        }else{
+            // Dont Make The Ajax Request if this is not a form or input tag
+            return;
+        };
         // Searches for results
         ajaxCount += 1;
-        $.get(url,$(this).serialize()+"&ajaxCount="+ajaxCount,function(data){
+        $.get(url,$el.serialize()+"&ajaxCount="+ajaxCount,function(data){
             if (ajaxCount > data.ajaxCount && data.ajaxCount < lastAjax) return;
+            // Stop Animation Here
             lastAjax = data.ajaxCount;
-            // Find A Way to Filter Results
-            // Add A More Button to Load Next Page Of Results
-            var code, name;
-            var results = data['list'];
-            var htmlString = "<div class='list-group'>";
-            var max = results.length;
-            // Places the results in an unordered list
-            for(var i=0; i<max;i++){
-                code = results[i].source_code +"/"+ results[i].code
-                name = results[i].name.substr(0,results[i].name.length-1).trim()
-                htmlString += "<button type='button' class='list-group-item btn-block' value='"+ code +"'>"+ name +"</button>";
+            // -Find A Way to Filter Results
+            // -Currently The Next Option Wont be available if the list length is 0
+            // -provide some amount of handling for errors
+            if (data['list'].length && data['start']+data['per_page']-1 < data['total_count']){
+                data['next'] = {
+                    'search':search,
+                    'page': data['current_page'] + 1
+                };
             };
-            htmlString += "</div>";
-            $('#middleBox').html(htmlString);
+            if (data['start'] > 1){
+                data['previous'] = {
+                    'search': search,
+                    'page': data['current_page'] - 1
+                };
+            };
+            var template = $('#search-result').html();
+            Mustache.parse(template);
+            var rendered = Mustache.render(template,data);
+            $('#middleBox').html(rendered);
         });
     });
 
     $('#middleBox').on('click', 'button', function(event){
+        // Start Animation Here
         var input = {};
-        var fullCode = $(this).val().split("/");
+        var $el = $(this);
+        var fullCode = $el.val().split("/");
         var startDate = $('input[name="start date"]').val();
-        input['company_name'] = $(this).html();
+        input['company_name'] = $el.html();
         input['start date'] = startDate;
         input['source_code'] = fullCode[0];
         input['code'] = fullCode[1];
 
         $.get('quandl/current/', input,function(data){
+            // Stop Animation
             // Wrap this in a function
-            console.log(data);
+            if (!data.close.length){
+                // Trigger something here
+                // Return to Prevent Graph from Drawing when No prices are returned
+                return;
+            };
             stockPrices = new global.Qwarg("price", data.close, data.symbol);
             // Make This An Object Literal called 'options'
             stockPrices.qwargParseDate = d3.time.format("%Y-%m-%d %X").parse;

@@ -1,0 +1,29 @@
+<script id="search-result" type="x-tmpl-mustache">
+    <div id="searchResultNavigation">
+    {% verbatim %}
+    {{#previous}}
+        <div class="pull-left">
+        <form id="previousResults" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+            <input type="hidden" name="input_string" value="{{search}}" required>
+            <input type="hidden" name="page_number" value="{{page}}">
+            <input type="submit" value="Previous">
+        </form>
+        </div>
+    {{/previous}}
+    {{#next}}
+        <div class="pull-right">
+        <form id="nextResults" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+            <input type="hidden" name="input_string" value="{{search}}" required>
+            <input type="hidden" name="page_number" value="{{page}}">
+            <input type="submit" value="Next">
+        </form>
+        </div>
+    {{/next}}
+    </div>
+    <div id="searchResultButtons" class='list-group'>
+    {{#list}}
+        <button type='button' class='list-group-item btn-block' value='{{source_code}}/{{code}}'>{{name}}</button>
+    {{/list}}
+    {% endverbatim %}
+    </div>
+</script>

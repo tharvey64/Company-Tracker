@@ -1,7 +1,6 @@
 <!-- Defer This -->
 <script id="stock-search" type="x-tmpl-mustache">
     <form id="stockForm" class="form" action="{% url 'markit:search' %}" method="GET">
-        {% csrf_token %}
         <fieldset class="date">
             <legend>Stock Look Up</legend>
             <label for="input_string">Search</label>
