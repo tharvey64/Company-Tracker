@@ -1,11 +1,10 @@
-function Qwarg(qwargType, qwargData, qwargClassString, options){
-    // Change The Parameters to options
-    // something = options.something || default
-    // Tweets should be stored with some reference to their Query
-    this.qwargType = qwargType;
-    this.qwargData = qwargData;
-    this.qwargClassString = qwargClassString;
-    this.qwargParseDate = options.praseDate || d3.time.format("%Y-%m-%d %X").parse;
+function Qwarg(options){
+    // tag for tweets should be the query
+    // "default" type is not supported
+    this.type = options.type || "default";
+    this.data = options.data;
+    this.tag = options.tag;
+    this.parseDate = options.praseDate || d3.time.format("%Y-%m-%d %X").parse;
     // Check hasOwnProperty for show 
     this.show = options.show || false;
     this.fill = options.fill || "black";
@@ -19,67 +18,76 @@ function Qwarg(qwargType, qwargData, qwargClassString, options){
             scale.range(this.radiusRange);
             return scale;
         }
-        var radiusHigh = d3.max(this.qwargData,function(d){return parseFloat(d.radius);});
-        var radiusLow = d3.min(this.qwargData,function(d){return parseFloat(d.radius);});
+        var radiusHigh = d3.max(this.data,function(d){return parseFloat(d.radius);});
+        var radiusLow = d3.min(this.data,function(d){return parseFloat(d.radius);});
         scale.domain([radiusLow,radiusHigh]);
         scale.range(this.radiusRange);
         return scale;
     }
 }
 
-function Graph(container){
-    this.container = container;
-    this.startDate;
-    this.endDate;
-    this.highPrice = 0;
-    this.lowPrice = 0;
-    this.padding = 70;
-    this.graphHeight = parseInt($(this.container).css("height"));
-    this.graphWidth = parseInt($(this.container).css("width"));
-    this.priceScale;
-    this.dateScale;
-    this.qwargSet = {};
+function Graph(settings){
+    // Page Settings
+    this.display = {
+        'container': settings.container,
+        'padding': settings.padding || 70,
+        'height': settings.containerHeight,
+        'width': settings.containerWidth
+    };
+    // Date Scale
+    this.dateScale = (function(context, settings){
+            var range, start, end;
+            return {
+                'checkDate': function(date){
+                        return (date > this.start) && (date < this.end)
+                    },
+                'setDomain': function(start, end){
+                        this.start = start || settings['startDate'] || new Date();
+                        this.end = end || settings['endDate'] || new Date();
+                        this.start.setHours(9);
+                        this.end.setHours(4);
+                    },
+                'setRange': function(){
+                        this.range = [context.display['padding'], context.display['width']-context.display['padding']];
+                    },
+                'get': function(){
+                        this.setRange();
+                        return d3.time.scale().domain([this.start,this.end]).range(this.range);
+                    }
+            };
+        })(this, settings);
+    // Price Scale
+    this.priceScale = (function(context){
+            var high, low, range;
+            return {
+                'setDomain': function(qwarg){
+                        var max, min;
+                        max = d3.max(qwarg.data, function(d){return (parseFloat(d.height*1.05))});
+                        min = d3.min(qwarg.data, function(d){return (parseFloat(d.height*0.95))});
+                        this.high = (max > this.high || !Number(this.high) ? max:this.high);
+                        this.low = (min < this.low || !Number(this.low) ? min:this.low); 
+                    },
+                'setRange': function(top){
+                        this.range = [context.display['height']-context.display['padding'],top];
+                    },
+                'get': function(settings){
+                        var top = settings['topPadding'] || 10;
+                        this.setRange(top);
+                        // if (!settins['resize']) this.setDomain(settings['qwarg']);
+                        return d3.scale.linear().domain([this.low,this.high]).range(this.range)
+                    }
+            };
+        })(this);
+    // Data
+    this.qwargSet = settings.qwargSet || {};
 }
 Graph.prototype.sentimentScale = function(){
-    return d3.scale.linear().domain([-1,1]).range([this.graphHeight - this.padding, this.padding]);
-}
-Graph.prototype.setDateScale = function(){
-    if (!this.dateScale){
-        this.startDate.setHours(this.startDate.getHours()+9);
-        this.endDate.setHours(this.endDate.getHours()+2);
-    }
-    this.dateScale = d3.time.scale()
-    this.dateScale.domain([this.startDate, this.endDate]);
-    this.dateScale.range([this.padding, this.graphWidth-this.padding]);
-}
-Graph.prototype.setPriceScale = function(qwarg, resize){
-    var high = d3.max(qwarg.qwargData, function(d){return (parseFloat(d.height)*1.05)});
-    var low = d3.min(qwarg.qwargData, function(d){return (parseFloat(d.height)*0.95)});
-    if (!this.priceScale || resize){
-        this.highPrice = high;
-        this.lowPrice = low;
-        this.priceScale = d3.scale.linear();
-        // default padding for top of graph = 10
-        this.priceScale.range([this.graphHeight - this.padding, 10]);
-        this.priceScale.domain([low ,high]);
-        return true;
-    }
-    else if (high > this.highPrice || low < this.lowPrice){
-        if (high > this.highPrice){
-            this.highPrice = high;
-        }
-        if (low < this.lowPrice){
-            this.lowPrice = low;   
-        }
-        this.priceScale.domain([this.lowPrice, this.highPrice]);
-        return true;
-    }
-    return false;
+    return d3.scale.linear().domain([-1,1]).range([this.display['height'] - this.display['padding'], this.display['padding']]);
 }
 Graph.prototype.drawXAxis = function(translateString){
     // Make Sure These are Drawn Once And Only Once
     var xAxis = d3.svg.axis();
-    xAxis.scale(this.dateScale).orient("bottom");
+    xAxis.scale(this.dateScale['get']()).orient("bottom");
 
     d3.select("svg").append("g")
     .attr("class", "axis")
@@ -94,7 +102,6 @@ Graph.prototype.drawXAxis = function(translateString){
         });
 }
 Graph.prototype.drawYAxis = function(currentScale,translateString){
-    // Make Sure These are Drawn Once And Only Once
     var yAxis = d3.svg.axis();
     yAxis.scale(currentScale).orient("left");
 
@@ -104,88 +111,76 @@ Graph.prototype.drawYAxis = function(currentScale,translateString){
         .call(yAxis);
 }
 Graph.prototype.createSvg = function(){
-    $(this.container).empty();
+    $(this.display['container']).empty();
     // $(".tooltip").remove();
-    this.graphHeight = parseInt($(this.container).css("height"));
-    this.graphWidth = parseInt($(this.container).css("width"));
+    this.display['height'] = parseInt($(this.display['container']).css("height"));
+    this.display['width'] = parseInt($(this.display['container']).css("width"));
 
-    d3.select(this.container)
+    d3.select(this.display['container'])
         .append("svg")
-        .attr("width",this.graphWidth)
-        .attr("height",this.graphHeight);
+        .attr("width",this.display['width'])
+        .attr("height",this.display['height']);
 
     return d3.select("svg");
 }
 Graph.prototype.draw = function(resize){
+    var price, sentiment;
     this.createSvg();
-    var price = false; 
-    var sentiment = false;
     // Setting Scales
-    // console.log(this.qwargSet)
     for (q in this.qwargSet){
-        if (this.qwargSet[q].qwargType == "price"){
-            this.setPriceScale(this.qwargSet[q], resize);
+        if (this.qwargSet[q].type == "price"){
+            this.priceScale['setDomain'](this.qwargSet[q]);
             price = true;
         }
-        else if (this.qwargSet[q].qwargType == "sentiment"){
+        else if (this.qwargSet[q].type == "sentiment"){
             sentiment = true;
         }
-    }
-    if (!this.dateScale || resize){
-        this.setDateScale();
-    }
-    // Drawing Axis
-    if (sentiment){
-        this.drawYAxis(this.sentimentScale(), "translate(" + (this.graphWidth-this.padding) +",0)");
-    }
-    if (price){
-        this.drawYAxis(this.priceScale, "translate(" + this.padding +",0)");
-    }
-    this.drawXAxis("translate(0," + (this.graphHeight - this.padding) +")");
-    // console.log(this.priceScale)
+    };
+    // Draw y-Axis
+    if (sentiment) this.drawYAxis(this.sentimentScale(), "translate(" + (this.display['width']-this.display['padding']) + ",0)");
+    if (price) this.drawYAxis(this.priceScale['get']({}), "translate(" + this.display['padding'] +",0)");
+    // Sets Domain Values For dateScale
+    this.dateScale['setDomain']();
+    // Draw x-Axis
+    this.drawXAxis("translate(0," + (this.display['height'] - this.display['padding']) +")");
     // Plotting Data
     for (q in this.qwargSet){
-        // Move this to upper function
-        if (this.qwargSet[q].qwargType == "price"){
+        if (this.qwargSet[q].type == "price"){
             this.plotPrices(this.qwargSet[q]);
         }
-        else if (this.qwargSet[q].qwargType == "sentiment"){
+        else if (this.qwargSet[q].type == "sentiment"){
             this.plotTweets(this.qwargSet[q]);
         }
-    }
-
-    // $("circle").tooltips(); 
+    };
 }
 Graph.prototype.plotTweets = function(qwarg){
     $(".tooltip").remove();
-    var start = this.startDate, 
-    end = this.endDate,
-    yScale,
-    rScale = qwarg.radiusScale(),
-    xScale = this.dateScale,
-    checkDate = this.checkDate,
-    svg = d3.select("svg");
-
+    var yScale;
+    var rScale = qwarg.radiusScale();
+    var xScale = this.dateScale['get']();
+    var checkDate = this.dateScale['checkDate'];
+    var svg = d3.select("svg");
+    // Not Sure If The Below Expression Does Anything
     if (!svg[0][0]){
         throw "No SVG";
     }
-    if (qwarg.qwargType == "price"){
+    if (qwarg.type == "price"){
         yScale = this.priceScale;
     }
-    else if (qwarg.qwargType == "sentiment"){
+    else if (qwarg.type == "sentiment"){
         yScale = this.sentimentScale();
     }
     else{
         return "Missing Qwarg Type";
-    }
+    };
     
-    svg.selectAll("circle" + (qwarg.qwargClassString ? "." + qwarg.qwargClassString:""))
-        .data(qwarg.qwargData)
+    svg.selectAll("circle" + (qwarg.tag ? "." + qwarg.tag:""))
+        .data(qwarg.data)
         .enter()
         .append("circle")
-        .attr("class", qwarg.qwargClassString)
+        .attr("class", qwarg.tag)
         .attr("cx", function(d){
-            return xScale(qwarg.qwargParseDate(d.date));
+            return xScale(qwarg.parseDate(d.date));
         })
         .attr("cy", function(d){
             return yScale(parseFloat(d.height));
@@ -198,8 +193,7 @@ Graph.prototype.plotTweets = function(qwarg){
         })
         .style("fill", qwarg.fill)
         .style("display", function(d){
-            date = qwarg.qwargParseDate(d.date);
-            if ((date > start) && (date < end)){
+            if (checkDate(qwarg.parseDate(d.date))){
                 return "initial";
             }
             else{
@@ -208,37 +202,19 @@ Graph.prototype.plotTweets = function(qwarg){
         });
 }
 Graph.prototype.plotPrices = function(qwarg){
-    // console.log(arguments);
-    // if (arguments.length == 2){
-    //     dataset = arguments[0].qwargData.concat(arguments[1].qwargData);
-    // } 
-    // else {
-    //     dataset = qwarg.qwargData;
-    // }
-    var start = this.startDate, 
-    end = this.endDate,
-    yScale,
-    rScale = qwarg.radiusScale(),
-    xScale = this.dateScale,
-    checkDate = this.checkDate,
-    svg = d3.select("svg");
-    
-    var yScale = this.priceScale;
-
-    // .attr("cx", function(d){
-    //     return xScale(qwarg.qwargParseDate(d.date));
-    // })
-    // .attr("cy", function(d){
-    //     return yScale(parseFloat(d.height));
-    // })
+    var yScale = this.priceScale['get']({});
+    var rScale = qwarg.radiusScale();
+    var xScale = this.dateScale['get']();
+    var checkDate = this.dateScale['checkDate'];
+    var svg = d3.select("svg");
 
     var line = d3.svg.line()
         .interpolate("monotone")
-        .x(function(d){return xScale(qwarg.qwargParseDate(d.date));})
+        .x(function(d){return xScale(qwarg.parseDate(d.date));})
         .y(function(d){return yScale(parseFloat(d.height));});
 
     var path = svg.append("path")
-        .attr("d", line(qwarg.qwargData))
+        .attr("d", line(qwarg.data))
         .attr("stroke", qwarg.fill)
         .attr("stroke-width", "2")
         .attr("fill", "none");
@@ -257,61 +233,3 @@ Graph.prototype.clear = function(setString){
     $(setString).remove();
     // $("circle").tooltips();
 }
-
-// function intraDay(ticker, graph){
-//     $.get('/quandl/current/',{'ticker':ticker},function(data){
-//         graph.qwargSet[ticker].qwargData[graph.qwargSet[ticker].qwargData.length] = data.prices[0];
-//         graph.qwargSet[ticker].qwargData = graph.qwargSet[ticker].qwargData.concat(data.prices);
-//         graph.draw();
-//     });
-// }
-
-// $(document).ready(function(){
-//     var endDate = new Date(),
-//     graph = new Graph(),
-//     stockQwarg,
-//     currentInterval;
-//     $(this.container).on("drawGraph", function(event, startDate, qwarg){
-//         if (qwarg.qwargType == "price" && stockQwarg != qwarg.qwargClassString){
-//             // Evaluate If This Is Needed 
-//             delete graph.qwargSet[stockQwarg]
-//             delete graph.qwargSet["tweet"]
-//             graph.dateScale = false;
-//             stockQwarg = qwarg.qwargClassString;
-//             graph.highPrice = 0; 
-//         }
-//         if(qwarg.qwargType == "tweet"){
-//             delete graph.qwargSet["tweet"]
-//         }
-//         graph.endDate = endDate;
-//         graph.startDate = startDate;
-//         // qwarg.qwargData is newest to oldest
-//         graph.qwargSet[qwarg.qwargClassString] = qwarg;
-//         // Might be a bad way to do this
-//         // intraDay(stockQwarg, graph);
-//         graph.draw();
-//     });
-//     $("#fillSelector").on("submit", "#color-form",function(event){
-//         event.preventDefault();
-//         var color = $('#colorSelection').val()
-//         $('path').attr('stroke', color);
-//     });
-//     $('#footer').on("click", '#colorTweetBut', function(event){
-//         event.preventDefault();
-//         var color = $('#colorTweetSelection').val()
-//         $('.tweet').css('fill', color);
-//     });
-//     $("body").on("addToDataSet", function(event, dataSetName, dataToAdd){
-//         // Add this for intraday
-//         if (graph.qwargSet[dataSetName]){
-//             graph.qwargSet[dataSetName].qwargData.push(dataToAdd);
-//             graph.draw();
-//         }
-//         else{
-//             console.log("Invalid dataSetName");
-//         }
-//     });
-//     $("body").on("click", "#backButton", function(event){
-//         graph = new Graph();
-//     });
-// });

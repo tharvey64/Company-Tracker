@@ -32,6 +32,7 @@ hr {
     background-size: cover;
     float:right;
 }
+/*Rename These Two*/
 .leftContent{
     background-color: #E2E2E2;
 }
@@ -39,6 +40,7 @@ hr {
     background-color: #F1B1B1;
     /*margin: 0.5em; */
 }
+/*End Rename These Two*/
 #rightColumn {
     height: 36em;
 }

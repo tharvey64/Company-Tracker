@@ -7,7 +7,7 @@ function renderForms(){
     var htmlString;
     htmlString = renderTemplate('#stock-search');
     $('#topBox').html(htmlString);
-    
+
     var today = new Date();
     htmlString = renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
     $('#bottomBox').html(htmlString);
@@ -114,7 +114,7 @@ $( document ).ready(function(){
         var fullCode, startDate, input, $el, $target;
         $target = graphRelatedItems['$graphBox'];
         $target.append(loadingImageRendered);
-        // Add Tabs to Right or Left side
+        // Add Tabs
         $el = $(this);
         fullCode = $el.val().split("/");
         startDate = $('input[name="start date"]').val();
@@ -132,18 +132,26 @@ $( document ).ready(function(){
                 // Return to Prevent Drawing of Graph
                 return;
             };
+            var options, stockPrices, settings;
             // Make UI for the Graph
             // Wrap this in a function
-            var options = {
-                'fill': "blue",
+            options = {
+                'type': 'price',
+                'data': data.close,
+                'tag': data.symbol,
+                'fill': 'blue',
                 'show': true
             };
-            stockPrices = new global.Qwarg("price", data.close, data.symbol, options);
-            
-            graphRelatedItems['graph'] = new global.Graph('#graphBox');
-            graphRelatedItems['graph'].endDate = new Date();
-            graphRelatedItems['graph'].startDate = new Date(startDate);
-            graphRelatedItems['graph'].qwargSet[stockPrices.qwargClassString] = stockPrices;
+            stockPrices = new global.Qwarg(options);
+            // var settings = {'container':,'padding':,'startDate':,'endDate':,'qwargSet':};
+            settings = {
+                'container': '#graphBox',
+                'padding': 60,
+                'startDate': new Date(startDate),
+                'qwargSet': {}
+            };
+            settings['qwargSet'][stockPrices.tag] = stockPrices;
+            graphRelatedItems['graph'] = new global.Graph(settings);
             graphRelatedItems['graph'].draw();
             // Move This To index.css
             $target.css('background-color','grey');
