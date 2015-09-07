@@ -36,9 +36,10 @@ class Google:
                         time = date_start+datetime.timedelta(seconds=int(raw[i])*int(interval))
                         raw[i]=str(time)
                     else:
-                        print(raw[i])
+                        # This Whole Method Is Tempermental
+                        # Check isDigit on all of these items being turned into int()
                         date_start = datetime.datetime.fromtimestamp(int(raw[i][1:]))
-                        date_start -= datetime.timedelta(minutes=int(data[6][-3:]))
+                        date_start -= datetime.timedelta(minutes=int(data[6][-2:]))
                         raw[i] = str(date_start)
             stage = dict(zip(key,raw))
             stage["date"]=stage["DATE"]

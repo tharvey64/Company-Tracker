@@ -12,9 +12,9 @@ class Markit:
     @classmethod
     def find_company(cls, name, page_number):
         if not isinstance(name, str):
-            return dict(error='Error Invalid Input Type')
+            return dict(error='Invalid Input Type')
         # response = requests.get(cls.company_search_url + name)
-        kwargs = dict(query=quote(name),database='YAHOO',per_page=25,page_number=page_number,token=os.environ['QUANDL_KEY'])
+        kwargs = dict(query=quote(name),database='YAHOO',per_page=300,page_number=page_number,token=os.environ['QUANDL_KEY'])
         
         url = cls.test_company_search.format(**kwargs)
         response = requests.get(url)

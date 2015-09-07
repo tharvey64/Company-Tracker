@@ -1,5 +1,90 @@
+/*Layout Adjustments*/
+.leftContent{
+    border-radius: 5%;
+    margin: 0.25em;
+    min-height: 8em;
+    max-height: 15em;
+    overflow: hidden;
+}
+.rightContent{
+    min-height: 34em;
+    padding: 1em;
+}
+/*#rightColumn {
+}*/
+#leftColumn{
+    padding: 0.25em; 
+    border-radius: 0.5em;
+}
+/*End Layout Section*/
+/*Loading Image Options*/
 .loading {
     background-image: url('/2static/images/default.svg');
     background-repeat: no-repeat;
     background-position: center;
+}
+/*Alignment for graph box*/
+#graphBox > img.cover {
+    /*display: none;*/
+    position: absolute;
+    top: 25%;
+    left: 40%;
+}
+/*Alignment for search results box*/
+.leftContent > img.cover {
+    /*display: none;*/
+    position: absolute;
+    top: 30%;
+    left: 30%;
+}
+/*End Loading Image Options*/
+.searchFieldset legend{
+    margin-bottom:0.5em;
+}
+#leftColumn {
+    box-shadow: -0.5em 0.5em 0.5em black;
+}
+#middleBox {
+    height:15em;
+}
+#searchResultNavigation {
+    min-height: 2em;
+    display: block;
+}
+#searchResultButtons {
+    text-align: center;
+    max-height: 12em;
+    overflow: scroll;
+}
+#graphBox {
+    background-color: #F1B1B1;
+    height: 24em;
+}
+#graphInterface {
+    background-color: #F1B1B1;
+    height: 10em;
+    border: solid;
+    box-shadow: -0.5em 0.5em 0.5em black;
+
+}
+#graphInterface > div {
+    display: inline-block;
+    height: 100%;
+    width: 33%;
+    border-right: solid;
+}
+#graphInterface > div:last-child {
+    border-right: none;
+}
+/*Graph CSS*/
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 0.75em;
 }

@@ -1,47 +1,53 @@
+function renderTemplate(tag, templateData){
+    var template = $(tag).html();
+    Mustache.parse(template);
+    return Mustache.render(template,templateData);
+}
 function renderForms(){
-    var stockSearchTemplate = $("#stock-search").html();
-    Mustache.parse(stockSearchTemplate);
-    var stockFormRendered = Mustache.render(stockSearchTemplate);
-    $('#topBox').html(stockFormRendered);
+    var htmlString;
+    htmlString = renderTemplate('#stock-search');
+    $('#topBox').html(htmlString);
     
     var today = new Date();
-    var dateRangeTemplate = $("#date-range").html();
-    Mustache.parse(dateRangeTemplate);
-    var dateRangeFormRendered = Mustache.render(dateRangeTemplate,{'today': today.toJSON().substring(0,10)});
-    $('#bottomBox').html(dateRangeFormRendered);
+    htmlString = renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
+    $('#bottomBox').html(htmlString);
 };
 
 function buttonDateValidation(tag){
-    var to_date, $el;
-    var $collection = $(tag);
-    var startDate = new Date($('input[name="start date"]').val());
-    var endDate = new Date($('input[name="end date"]').val());
-    // console.log($('input[name="end date"]').val() instanceof Date);
+    var startDate, to_date, $el, $collection;
+    startDate = new Date($('input[name="start date"]').val()) || new Date();
+    $collection = $(tag);
+    // var endDate = new Date($('input[name="end date"]').val());
+
     $collection.each(function(index, el){
         $el = $(el);
         to_date = new Date(el.dataset.to_date);
         if (to_date.getTime() < startDate.getTime()){
             $el.removeClass('list-group-item-success');
             $el.addClass('list-group-item-danger disabled');
-            $el.attr("disabled","disabled");
+            $el.attr('disabled','disabled');
         }else{
             $el.addClass('list-group-item-success');
             $el.removeClass('list-group-item-danger disabled');
-            $el.removeAttr("disabled");
-        }
+            $el.removeAttr('disabled');
+        };
     });
 };
 
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
-// use more objects
-// Move date out of search form
 $( document ).ready(function(){
     var global = (function () {
         return this || (1, eval)('this');
     }());
     
     renderForms();
-
+    // polluting the fucking namespace
+    // graphBoxWidth, resizeInterval
+    var graphRelatedItems = {
+        '$graphBox': $('#graphBox')
+    };
+    var $graphBox = $('#graphBox');
+    var loadingImageRendered = renderTemplate('#loading-image');
     var stockSearchAjaxTracker = {
         'count': 0,
         'last': 0
@@ -51,35 +57,39 @@ $( document ).ready(function(){
     $('#topBox, #middleBox').on('input submit', '.companySearch', function(event){
         event.preventDefault();
         event.stopPropagation();
-        var url, search;
-        var $el = $(this);
-        if (this.nodeName==='FORM'){
+
+        var url, search, serialized, $el, $middleBox;
+        
+        $el = $(this);
+        if ($el.is('form')){
             url = $el.attr('action');
             search = $el.children('input[name="input_string"]').val();
-        }else if (this.nodeName==='INPUT'){
+        }else if ($el.is('input')){
             url = $el.parents('#stockForm').attr('action');
             search = $el.val();
         }else{
-            // Dont Make The Ajax Request if this is not a form or input tag
+            // End Callback if tag is not form or input
             return;
         };
-        // Start Animation Here
-        $('#middleBox').addClass('loading');
+        // Start Loading Animation Here
+        $middleBox = $('#middleBox');
+        $middleBox.append(loadingImageRendered);
+        $('.disableOnLoad').attr('disabled','disabled');
         // Searches for results
         stockSearchAjaxTracker['count'] += 1;
-        $.get(url,$el.serialize()+"&ajaxCount="+stockSearchAjaxTracker['count'],function(data){
+        serialized = $el.serialize()+'&ajaxCount='+stockSearchAjaxTracker['count']
+
+        $.get(url, serialized, function(data){
             if (stockSearchAjaxTracker['count'] > data.ajaxCount && data.ajaxCount < stockSearchAjaxTracker['last']) return;
             
             stockSearchAjaxTracker['last'] = data.ajaxCount;
-            // Stop Animation Here
-            $('#middleBox').removeClass('loading');
-
-            // -Find A Way to Filter Results
-            // ^^^^^ Each Result Has A from_date And to_date prop that says the date range of the info 
-            // ^^^^^ I should Include these with the buttons and have the buttons respond based on that
-            // -Currently The Next Option Wont be available if the list length is 0
-            // -provide some amount of handling for errors
-            // console.log(data);
+            if (data['error']){
+                $('#middleBox > .loadingImage').remove();
+                // load some error message
+                return;
+            };
+            // -Next Button does not appear when list length is 0
+            // ^^^ This However does not mean that there are no more results
             if (data['list'].length && data['start']+data['per_page']-1 < data['total_count']){
                 data['next'] = {
                     'search':search,
@@ -92,57 +102,71 @@ $( document ).ready(function(){
                     'page': data['current_page'] - 1
                 };
             };
-            var template = $('#search-result').html();
-            Mustache.parse(template);
-            var rendered = Mustache.render(template,data);
-            $('#middleBox').html(rendered);
-            // Check Buttons
+
+            var htmlString = renderTemplate('#search-result', data);
+            $middleBox.html(htmlString);
+            // Check Company Buttons
             buttonDateValidation('.companyButton');
         });
     });
 
     $('#middleBox').on('click', 'button', function(event){
-        // Start Animation Here
-        // This Needs an Id or another div
-        $('.rightContent').addClass('loading');
-        // Build out right side of page
+        var fullCode, startDate, input, $el, $target;
+        $target = graphRelatedItems['$graphBox'];
+        $target.append(loadingImageRendered);
         // Add Tabs to Right or Left side
-
-        var input = {};
-        var $el = $(this);
-        var fullCode = $el.val().split("/");
-        var startDate = $('input[name="start date"]').val();
-        input['company_name'] = $el.html();
-        input['start date'] = startDate;
-        input['source_code'] = fullCode[0];
-        input['code'] = fullCode[1];
+        $el = $(this);
+        fullCode = $el.val().split("/");
+        startDate = $('input[name="start date"]').val();
+        input = {
+            'company_name': $el.html(),
+            'start date': startDate,
+            'source_code': fullCode[0],
+            'code': fullCode[1]
+        };
 
         $.get('quandl/current/', input,function(data){
-            // Stop Animation
-            // Wrap this in a function
-            $('.rightContent').removeClass('loading');
 
             if (!data.close.length){
-                // Trigger something here
-                // Return to Prevent Graph from Drawing when No prices are returned
+                $target.html('<h2>No Results Found For '+ data.symbol +'</h2>');
+                // Return to Prevent Drawing of Graph
                 return;
             };
-            stockPrices = new global.Qwarg("price", data.close, data.symbol);
-            // Make This An Object Literal called 'options'
-            stockPrices.qwargParseDate = d3.time.format("%Y-%m-%d %X").parse;
-            stockPrices.fill = "blue";
-            stockPrices.radiusRange = [5,5]
-            stockPrices.show = true;
-
-            graph = new global.Graph(".rightContent");
-            graph.endDate = new Date();
-            graph.startDate = d3.time.format("%Y-%m-%d").parse(startDate);
-            graph.qwargSet[stockPrices.qwargClassString] = stockPrices;
-            graph.draw();
+            // Make UI for the Graph
+            // Wrap this in a function
+            var options = {
+                'fill': "blue",
+                'show': true
+            };
+            stockPrices = new global.Qwarg("price", data.close, data.symbol, options);
+            
+            graphRelatedItems['graph'] = new global.Graph('#graphBox');
+            graphRelatedItems['graph'].endDate = new Date();
+            graphRelatedItems['graph'].startDate = new Date(startDate);
+            graphRelatedItems['graph'].qwargSet[stockPrices.qwargClassString] = stockPrices;
+            graphRelatedItems['graph'].draw();
+            // Move This To index.css
+            $target.css('background-color','grey');
+            graphRelatedItems['graphBoxWidth'] = $target.css('width');
         });
     });
-    
+    // Check Company Buttons With New Date
     $('#bottomBox').on('input', 'input[type="date"]', function(event){
         buttonDateValidation('.companyButton');
+    });
+
+    // I DO NOT LIKE THIS SOLUTION
+    $(window).on('resize', function(event){
+        if(graphRelatedItems['graph'] && !graphRelatedItems['resizeInterval'] && (graphRelatedItems['$graphBox'].css('width') != graphRelatedItems['graphBoxWidth'])){
+            graphRelatedItems['graphBoxWidth'] = graphRelatedItems['$graphBox'].css('width');
+            graphRelatedItems['graph'].draw(true);
+            graphRelatedItems['resizeInterval'] = setInterval(function(){
+                graphRelatedItems['graph'].draw(true);
+            }, 600);
+            setTimeout(function(){
+                clearInterval(graphRelatedItems['resizeInterval']);
+                graphRelatedItems['resizeInterval'] = undefined;
+            },2000);
+        };
     });
 });
