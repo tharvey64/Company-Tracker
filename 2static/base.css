@@ -1,51 +1,62 @@
+/* ID's and tags only */
 /*This Css File Is For Basic Layout*/
 body{
     opacity: 0.8; 
     background-image: url("images/1.jpg");
 }
-hr {
+/*Change This To Border*/
+#rootContainer{
+    height:60em;
+}
+hr{
     height: 0.5em;
     background-color: white;
     margin: 0em;
 }
-.header-body{
-    min-height: 5em;
-    background-color: #ABABAB;
-}
-#top{
+#outerHeader{
+    height: 13%;
+    width: 100%;
+    /*padding: 2%;*/
+    margin: 1% auto;
     background-color: #5bc0de;
-    height:8em;
-    width:100%;
     font-family: 'Libre Baskerville', serif;
     padding: 0.75em 0.75em;
     color: white;
     border: none;
+}
+#innerHeader{
+    background-color: #ABABAB;
 }
 #intro{
     display:inline-block;
     margin-top: 1em;
 }
 #logo{
-    background-image: url('images/Drawing.png');
-    width: 6em;
     height: 5.5em;
+    width: 6em;
+    background-image: url('images/Drawing.png');
     background-size: cover;
     float:right;
 }
-/*Rename These Two*/
-.leftContent{
-    background-color: #E2E2E2;
+#page-content{
+    height: 80%;
+    width: 100%;
+    overflow: auto;
+    background-color: yellow;
 }
-.rightContent{
-    background-color: #F1B1B1;
-    /*margin: 0.5em; */
-}
-/*End Rename These Two*/
 #rightColumn {
-    height: 36em;
+    height: 100%;
+    width: 72%;
+    background-color: purple;
+    overflow: auto;
 }
 #leftColumn{
+    height: 100%;
+    width:27%;
     background-color: blue;
-    display: inline-block;
-    max-height: 36em;
+    overflow: hidden;
+    padding: 0.5%; 
+    border-radius: 0.5em;
+    box-shadow: -0.5em 0.5em 0.5em black;
+    /*display: inline-block;
 }

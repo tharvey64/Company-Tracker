@@ -1,20 +1,22 @@
+/*Css ERROR Somewhere in Here*/
 /*Layout Adjustments*/
-.leftContent{
-    border-radius: 5%;
-    margin: 0.25em;
-    min-height: 8em;
-    max-height: 15em;
-    overflow: hidden;
+.leftContent {
+    height: 32.5%;
+    margin: 1%;
+    padding: 1%;
+    overflow: scroll;
+    background-color: #E2E2E2;
+    /*background-color:blue;*/
+    border: solid black;
 }
-.rightContent{
-    min-height: 34em;
-    padding: 1em;
+.rightContent {
+    height: 100%;
+    padding: 2%;
+    border-radius: 1%;
+    background-color: #F1B1B1;
 }
-/*#rightColumn {
-}*/
-#leftColumn{
-    padding: 0.25em; 
-    border-radius: 0.5em;
+#middleBox {
+    position: relative;
 }
 /*End Layout Section*/
 /*Loading Image Options*/
@@ -25,63 +27,63 @@
 }
 /*Alignment for graph box*/
 #graphBox > img.cover {
-    /*display: none;*/
     position: absolute;
     top: 25%;
     left: 40%;
 }
 /*Alignment for search results box*/
-.leftContent > img.cover {
-    /*display: none;*/
+#middleBox > img.cover {
     position: absolute;
-    top: 30%;
-    left: 30%;
+    top: 26%;
+    left: 26%;
 }
 /*End Loading Image Options*/
 .searchFieldset legend{
-    margin-bottom:0.5em;
+    margin-bottom: 3%;
 }
-#leftColumn {
-    box-shadow: -0.5em 0.5em 0.5em black;
+#endDateLabel {
+    float: right;
+    margin-right: 1%;
 }
-#middleBox {
-    height:15em;
-}
+
 #searchResultNavigation {
-    min-height: 2em;
+    overflow: auto;
+    border-bottom: solid black;
     display: block;
 }
 #searchResultButtons {
+    max-height: 75%;
     text-align: center;
-    max-height: 12em;
     overflow: scroll;
 }
+/*Right Side Of Page*/
 #graphBox {
-    background-color: #F1B1B1;
-    height: 24em;
+    height: 70%;
+    /*background-color: #F1B1B1;*/
+    background-color: grey;
 }
 #graphInterface {
+    height: 30%;
     background-color: #F1B1B1;
-    height: 10em;
     border: solid;
     box-shadow: -0.5em 0.5em 0.5em black;
-
+    border-radius: 2%;
 }
+/*Individual Graph Divs*/
 #graphInterface > div {
-    display: inline-block;
     height: 100%;
     width: 33%;
+    display: inline-block;
     border-right: solid;
 }
 #graphInterface > div:last-child {
     border-right: none;
 }
 /*Graph CSS*/
-.axis path,
-.axis line {
+.axis path,.axis line {
     fill: none;
     stroke: black;
-    shape-rendering: crispEdges;
+    /*shape-rendering: crispEdges; */
 }
 
 .axis text {

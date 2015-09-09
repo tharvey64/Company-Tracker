@@ -37,6 +37,7 @@ function Graph(settings){
     // Date Scale
     this.dateScale = (function(context, settings){
             var range, start, end;
+            // make sure context is not a copy
             return {
                 'checkDate': function(date){
                         return (date > this.start) && (date < this.end)

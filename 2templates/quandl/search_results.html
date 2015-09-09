@@ -6,7 +6,7 @@
         <form id="previousResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
             <input type="hidden" name="input_string" value="{{search}}" required>
             <input type="hidden" name="page_number" value="{{page}}">
-            <input class="disableOnLoad" type="submit" value="Previous">
+            <button type="submit" class="btn btn-default disableOnLoad" for="previousResults">Previous</button>
         </form>
         </div>
     {{/previous}}
@@ -15,7 +15,7 @@
         <form id="nextResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
             <input type="hidden" name="input_string" value="{{search}}" required>
             <input type="hidden" name="page_number" value="{{page}}">
-            <input class="disableOnLoad" type="submit" value="Next">
+            <button type="submit" class="btn btn-default disableOnLoad" for="nextResults">Next</button>
         </form>
         </div>
     {{/next}}

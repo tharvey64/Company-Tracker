@@ -4,9 +4,10 @@
         <fieldset class="searchFieldset">
         <legend>Date Range</legend>
             <label for="start date">Start Date</label>
-            <input type="date" class="form-control" name="start date" max={{today}} value={{today}}>
-            <label for="end date">NOT ACTIVE: End Date</label>
-            <input type="date" class="form-control" name="end date" max={{today}} value={{today}}>
+            <label id="endDateLabel" for="end date">End Date</label><br>
+            <input type="date" name="start date" max={{today}} value={{today}}>
+            <span>-</span>
+            <input type="date" name="end date" max={{today}} value={{today}} disabled="disabled">
             {% endverbatim %}
         </fieldset>
     </form>

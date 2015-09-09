@@ -6,11 +6,10 @@ function renderTemplate(tag, templateData){
 function renderForms(){
     var htmlString;
     htmlString = renderTemplate('#stock-search');
-    $('#topBox').html(htmlString);
-
+    // $('#topBox').html(htmlString);
     var today = new Date();
-    htmlString = renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
-    $('#bottomBox').html(htmlString);
+    htmlString += renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
+    $('#topBox').html(htmlString);
 };
 
 function buttonDateValidation(tag){
@@ -110,7 +109,7 @@ $( document ).ready(function(){
         });
     });
 
-    $('#middleBox').on('click', 'button', function(event){
+    $('#middleBox').on('click', 'button.companyButton', function(event){
         var fullCode, startDate, input, $el, $target;
         $target = graphRelatedItems['$graphBox'];
         $target.append(loadingImageRendered);
@@ -154,12 +153,11 @@ $( document ).ready(function(){
             graphRelatedItems['graph'] = new global.Graph(settings);
             graphRelatedItems['graph'].draw();
             // Move This To index.css
-            $target.css('background-color','grey');
             graphRelatedItems['graphBoxWidth'] = $target.css('width');
         });
     });
     // Check Company Buttons With New Date
-    $('#bottomBox').on('input', 'input[type="date"]', function(event){
+    $('#topBox').on('input', 'input[type="date"]', function(event){
         buttonDateValidation('.companyButton');
     });
 

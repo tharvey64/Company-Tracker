@@ -18,27 +18,31 @@
         <title>Layout Test</title>
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="page-header col-xs-12" id="top">
-                <div class="header-body">
+        <div class="container-fluid" id="rootContainer">
+            <div class="page-header col-xs-12" id="outerHeader">
+                <div class="header-body" id="innerHeader">
                     {% block header %}{% endblock header %}
                 </div>
             </div>
-            <div class="column pull-left col-xs-3" id="leftColumn">
-                <div class="leftContent" id="topBox">
-                    {% block topBox %}{% endblock topBox %}
+            <div id="page-content">
+
+                <div class="column pull-left col-xs-3" id="leftColumn">
+                    <div class="leftContent" id="topBox">
+                        {% block topBox %}{% endblock topBox %}
+                    </div>
+                    <div class="leftContent" id="middleBox">
+                        {% block middleBox %}{% endblock middleBox %}
+                    </div>
+                    <div class="leftContent" id="bottomBox">
+                        {% block bottomBox %}{% endblock bottomBox %}
+                    </div>
                 </div>
-                <div class="leftContent" id="middleBox">
-                    {% block middleBox %}{% endblock middleBox %}
+                <div class="column pull-right col-xs-9" id="rightColumn">
+                    <div class="rightContent">
+                        {% block rightContent %}{% endblock rightContent %}
+                    </div>
                 </div>
-                <div class="leftContent" id="bottomBox">
-                    {% block bottomBox %}{% endblock bottomBox %}
-                </div>
-            </div>
-            <div class="column pull-right col-xs-9" id="rightColumn">
-                <div class="rightContent">
-                    {% block rightContent %}{% endblock rightContent %}
-                </div>
+            
             </div>
         </div>
     </body>
