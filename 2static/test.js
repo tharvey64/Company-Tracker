@@ -1,6 +1,6 @@
-var DataManagment = {};
+// Rename This
+var Collection = {};
 (function(namespace){
-
     // needs Function That Builds D3 scales
     // Needs to Store range
     // function Scale(scaleType){
@@ -11,9 +11,6 @@ var DataManagment = {};
     // Scale.prototype.getScale = function(range){
     //     return this.scaleType.range(range);
     // };
-
-    // NOT DONE
-    // Need to be singleton that will act as the public interface
     function DataGroup(options){
         // :parameters: 
         // type = price or sentiment (Expand To Ratios Later)
@@ -98,42 +95,82 @@ var DataManagment = {};
     // namespace['scale'] = Scale;
     namespace['dataGroup'] = DataGroup;
     namespace['qwarg'] = Qwarg;
-})(DataManagment);
+})(Collection);
 
 
-var CollectionManangment = {};
+var CollectionInterface = {};
 (function(namespace, helper){
     var existingGroups = {};
-    return {
-        createCollection: function(type) {
-            // Check if a collection of this type already exists 
-            var existingDataGroup = existingGroups[type];
-            if (existingDataGroup) {
-                return existingDataGroup; 
-            } 
-            else {
-                // if not, let's create a new instance of it and store it
-                var group = new helper.['dataGroup']({'type':type}); 
-                existingGroups[type] = group;
-                return group;
-            } 
-        },
-        createQwarg: function(options){
-            return new helper.['qwarg'](options);
-        },
-        deleteCollection: function(type) {
-            delete existingGroups[type];
-        },
-        deleteQwarg: function(type, tag){
-            delete existingGroups[type][tag]
-        },
-        updateCollection: function(type){},
-        updateQwarg: function(type, tag, options){},
-
+    function getQwarg(type, tag){
+        var group, location;
+        group = existingGroups[type];
+        if(group){
+            location = group.searchCollection(tag);
+            if (location === -1) return false;
+            return group.collection[location];
+        }
+        else {
+            return false
+        }
     };
-})(CollectionManangment, DataManagment);
 
-console.log(DataManagment);
+    namespace['listGroups'] = function(){
+        for(var item in existingGroups){
+            console.log(item);
+        }
+    };
+    namespace['createCollection'] = function(type) {
+        // consider Splitting this into two methods add and create
+        // Check if a collection of this type already exists 
+        var existingDataGroup = existingGroups[type];
+        if (existingDataGroup) {
+            return existingDataGroup; 
+        } 
+        else {
+            // if not, let's create a new instance of it and store it
+            var group = new helper['dataGroup']({'type':type}); 
+            existingGroups[type] = group;
+            return group;
+        } 
+    };
+    namespace['createQwarg'] = function(options){
+        return new helper['qwarg'](options);
+    };
+    namespace['addQwarg'] = function(type, qwarg){
+        var collection = existingGroups[type];
+        if(collection){
+            collection.newDataSet(qwarg);
+        }
+    };
+    // namespace['updateCollection'] = function(type){
+    //     // takes stock tag and updates date range
+    //     // Updates all qwargs in a collection
+    //     // this.createCollection(type)
+    // };
+    namespace['updateQwarg'] = function(type, tag, options){
+        var target, group, location;
+        target = getQwarg(type, tag);
+        if (!target) return false;
+        // Color Changes, Show/Hide, data updates
+        // iterates over options setting the values for the qwarg
+        for (var item in options){
+            target[item] = options[item];
+        };
+        return true;
+    };
+    namespace['deleteCollection'] = function(type) {
+        delete existingGroups[type];
+    };
+    namespace['deleteQwarg'] = function(type, tag){
+        if(getQwarg(type, tag)){
+            delete existingGroups[type][tag];
+        }
+    };
+})(CollectionInterface, Collection);
+
+
+
+// console.log(Collection);
 
 // options = {'type': 'price'};
 // options['collection'] = [
@@ -144,7 +181,7 @@ console.log(DataManagment);
 //     new Qwarg({'show':true, 'data':[{'height':47},{'height':3},{'height':9},{'height':89}]}),
 //     new Qwarg({'show':false, 'data':[{'height':65},{'height':7},{'height':59},{'height':0}]})
 // ];
-// m = new DataManagment['dataGroup'](options);
+// m = new Collection['dataGroup'](options);
 // console.log(m.getCollectionRange('height', true));
 
 
