@@ -97,10 +97,11 @@ var Collection = {};
     namespace['qwarg'] = Qwarg;
 })(Collection);
 
-
+// First Iteration of Collection Interface
 var CollectionInterface = {};
 (function(namespace, helper){
     var existingGroups = {};
+
     function getQwarg(type, tag){
         var group, location;
         group = existingGroups[type];
@@ -111,12 +112,6 @@ var CollectionInterface = {};
         }
         else {
             return false
-        }
-    };
-
-    namespace['listGroups'] = function(){
-        for(var item in existingGroups){
-            console.log(item);
         }
     };
     namespace['createCollection'] = function(type) {
@@ -141,6 +136,9 @@ var CollectionInterface = {};
         if(collection){
             collection.newDataSet(qwarg);
         }
+    };
+    namespace['getCollection'] = function(type){
+        return existingGroups[type];
     };
     // namespace['updateCollection'] = function(type){
     //     // takes stock tag and updates date range

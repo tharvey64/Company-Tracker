@@ -26,16 +26,6 @@ function Qwarg(options){
     }
 }
 
-
-// function DataGroup(){
-//     this.existingDataSets = {};
-//     this.type = '';
-//     this.radiusRange;
-//     this.parseDate;
-//     this.yScale;
-//  
-// }
-
 function Graph(settings){
     // Page Settings
     this.display = {
