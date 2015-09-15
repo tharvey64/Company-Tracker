@@ -61,10 +61,11 @@ function Graph(settings){
     this.priceScale = (function(context){
             var high, low, range;
             return {
+                // Domain values will come from the Qwargset
                 'setDomain': function(qwarg){
                         var max, min;
-                        max = d3.max(qwarg.data, function(d){return (parseFloat(d.height*1.05))});
-                        min = d3.min(qwarg.data, function(d){return (parseFloat(d.height*0.95))});
+                        // max = d3.max(qwarg.data, function(d){return (parseFloat(d.height*1.05))});
+                        // min = d3.min(qwarg.data, function(d){return (parseFloat(d.height*0.95))});
                         this.high = (max > this.high || !Number(this.high) ? max:this.high);
                         this.low = (min < this.low || !Number(this.low) ? min:this.low); 
                     },
@@ -74,13 +75,16 @@ function Graph(settings){
                 'get': function(settings){
                         var top = settings['topPadding'] || 10;
                         this.setRange(top);
-                        // if (!settins['resize']) this.setDomain(settings['qwarg']);
+                        // if (!settings['resize']) this.setDomain(settings['qwarg']);
                         return d3.scale.linear().domain([this.low,this.high]).range(this.range)
                     }
             };
         })(this);
-    // Data
+    // Data 
+    // New Stuff Here
+    // This Will be an object
     this.qwargSet = settings.qwargSet || {};
+    // this.qwargSet = MyInterface() || {};
 }
 Graph.prototype.sentimentScale = function(){
     return d3.scale.linear().domain([-1,1]).range([this.display['height'] - this.display['padding'], this.display['padding']]);
@@ -130,6 +134,7 @@ Graph.prototype.draw = function(resize){
     // Setting Scales
     for (q in this.qwargSet){
         if (this.qwargSet[q].type == "price"){
+            // get the range of each collection
             this.priceScale['setDomain'](this.qwargSet[q]);
             price = true;
         }

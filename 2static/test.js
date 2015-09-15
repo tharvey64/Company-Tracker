@@ -1,21 +1,11 @@
 // Rename This
-var Collection = {};
-(function(namespace){
-    // needs Function That Builds D3 scales
-    // Needs to Store range
-    // function Scale(scaleType){
-    //     this.scaleType = scaleType;
-    //     this.low;
-    //     this.high;
-    // };
-    // Scale.prototype.getScale = function(range){
-    //     return this.scaleType.range(range);
-    // };
+var CollectionInterface = CollectionInterface || {};
+(function(extend){
+
     function DataGroup(options){
-        // :parameters: 
+        // :parameters:
         // type = price or sentiment (Expand To Ratios Later)
         this.type = options.type;
-        // Consider makeing collection an object literal
         this.collection = options.collection || [];
     };
     DataGroup.prototype.searchCollection = function(tag){
@@ -73,7 +63,7 @@ var Collection = {};
         // Check hasOwnProperty for show 
         this.fill = options.fill || "black";
         this.show = options.show || false;
-    }
+    };
     Qwarg.prototype.findDataRange = function(key){
         var high = low = this.data[0];
 
@@ -91,15 +81,13 @@ var Collection = {};
         return {'high':high[key],'low':low[key]};
     };
 
-    // Consider What Should be Exposed
-    // namespace['scale'] = Scale;
-    namespace['dataGroup'] = DataGroup;
-    namespace['qwarg'] = Qwarg;
-})(Collection);
+    // extend['dataGroup'] = DataGroup;
+    // extend['qwarg'] = Qwarg;
+// })(Collection);
 
-// First Iteration of Collection Interface
-var CollectionInterface = {};
-(function(namespace, helper){
+// // First Iteration of Collection Interface
+// var CollectionInterface = {};
+// (function(extend, helper){
     var existingGroups = {};
 
     function getQwarg(type, tag){
@@ -111,41 +99,39 @@ var CollectionInterface = {};
             return group.collection[location];
         }
         else {
-            return false
+            return false;
         }
     };
-    namespace['createCollection'] = function(type) {
-        // consider Splitting this into two methods add and create
+
+    extend['getCollection'] = function(type) {
+        return existingGroups[type];
+    };
+    extend['createCollection'] = function(type) {
         // Check if a collection of this type already exists 
-        var existingDataGroup = existingGroups[type];
-        if (existingDataGroup) {
-            return existingDataGroup; 
-        } 
-        else {
-            // if not, let's create a new instance of it and store it
-            var group = new helper['dataGroup']({'type':type}); 
-            existingGroups[type] = group;
-            return group;
-        } 
+        if (existingGroups.hasOwnProperty(type)) return false; 
+
+        var group = new DataGroup({'type':type}); 
+        existingGroups[type] = group;
+        return group;
     };
-    namespace['createQwarg'] = function(options){
-        return new helper['qwarg'](options);
+    extend['createQwarg'] = function(options){
+        return new Qwarg(options);
     };
-    namespace['addQwarg'] = function(type, qwarg){
+    extend['addQwarg'] = function(type, qwarg){
         var collection = existingGroups[type];
         if(collection){
             collection.newDataSet(qwarg);
         }
-    };
-    namespace['getCollection'] = function(type){
+    };  
+    extend['getCollection'] = function(type){
         return existingGroups[type];
     };
-    // namespace['updateCollection'] = function(type){
+    // extend['updateCollection'] = function(type){
     //     // takes stock tag and updates date range
     //     // Updates all qwargs in a collection
     //     // this.createCollection(type)
     // };
-    namespace['updateQwarg'] = function(type, tag, options){
+    extend['updateQwarg'] = function(type, tag, options){
         var target, group, location;
         target = getQwarg(type, tag);
         if (!target) return false;
@@ -156,18 +142,18 @@ var CollectionInterface = {};
         };
         return true;
     };
-    namespace['deleteCollection'] = function(type) {
+    extend['deleteCollection'] = function(type) {
         delete existingGroups[type];
     };
-    namespace['deleteQwarg'] = function(type, tag){
+    extend['deleteQwarg'] = function(type, tag){
         if(getQwarg(type, tag)){
             delete existingGroups[type][tag];
         }
     };
-})(CollectionInterface, Collection);
+})(CollectionInterface);
 
-
-
+var test = CollectionInterface;
+// console.log(test.createQwarg({}));
 // console.log(Collection);
 
 // options = {'type': 'price'};
