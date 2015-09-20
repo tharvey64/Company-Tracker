@@ -17,7 +17,7 @@
                 // string representing expected date format
                 this.parseDate = options.parseDate;
                 // Check hasOwnProperty for show 
-                this.fill = options.fill || "black";
+                this.fill = options.fill || "#000000";
                 this.show = options.show || false;
             };
             Qwarg.prototype.findDataRange = function(key){
