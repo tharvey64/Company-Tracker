@@ -1,11 +1,11 @@
-// var myApp = MyApplication || {}
 (function(){
     var myapp = this;
     myapp.renderTemplate = function renderTemplate(tag, templateData){
         var template = $(tag).html();
         Mustache.parse(template);
         return Mustache.render(template,templateData);
-    }
+    };
+
     myapp.renderForms = function renderForms(){
         var htmlString;
         htmlString = myapp.renderTemplate('#stock-search');
@@ -35,7 +35,26 @@
             };
         });
     };
+
+    myapp.dataDisplay = function dataDisplay(obj_list, title, $target){
+        var templateSchema = {};
+        templateSchema['title'] = title;
+        templateSchema['listId'] = title.toLowerCase() + 'List';  
+        templateSchema['content'] = [];
+        for (var idx = obj_list.length; idx--;){
+            var current = {
+                'color': obj_list[idx]['fill'],
+                'name': obj_list[idx]['tag'],
+                'visible': obj_list[idx]['show']
+            };
+            templateSchema['content'].push(current);
+        };
+        var rendered = myapp.renderTemplate('#graph-data-list', templateSchema);
+        $target.html(rendered);
+    };
+
 }).apply(MyApplication);
+
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
 $( document ).ready(function(){
     var global = (function () {
@@ -43,17 +62,32 @@ $( document ).ready(function(){
     }());
     
     MyApplication["renderForms"]();
-    // polluting the fucking namespace
     // graphBoxWidth, resizeInterval
     var graphRelatedItems = {
         '$graphBox': $('#graphBox')
     };
-    var $graphBox = $('#graphBox');
     var loadingImageRendered = MyApplication["renderTemplate"]('#loading-image');
     var stockSearchAjaxTracker = {
         'count': 0,
         'last': 0
     };
+    // Edit Data Set
+    $('#graphInterfaceLeft').on('change','li',function(event){
+        var options, $target;
+        options = {};
+        $target = $(event.target);
+        if ($target.attr('type')==='checkbox'){
+            options['show'] = ($target.is(':checked') ? true:false);
+        }
+        else if ($target.attr('type')==='color'){
+            options['fill'] = $target.val();
+        };
+        graphRelatedItems['graph'].dataInterfaceTest.updateQwarg("price", this.dataset.name, options);
+        // Draw Should look at date range
+        var startDate = new Date($('#dateRangeForm').find('input[name="start date"]').val());
+        graphRelatedItems['graph'].draw(false, startDate);
+    });
+
     // This Event Is Expecting One of these Four
     //'input[name="input_string"], #stockForm, #previousResults, #nextResults'
     $('#topBox, #middleBox').on('input submit', '.companySearch', function(event){
@@ -160,14 +194,14 @@ $( document ).ready(function(){
                 'parseDate': "%Y-%m-%d %X",
                 'data': data.close,
                 'tag': hold,
-                'fill': 'blue',
+                'fill': '#0000ff',
                 'show': true
             };
             var q = graph.dataInterfaceTest.createQwarg(options);
             graph.dataInterfaceTest.addQwarg('price', q);
-
-            graphRelatedItems['graph'].draw();
-            console.log(group.collection);
+            // Draw Should Take Object
+            graphRelatedItems['graph'].draw(false, new Date(startDate));
+            MyApplication["dataDisplay"](group.collection, 'Stocks', $('#graphInterfaceLeft'));
             // Append List of Tickers Here
         });
     });
@@ -177,6 +211,8 @@ $( document ).ready(function(){
     });
 
     // I DO NOT LIKE THIS SOLUTION
+    // Change This To setTimeout
+    // Use Debounce
     $(window).on('resize', function(event){
         if(graphRelatedItems['graph'] && !graphRelatedItems['resizeInterval'] && (graphRelatedItems['$graphBox'].css('width') != graphRelatedItems['graphBoxWidth'])){
             graphRelatedItems['graphBoxWidth'] = graphRelatedItems['$graphBox'].css('width');

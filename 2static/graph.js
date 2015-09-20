@@ -66,13 +66,15 @@
                 return {
                     // Domain values will come from the Qwargset
                     'setDomain': function(domain){
-                            var max, min;
-                            min = parseFloat(domain[0]*0.95);
-                            max = parseFloat(domain[1]*1.05);
-                            // max = d3.max(qwarg.data, function(d){return (parseFloat(d.height*1.05))});
-                            // min = d3.min(qwarg.data, function(d){return (parseFloat(d.height*0.95))});
-                            this.high = (max > this.high || !Number(this.high) ? max:this.high);
-                            this.low = (min < this.low || !Number(this.low) ? min:this.low); 
+                            // var max, min;
+                            // min = parseFloat(domain[0]*0.95);
+                            // max = parseFloat(domain[1]*1.05);
+                            // // max = d3.max(qwarg.data, function(d){return (parseFloat(d.height*1.05))});
+                            // // min = d3.min(qwarg.data, function(d){return (parseFloat(d.height*0.95))});
+                            // this.high = (max > this.high || !Number(this.high) ? max:this.high);
+                            // this.low = (min < this.low || !Number(this.low) ? min:this.low); 
+                            this.low = parseFloat(domain[0] * 0.95);
+                            this.high = parseFloat(domain[1] * 1.05);
                         },
                     'setRange': function(top){
                             this.range = [context.display['height']-context.display['padding'],top];
@@ -130,7 +132,7 @@
 
         return d3.select("svg");
     }
-    myapp.Graph.prototype.draw = function(resize){
+    myapp.Graph.prototype.draw = function(resize, start, end){
         var price, sentiment;
         this.createSvg();
         // New Code
@@ -140,6 +142,7 @@
                 price = true;
                 var domain = groups[name].getCollectionRange('height');
                 this.priceScale['setDomain'](domain);
+                console.log(domain);
             }
             else if (name === "sentiment"){
                 sentiment = true;
@@ -149,7 +152,7 @@
         if (sentiment) this.drawYAxis(this.sentimentScale(), "translate(" + (this.display['width']-this.display['padding']) + ",0)");
         if (price) this.drawYAxis(this.priceScale['get']({}), "translate(" + this.display['padding'] +",0)");
         // Sets Domain Values For dateScale
-        this.dateScale['setDomain']();
+        this.dateScale['setDomain'](start, end);
         // Draw x-Axis
         this.drawXAxis("translate(0," + (this.display['height'] - this.display['padding']) +")");
         // Plotting Data
@@ -159,6 +162,7 @@
                 var current = groups[name];
                 for(var idx = current.collection.length; idx--;){
                     // console.log(current.collection[idx]);
+                    if (!current.collection[idx].show) continue;
                     this.plotPrices(current.collection[idx]);  
                 }
             }
@@ -177,9 +181,7 @@
         var checkDate = this.dateScale['checkDate'];
         var svg = d3.select("svg");
         // Not Sure If The Below Expression Does Anything
-        if (!svg[0][0]){
-            throw "No SVG";
-        }
+        if (!svg[0][0]) throw "No SVG";
         if (qwarg.type == "price"){
             yScale = this.priceScale;
         }

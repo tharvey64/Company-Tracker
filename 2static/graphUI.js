@@ -1,6 +1,6 @@
 // Build The Event Handlers for The Graph Here
 // Refactor Graph.js First
-
+// This Is Not A Graph Interface It Is a Data Interface
 // Rename This And Namespace This
 (function(){
     var myapp = this;
