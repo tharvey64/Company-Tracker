@@ -85,6 +85,8 @@ class Quandl:
     def process_json(stock_info,symbol):
         if 'data' in stock_info:
             # Yahoo Data Format
+            if len(stock_info['data'][0]) < 7:
+                return dict(error=stock_info['data'][0], prices=None)
             processed_data = [dict(date=day[0]+' 16:00:00', height=day[6], radius=day[5], title=day[0]) for day in stock_info['data']]
             return dict(error=None,prices=processed_data,symbol=symbol)
         else:

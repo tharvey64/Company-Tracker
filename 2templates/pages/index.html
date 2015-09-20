@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block scripts %}
+    <script src="{% static 'myapps_namespace.js' %}"></script>
     <script src="{% static 'd3.min.js' %}"></script>
     <script src="{% static 'graph.js' %}"></script>
     <script src="{% static 'graphUI.js' %}"></script>
@@ -30,9 +31,24 @@
 
 {% block rightContent %}
     <div id="graphBox"></div>
+    <!-- Use Col span here -->
     <div id="graphInterface">
-        <div id="graphInterfaceLeft"></div>
-        <div id="graphInterfaceMiddle"></div>
-        <div id="graphInterfaceRight"></div>
+        <div id="graphInterfaceLeft">
+            <h4 class="graphInterfaceTitle">Stocks</h4>
+            <div class="graphInterfaceContainer">
+                <ul id="stockList"></ul>
+            </div>
+        </div>
+        <div id="graphInterfaceMiddle">
+            <h4 class="graphInterfaceTitle">Other</h4>
+            <div class="graphInterfaceContainer">
+            </div>
+        </div>
+        <div id="graphInterfaceRight">
+            <h4 class="graphInterfaceTitle">Twitter</h4>
+            <div class="graphInterfaceContainer">
+                <ul id="twitterList"></ul>
+            </div>
+        </div>
     </div>
 {% endblock rightContent %}

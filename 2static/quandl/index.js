@@ -1,52 +1,55 @@
-function renderTemplate(tag, templateData){
-    var template = $(tag).html();
-    Mustache.parse(template);
-    return Mustache.render(template,templateData);
-}
-function renderForms(){
-    var htmlString;
-    htmlString = renderTemplate('#stock-search');
-    // $('#topBox').html(htmlString);
-    var today = new Date();
-    htmlString += renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
-    $('#topBox').html(htmlString);
-};
+// var myApp = MyApplication || {}
+(function(){
+    var myapp = this;
+    myapp.renderTemplate = function renderTemplate(tag, templateData){
+        var template = $(tag).html();
+        Mustache.parse(template);
+        return Mustache.render(template,templateData);
+    }
+    myapp.renderForms = function renderForms(){
+        var htmlString;
+        htmlString = myapp.renderTemplate('#stock-search');
+        // $('#topBox').html(htmlString);
+        var today = new Date();
+        htmlString += myapp.renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
+        $('#topBox').html(htmlString);
+    };
 
-function buttonDateValidation(tag){
-    var startDate, to_date, $el, $collection;
-    startDate = new Date($('input[name="start date"]').val()) || new Date();
-    $collection = $(tag);
-    // var endDate = new Date($('input[name="end date"]').val());
+    myapp.buttonDateValidation = function buttonDateValidation(tag){
+        var startDate, to_date, $el, $collection;
+        startDate = new Date($('input[name="start date"]').val()) || new Date();
+        $collection = $(tag);
+        // var endDate = new Date($('input[name="end date"]').val());
 
-    $collection.each(function(index, el){
-        $el = $(el);
-        to_date = new Date(el.dataset.to_date);
-        if (to_date.getTime() < startDate.getTime()){
-            $el.removeClass('list-group-item-success');
-            $el.addClass('list-group-item-danger disabled');
-            $el.attr('disabled','disabled');
-        }else{
-            $el.addClass('list-group-item-success');
-            $el.removeClass('list-group-item-danger disabled');
-            $el.removeAttr('disabled');
-        };
-    });
-};
-
+        $collection.each(function(index, el){
+            $el = $(el);
+            to_date = new Date(el.dataset.to_date);
+            if (to_date.getTime() < startDate.getTime()){
+                $el.removeClass('list-group-item-success');
+                $el.addClass('list-group-item-danger disabled');
+                $el.attr('disabled','disabled');
+            }else{
+                $el.addClass('list-group-item-success');
+                $el.removeClass('list-group-item-danger disabled');
+                $el.removeAttr('disabled');
+            };
+        });
+    };
+}).apply(MyApplication);
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
 $( document ).ready(function(){
     var global = (function () {
         return this || (1, eval)('this');
     }());
     
-    renderForms();
+    MyApplication["renderForms"]();
     // polluting the fucking namespace
     // graphBoxWidth, resizeInterval
     var graphRelatedItems = {
         '$graphBox': $('#graphBox')
     };
     var $graphBox = $('#graphBox');
-    var loadingImageRendered = renderTemplate('#loading-image');
+    var loadingImageRendered = MyApplication["renderTemplate"]('#loading-image');
     var stockSearchAjaxTracker = {
         'count': 0,
         'last': 0
@@ -76,20 +79,20 @@ $( document ).ready(function(){
         $('.disableOnLoad').attr('disabled','disabled');
         // Searches for results
         stockSearchAjaxTracker['count'] += 1;
-        serialized = $el.serialize()+'&ajaxCount='+stockSearchAjaxTracker['count']
+        serialized = $el.serialize()+'&ajaxCount='+stockSearchAjaxTracker['count'];
 
         $.get(url, serialized, function(data){
             if (stockSearchAjaxTracker['count'] > data.ajaxCount && data.ajaxCount < stockSearchAjaxTracker['last']) return;
             
             stockSearchAjaxTracker['last'] = data.ajaxCount;
             if (data['error']){
-                $('#middleBox > .loadingImage').remove();
+                $('#middleBox > #loadingImage').remove();
                 // load some error message
                 return;
             };
             // -Next Button does not appear when list length is 0
             // ^^^ This However does not mean that there are no more results
-            if (data['list'].length && data['start']+data['per_page']-1 < data['total_count']){
+            if (data['list'].length && (data['start']+data['per_page']-1) < data['total_count']){
                 data['next'] = {
                     'search':search,
                     'page': data['current_page'] + 1
@@ -102,10 +105,10 @@ $( document ).ready(function(){
                 };
             };
 
-            var htmlString = renderTemplate('#search-result', data);
+            var htmlString = MyApplication["renderTemplate"]('#search-result', data);
             $middleBox.html(htmlString);
             // Check Company Buttons
-            buttonDateValidation('.companyButton');
+            MyApplication["buttonDateValidation"]('.companyButton');
         });
     });
 
@@ -115,6 +118,7 @@ $( document ).ready(function(){
         $target.append(loadingImageRendered);
         // Add Tabs
         $el = $(this);
+        hold = $el.val();
         fullCode = $el.val().split("/");
         startDate = $('input[name="start date"]').val();
         input = {
@@ -126,39 +130,50 @@ $( document ).ready(function(){
 
         $.get('quandl/current/', input,function(data){
 
-            if (!data.close.length){
-                $target.html('<h2>No Results Found For '+ data.symbol +'</h2>');
+            if (data.error || !data.close.length){
+                $('#loadingImage').remove();
+                $('#bottomBox').html('<h2>No Results Found For '+ data.symbol +'</h2>');
                 // Return to Prevent Drawing of Graph
                 return;
             };
-            var options, stockPrices, settings;
-            // Make UI for the Graph
-            // Wrap this in a function
-            options = {
-                'type': 'price',
-                'data': data.close,
-                'tag': data.symbol,
-                'fill': 'blue',
-                'show': true
-            };
-            stockPrices = new global.Qwarg(options);
+            // MOVE THIS CODE TO NEW FILE
+            var options, settings;
             // var settings = {'container':,'padding':,'startDate':,'endDate':,'qwargSet':};
             settings = {
                 'container': '#graphBox',
                 'padding': 60,
                 'startDate': new Date(startDate),
-                'qwargSet': {}
             };
-            settings['qwargSet'][stockPrices.tag] = stockPrices;
-            graphRelatedItems['graph'] = new global.Graph(settings);
-            graphRelatedItems['graph'].draw();
+            if (!graphRelatedItems['graph']) {
+                graphRelatedItems['graph'] = new MyApplication["Graph"](settings);
+            }
             // Move This To index.css
             graphRelatedItems['graphBoxWidth'] = $target.css('width');
+            
+            // New Code 
+            var graph = graphRelatedItems['graph'];
+            var group = graph.dataInterfaceTest.getCollection('price')
+            if (!group){
+                group = graph.dataInterfaceTest.createCollection('price')
+            }
+            options = {
+                'parseDate': "%Y-%m-%d %X",
+                'data': data.close,
+                'tag': hold,
+                'fill': 'blue',
+                'show': true
+            };
+            var q = graph.dataInterfaceTest.createQwarg(options);
+            graph.dataInterfaceTest.addQwarg('price', q);
+
+            graphRelatedItems['graph'].draw();
+            console.log(group.collection);
+            // Append List of Tickers Here
         });
     });
     // Check Company Buttons With New Date
     $('#topBox').on('input', 'input[type="date"]', function(event){
-        buttonDateValidation('.companyButton');
+        MyApplication["buttonDateValidation"]('.companyButton');
     });
 
     // I DO NOT LIKE THIS SOLUTION
@@ -172,7 +187,7 @@ $( document ).ready(function(){
             setTimeout(function(){
                 clearInterval(graphRelatedItems['resizeInterval']);
                 graphRelatedItems['resizeInterval'] = undefined;
-            },2000);
+            }, 2000);
         };
     });
 });
