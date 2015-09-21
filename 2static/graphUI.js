@@ -13,6 +13,7 @@
             function Qwarg(options){
                 // add min/max that updates on init or data update
                 this.tag = options.tag;
+                this.title = options.title;
                 this.data = options.data;
                 // string representing expected date format
                 this.parseDate = options.parseDate;
@@ -41,6 +42,8 @@
             function DataGroup(options){
                 // :parameters:
                 // type = price or sentiment (Expand To Ratios Later)
+                // add property that specifies what graph method 
+                // to use when plotting this DataGroup
                 this.type = options.type;
                 this.collection = options.collection || [];
             };
@@ -142,19 +145,29 @@
                 var target, group, location;
                 target = getQwarg(type, tag);
                 if (!target) return false;
+                if (Object.prototype.hasOwnProperty.call(options,'delete')){
+                    if (options['delete'] === true){
+                        extend['deleteQwarg'](type, tag);
+                        return true;
+                    }
+                }
                 // Color Changes, Show/Hide, data updates
                 // iterates over options setting the values for the qwarg
                 for (var item in options){
+                    if (item === 'delete') continue;
                     target[item] = options[item];
                 };
                 return true;
             };
+            // Should The Delete Methods Be Exposed
             extend['deleteCollection'] = function(type) {
                 delete existingGroups[type];
             };
             extend['deleteQwarg'] = function(type, tag){
-                if(getQwarg(type, tag)){
-                    delete existingGroups[type][tag];
+                if (!existingGroups[type]) return false;
+                var idx = existingGroups[type].searchCollection(tag);
+                if(idx !== -1){
+                    existingGroups[type].collection.splice(idx,1);
                 }
             };
         })(exposed, container);

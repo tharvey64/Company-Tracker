@@ -39,20 +39,30 @@
     myapp.dataDisplay = function dataDisplay(obj_list, title, $target){
         var templateSchema = {};
         templateSchema['title'] = title;
-        templateSchema['listId'] = title.toLowerCase() + 'List';  
+        templateSchema['listId'] = title.toLowerCase() + 'Table';  
         templateSchema['content'] = [];
         for (var idx = obj_list.length; idx--;){
             var current = {
                 'color': obj_list[idx]['fill'],
-                'name': obj_list[idx]['tag'],
+                'name': obj_list[idx]['title'],
+                'tag': obj_list[idx]['tag'],
                 'visible': obj_list[idx]['show']
             };
             templateSchema['content'].push(current);
         };
-        var rendered = myapp.renderTemplate('#graph-data-list', templateSchema);
+        var rendered = myapp.renderTemplate('#graph-data-table', templateSchema);
         $target.html(rendered);
     };
 
+    myapp.addData = function addData(options){
+        var group = options.graph.dataInterfaceTest.getCollection(options.type);
+        if (!group){
+            group = options.graph.dataInterfaceTest.createCollection(options.type);
+        }
+        var q = options.graph.dataInterfaceTest.createQwarg(options.build);
+        options.graph.dataInterfaceTest.addQwarg(options.type, q);
+        this.dataDisplay(group.collection, options.title, options["userInterface"]);
+    };
 }).apply(MyApplication);
 
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
@@ -71,8 +81,9 @@ $( document ).ready(function(){
         'count': 0,
         'last': 0
     };
-    // Edit Data Set
-    $('#graphInterfaceLeft').on('change','li',function(event){
+    // Edit Data Set 
+    $('#graphInterfaceLeft').on('change','.graphDataRow',function(event){
+    // This Event Should Work For twitter too!!!!!
         var options, $target;
         options = {};
         $target = $(event.target);
@@ -81,9 +92,22 @@ $( document ).ready(function(){
         }
         else if ($target.attr('type')==='color'){
             options['fill'] = $target.val();
-        };
+        }
+        else if ($target.attr('type')==='radio'){
+            options['delete'] = true;
+        }
+        else{
+            return false;
+        }
+        // "price should be a variable"
         graphRelatedItems['graph'].dataInterfaceTest.updateQwarg("price", this.dataset.name, options);
+        var group = graphRelatedItems['graph'].dataInterfaceTest.getCollection("price");
+        // Not Flexible!!!!!
+        // Try closest
+        var $target = $(event.delegateTarget);
+        var title = $target.children('h4').html();
         // Draw Should look at date range
+        MyApplication["dataDisplay"](group, title, $target);
         var startDate = new Date($('#dateRangeForm').find('input[name="start date"]').val());
         graphRelatedItems['graph'].draw(false, startDate);
     });
@@ -152,6 +176,7 @@ $( document ).ready(function(){
         $target.append(loadingImageRendered);
         // Add Tabs
         $el = $(this);
+        // GLOBAL
         hold = $el.val();
         fullCode = $el.val().split("/");
         startDate = $('input[name="start date"]').val();
@@ -163,7 +188,8 @@ $( document ).ready(function(){
         };
 
         $.get('quandl/current/', input,function(data){
-
+            // Make This Uniform 
+            // If data.close.length == 0 return an error
             if (data.error || !data.close.length){
                 $('#loadingImage').remove();
                 $('#bottomBox').html('<h2>No Results Found For '+ data.symbol +'</h2>');
@@ -178,31 +204,30 @@ $( document ).ready(function(){
                 'padding': 60,
                 'startDate': new Date(startDate),
             };
+            // Find Another Way to Do This
+            graphRelatedItems['graphBoxWidth'] = $target.css('width');
+
             if (!graphRelatedItems['graph']) {
                 graphRelatedItems['graph'] = new MyApplication["Graph"](settings);
             }
-            // Move This To index.css
-            graphRelatedItems['graphBoxWidth'] = $target.css('width');
-            
-            // New Code 
             var graph = graphRelatedItems['graph'];
-            var group = graph.dataInterfaceTest.getCollection('price')
-            if (!group){
-                group = graph.dataInterfaceTest.createCollection('price')
-            }
-            options = {
-                'parseDate': "%Y-%m-%d %X",
-                'data': data.close,
-                'tag': hold,
-                'fill': '#0000ff',
-                'show': true
+            var newData = {
+                'graph': graph,
+                'type': 'price',
+                'title': 'Stocks', 
+                'userInterface': $('#graphInterfaceLeft'),
+                'build': {
+                    'parseDate': "%Y-%m-%d %X",
+                    'data': data.close,
+                    'title':data.symbol,
+                    'tag': hold,
+                    'fill': '#0000ff',
+                    'show': true
+                }
             };
-            var q = graph.dataInterfaceTest.createQwarg(options);
-            graph.dataInterfaceTest.addQwarg('price', q);
+            MyApplication["addData"](newData);
             // Draw Should Take Object
-            graphRelatedItems['graph'].draw(false, new Date(startDate));
-            MyApplication["dataDisplay"](group.collection, 'Stocks', $('#graphInterfaceLeft'));
-            // Append List of Tickers Here
+            graph.draw(false, new Date(startDate));
         });
     });
     // Check Company Buttons With New Date

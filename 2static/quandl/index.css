@@ -97,8 +97,15 @@
     overflow: auto;
     background-color: red;
 }
-#stocksList {
-    list-style-type: none;
+#stocksTable{
+    background-color: white;
+}
+#stocksTable > tbody{
+    overflow: scroll;
+}
+/*Make This More Specific*/
+th,td{
+    text-align: center!important;
 }
 /*Graph CSS*/
 .axis path,.axis line {

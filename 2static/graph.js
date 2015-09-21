@@ -142,7 +142,6 @@
                 price = true;
                 var domain = groups[name].getCollectionRange('height');
                 this.priceScale['setDomain'](domain);
-                console.log(domain);
             }
             else if (name === "sentiment"){
                 sentiment = true;
