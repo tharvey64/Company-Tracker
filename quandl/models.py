@@ -39,8 +39,6 @@ class Google:
                         # This Whole Method Is Tempermental
                         # Check isDigit on all of these items being turned into int()
                         date_start = datetime.datetime.fromtimestamp(int(raw[i][1:]))
-                        # print(data[6],"=",int(data[6][-2:]))
-                        # print("models.py line 44\n",datetime.timedelta(minutes=int(data[6][-2:])))
                         date_start += datetime.timedelta(minutes=int(data[6].split("=")[1]))
                         raw[i] = str(date_start)
             stage = dict(zip(key,raw))
@@ -52,6 +50,46 @@ class Google:
 
             processing.append(stage)
         return dict(error=None,prices=processing)
+
+class Yahoo:
+    url = 'http://chartapi.finance.yahoo.com/instrument/1.0/{TICKER}/chartdata;type=quote;range=1d/csv'
+    
+    @classmethod
+    def get_intra_day_prices(cls, ticker):
+        # print(cls.url.format(interval_seconds=interval,period_days=period,ticker=ticker)
+        base = cls.url
+        m = base.format(TICKER=ticker.upper())
+        response = requests.get(m)
+        return cls.process_csv(response.text, cls.clean_row)
+
+    @staticmethod
+    def process_csv(text, cleaner):
+        data = text.split("\n")[:-1]
+        if len(data) == 6:
+            # prices should be empty list
+            return dict(error='Intraday Data Not Found', prices=None)
+        offset = int(data[7].split(":")[1])
+        keys = data[11].split(":")[1].split(",")
+        price_list = [cleaner(line.split(","), keys, offset) for line in data[17:]]
+        print(price_list[-1])
+        return dict(error=None, prices=price_list)
+
+    @staticmethod
+    def clean_row(row_list, keys, offset):
+        for idx in range(len(row_list)):
+            if idx == 0:
+                value = datetime.datetime.fromtimestamp(int(row_list[idx]))
+                value += datetime.timedelta(seconds=offset)
+                row_list[idx] = str(value)
+            else:
+                row_list[idx] = float(row_list[idx])
+        row_dict = dict(zip(keys, row_list))
+        row_dict["date"]=row_dict["Timestamp"]
+        row_dict["height"]=row_dict["close"]
+        row_dict["radius"]=row_dict["volume"]
+        # row_dict["title"]=row_dict["CLOSE"]
+        row_dict["title"]=row_dict["Timestamp"]
+        return row_dict
 
 class Quandl:
     api_key = os.environ['QUANDL_KEY']
@@ -109,5 +147,3 @@ class Quandl:
     # ["Date","Open","High","Low","Close","Volume","Ex-Dividend","Split Ratio","Adj. Open","Adj. High","Adj. Low","Adj. Close","Adj. Volume"]
     # YAHOO
     # ["Date","Open","High","Low","Close","Volume","Adjusted Close"]
-
-

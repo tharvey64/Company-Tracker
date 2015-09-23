@@ -2,7 +2,7 @@ import datetime
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic.base import View
-from quandl.models import Quandl,Google
+from quandl.models import Quandl,Google,Yahoo
 from markit.models import Markit
 
 def get_variables(query_dict):
@@ -27,7 +27,7 @@ class QuandlHistoryView(View):
         if stock_history['error']:
             return JsonResponse(stock_history)
         else:
-            return JsonResponse(dict(symbol=stock_history['symbol'],close=processed_data[::-1]))
+            return JsonResponse(dict(symbol=stock_history['symbol'],values=processed_data[::-1]))
 
 # Todays Prices Only
 class IntraDayView(View):
@@ -35,11 +35,12 @@ class IntraDayView(View):
     def get(self,request):
         ticker = request.GET.get("ticker")
         # Find New Source
-        prices = Google.get_intra_day_prices(60,1,ticker)
-        return JsonResponse(prices)
+        prices = Yahoo.get_intra_day_prices(ticker)
+        return JsonResponse(dict(error=prices['error'],values=prices['prices']))
 
 # start date to current minute prices
 class FullRangeView(View):
+
     def get(self, request):
         # Could Try all(request.GET.values())
         query_dict = get_variables(request.GET)
@@ -52,12 +53,12 @@ class FullRangeView(View):
         if stock_history['error']:
              return JsonResponse(stock_history)
 
-        daily = Google.get_intra_day_prices(60,1,stock_history['symbol'])
+        daily = Yahoo.get_intra_day_prices(stock_history['symbol'])
         if daily['error']:
             close = stock_history['prices'][::-1]
         else:
             close = stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices']
-        return JsonResponse(dict(symbol=stock_history['symbol'],close=close))
+        return JsonResponse(dict(symbol=stock_history['symbol'],values=close))
 
 #######################
 #######################

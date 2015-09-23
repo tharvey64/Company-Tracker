@@ -117,7 +117,7 @@ $( document ).ready(function(){
         $.get('quandl/current/', input,function(data){
             // Make This Uniform 
             // If data.close.length == 0 return an error
-            if (data.error || !data.close.length){
+            if (data.error || !data.values){
                 $('#loadingImage').remove();
                 $('#bottomBox').html('<h2>No Results Found For '+ data.symbol +'</h2>');
                 // Return to Prevent Drawing of Graph
@@ -145,7 +145,7 @@ $( document ).ready(function(){
                 'userInterface': $('#graphInterfaceLeft'),
                 'build': {
                     'parseDate': "%Y-%m-%d %X",
-                    'data': data.close,
+                    'data': data.values,
                     'title':data.symbol,
                     'tag': hold,
                     'fill': '#0000ff',
