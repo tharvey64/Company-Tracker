@@ -5,10 +5,10 @@
         <legend>Date Range</legend>
             <label for="start date">Start Date</label>
             <label id="endDateLabel" for="end date">End Date</label><br>
-            <input type="date" name="start date" max={{today}} value={{today}}>
+            <input class="dateRanges" type="date" name="start_date" max={{today}} value={{today}}>
             <span>-</span>
-            <input type="date" name="end date" max={{today}} value={{today}} disabled="disabled">
-            {% endverbatim %}
+            <input class="dateRanges" type="date" name="end_date" max={{today}} value={{today}} disabled="disabled">
         </fieldset>
+        {% endverbatim %}
     </form>
 </script>

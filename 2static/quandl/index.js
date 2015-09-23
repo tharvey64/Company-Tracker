@@ -1,82 +1,16 @@
-(function(){
-    var myapp = this;
-    myapp.renderTemplate = function renderTemplate(tag, templateData){
-        var template = $(tag).html();
-        Mustache.parse(template);
-        return Mustache.render(template,templateData);
-    };
-
-    myapp.renderForms = function renderForms(){
-        var htmlString;
-        htmlString = myapp.renderTemplate('#stock-search');
-        // $('#topBox').html(htmlString);
-        var today = new Date();
-        htmlString += myapp.renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
-        $('#topBox').html(htmlString);
-    };
-
-    myapp.buttonDateValidation = function buttonDateValidation(tag){
-        var startDate, to_date, $el, $collection;
-        startDate = new Date($('input[name="start date"]').val()) || new Date();
-        $collection = $(tag);
-        // var endDate = new Date($('input[name="end date"]').val());
-
-        $collection.each(function(index, el){
-            $el = $(el);
-            to_date = new Date(el.dataset.to_date);
-            if (to_date.getTime() < startDate.getTime()){
-                $el.removeClass('list-group-item-success');
-                $el.addClass('list-group-item-danger disabled');
-                $el.attr('disabled','disabled');
-            }else{
-                $el.addClass('list-group-item-success');
-                $el.removeClass('list-group-item-danger disabled');
-                $el.removeAttr('disabled');
-            };
-        });
-    };
-
-    myapp.dataDisplay = function dataDisplay(obj_list, title, $target){
-        var templateSchema = {};
-        templateSchema['title'] = title;
-        templateSchema['listId'] = title.toLowerCase() + 'Table';  
-        templateSchema['content'] = [];
-        for (var idx = obj_list.length; idx--;){
-            var current = {
-                'color': obj_list[idx]['fill'],
-                'name': obj_list[idx]['title'],
-                'tag': obj_list[idx]['tag'],
-                'visible': obj_list[idx]['show']
-            };
-            templateSchema['content'].push(current);
-        };
-        var rendered = myapp.renderTemplate('#graph-data-table', templateSchema);
-        $target.html(rendered);
-    };
-
-    myapp.addData = function addData(options){
-        var group = options.graph.dataInterfaceTest.getCollection(options.type);
-        if (!group){
-            group = options.graph.dataInterfaceTest.createCollection(options.type);
-        }
-        var q = options.graph.dataInterfaceTest.createQwarg(options.build);
-        options.graph.dataInterfaceTest.addQwarg(options.type, q);
-        this.dataDisplay(group.collection, options.title, options["userInterface"]);
-    };
-}).apply(MyApplication);
-
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
 $( document ).ready(function(){
-    var global = (function () {
-        return this || (1, eval)('this');
-    }());
-    
-    MyApplication["renderForms"]();
+    // var global = (function () {
+    //     return this || (1, eval)('this');
+    // }());
+    var toolkit = MyApplication.utils;
+    var models = MyApplication.models;
+    toolkit.renderForms();
     // graphBoxWidth, resizeInterval
     var graphRelatedItems = {
         '$graphBox': $('#graphBox')
     };
-    var loadingImageRendered = MyApplication["renderTemplate"]('#loading-image');
+    var loadingImageRendered = toolkit.renderTemplate('#loading-image');
     var stockSearchAjaxTracker = {
         'count': 0,
         'last': 0
@@ -85,31 +19,24 @@ $( document ).ready(function(){
     $('#graphInterfaceLeft').on('change','.graphDataRow',function(event){
     // This Event Should Work For twitter too!!!!!
         var options, $target;
-        options = {};
         $target = $(event.target);
-        if ($target.attr('type')==='checkbox'){
-            options['show'] = ($target.is(':checked') ? true:false);
-        }
-        else if ($target.attr('type')==='color'){
-            options['fill'] = $target.val();
-        }
-        else if ($target.attr('type')==='radio'){
-            options['delete'] = true;
-        }
-        else{
-            return false;
-        }
+        options = {
+            'show' : {'change':$target.attr('type')==='checkbox', 'value': $target.is(':checked')},
+            'fill': {'change':$target.attr('type')==='color', 'value':$target.val()},
+            'remove': {'change':$target.attr('type')==='radio', 'value':true}
+        };
         // "price should be a variable"
-        graphRelatedItems['graph'].dataInterfaceTest.updateQwarg("price", this.dataset.name, options);
-        var group = graphRelatedItems['graph'].dataInterfaceTest.getCollection("price");
-        // Not Flexible!!!!!
-        // Try closest
-        var $target = $(event.delegateTarget);
-        var title = $target.children('h4').html();
-        // Draw Should look at date range
-        MyApplication["dataDisplay"](group, title, $target);
-        var startDate = new Date($('#dateRangeForm').find('input[name="start date"]').val());
-        graphRelatedItems['graph'].draw(false, startDate);
+        graphRelatedItems['graph'].dataInterface.updateQwarg("price", this.dataset.name, options);
+        graphRelatedItems['graph'].draw(false, toolkit.scrapeDateRange());
+        if (options['remove'].change){
+            var group = graphRelatedItems['graph'].dataInterface.getCollection("price");
+            // Not Flexible!!!!!
+            // Try closest
+            var $parent = $(event.delegateTarget);
+            var title = $parent.children('h4').html();
+            // Draw Should look at date range
+            toolkit.dataDisplay(group.collection, title, $parent);
+        };
     });
 
     // This Event Is Expecting One of these Four
@@ -163,10 +90,10 @@ $( document ).ready(function(){
                 };
             };
 
-            var htmlString = MyApplication["renderTemplate"]('#search-result', data);
+            var htmlString = toolkit.renderTemplate('#search-result', data);
             $middleBox.html(htmlString);
             // Check Company Buttons
-            MyApplication["buttonDateValidation"]('.companyButton');
+            toolkit.buttonDateValidation('.companyButton');
         });
     });
 
@@ -179,10 +106,10 @@ $( document ).ready(function(){
         // GLOBAL
         hold = $el.val();
         fullCode = $el.val().split("/");
-        startDate = $('input[name="start date"]').val();
+        startDate = $('input[name="start_date"]').val();
         input = {
             'company_name': $el.html(),
-            'start date': startDate,
+            'start_date': startDate,
             'source_code': fullCode[0],
             'code': fullCode[1]
         };
@@ -208,7 +135,7 @@ $( document ).ready(function(){
             graphRelatedItems['graphBoxWidth'] = $target.css('width');
 
             if (!graphRelatedItems['graph']) {
-                graphRelatedItems['graph'] = new MyApplication["Graph"](settings);
+                graphRelatedItems['graph'] = new models.Graph(settings);
             }
             var graph = graphRelatedItems['graph'];
             var newData = {
@@ -225,14 +152,14 @@ $( document ).ready(function(){
                     'show': true
                 }
             };
-            MyApplication["addData"](newData);
+            toolkit.addData(newData);
             // Draw Should Take Object
-            graph.draw(false, new Date(startDate));
+            graph.draw(false, toolkit.scrapeDateRange());
         });
     });
     // Check Company Buttons With New Date
     $('#topBox').on('input', 'input[type="date"]', function(event){
-        MyApplication["buttonDateValidation"]('.companyButton');
+        toolkit.buttonDateValidation('.companyButton');
     });
 
     // I DO NOT LIKE THIS SOLUTION

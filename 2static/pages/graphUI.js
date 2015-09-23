@@ -1,7 +1,9 @@
+// Rename This File
 // Build The Event Handlers for The Graph Here
 // Refactor Graph.js First
 // This Is Not A Graph Interface It Is a Data Interface
-// Rename This And Namespace This
+// Rename This And Namespace It
+MyApplication.models = MyApplication.models || {};
 (function(){
     var myapp = this;
     myapp.MyInterface = function MyInterface(exposed, container){
@@ -17,7 +19,6 @@
                 this.data = options.data;
                 // string representing expected date format
                 this.parseDate = options.parseDate;
-                // Check hasOwnProperty for show 
                 this.fill = options.fill || "#000000";
                 this.show = options.show || false;
             };
@@ -45,6 +46,7 @@
                 // add property that specifies what graph method 
                 // to use when plotting this DataGroup
                 this.type = options.type;
+                this.title = options.title;
                 this.collection = options.collection || [];
             };
             DataGroup.prototype.searchCollection = function(tag){
@@ -145,17 +147,19 @@
                 var target, group, location;
                 target = getQwarg(type, tag);
                 if (!target) return false;
-                if (Object.prototype.hasOwnProperty.call(options,'delete')){
-                    if (options['delete'] === true){
-                        extend['deleteQwarg'](type, tag);
-                        return true;
-                    }
+                if (options['remove'].change === true){
+                    extend['deleteQwarg'](type, tag);
+                    return true;
                 }
                 // Color Changes, Show/Hide, data updates
                 // iterates over options setting the values for the qwarg
                 for (var item in options){
-                    if (item === 'delete') continue;
-                    target[item] = options[item];
+                    if (item === 'remove' || options[item].change === false){
+                        continue;
+                    }
+                    else{
+                        target[item] = options[item].value;
+                    };
                 };
                 return true;
             };
@@ -174,4 +178,4 @@
 
         return exposed;
     };
-}).apply(MyApplication);
+}).apply(MyApplication.models);

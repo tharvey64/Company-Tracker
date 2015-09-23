@@ -8,7 +8,7 @@ from markit.models import Markit
 def get_variables(query_dict):
     variables = dict(code=query_dict.get('code'),
             source_code=query_dict.get('source_code'),
-            start_date=query_dict.get('start date'),
+            start_date=query_dict.get('start_date'),
             company_name=query_dict.get('company_name'))
     if not all(variables.values()):
         variables['error'] = 'Missing Input'
@@ -17,7 +17,6 @@ def get_variables(query_dict):
 class QuandlHistoryView(View):
 
     def get(self, request):
-        # These 6 lines Check Input NOT DRY
         # Could Try all(request.GET.values())
         query_dict = get_variables(request.GET)
         if 'error' in query_dict:
@@ -42,21 +41,6 @@ class IntraDayView(View):
 # start date to current minute prices
 class FullRangeView(View):
     def get(self, request):
-        #######################
-        #######################
-        # XX CLEAN UP CSS
-        # PRELOAD STOCK SEARCH WITH RESULTS
-        # ADD CELERY AND RABBIT MQ TO PING TWITTER FOR TWEETS
-        # DOWNLOAD THE QUANDL LIBRARY
-        # DELETE MARKIT APP RENAME QUANDL APP
-        #######################
-        #######################
-        # GET DIFF FROM PREVIOUS PRICE AND % CHANGE FROM PREVIOUS TRY TO PLOT CHANGES IN MOMENTUM 
-        # DIFF, RDIFF, MOVING AVG
-        # These 6 lines Check Input NOT DRY
-        # THESE SHOULD ALL GO IN AS DIFFERENT HEIGHTS
-        # THIS WILL BE THE FIRST IMPLEMENTATION OF THE GRAPH OPTIONS
-        # PERCENT CHANGE BETWEEN 1 AND -1
         # Could Try all(request.GET.values())
         query_dict = get_variables(request.GET)
         if 'error' in query_dict:
@@ -74,3 +58,19 @@ class FullRangeView(View):
         else:
             close = stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices']
         return JsonResponse(dict(symbol=stock_history['symbol'],close=close))
+
+#######################
+#######################
+# XX CLEAN UP CSS
+# PRELOAD STOCK SEARCH WITH RESULTS
+# ADD CELERY AND RABBIT MQ TO PING TWITTER FOR TWEETS
+# DOWNLOAD THE QUANDL LIBRARY
+# DELETE MARKIT APP RENAME QUANDL APP
+#######################
+#######################
+# GET DIFF FROM PREVIOUS PRICE AND % CHANGE FROM PREVIOUS TRY TO PLOT CHANGES IN MOMENTUM 
+# DIFF, RDIFF, MOVING AVG
+# These 6 lines Check Input NOT DRY
+# THESE SHOULD ALL GO IN AS DIFFERENT HEIGHTS
+# THIS WILL BE THE FIRST IMPLEMENTATION OF THE GRAPH OPTIONS
+# PERCENT CHANGE BETWEEN 1 AND -1

@@ -16,8 +16,8 @@ class Google:
 
     @staticmethod
     def process_csv(text):
+        # print("models.py line 19\n", text)
         data = text.split("\n")[:-1]
-        # print(data)
         if len(data) == 6:
             # prices should be empty list
             return dict(error='Intraday Data Not Found', prices=None)
@@ -39,7 +39,9 @@ class Google:
                         # This Whole Method Is Tempermental
                         # Check isDigit on all of these items being turned into int()
                         date_start = datetime.datetime.fromtimestamp(int(raw[i][1:]))
-                        date_start -= datetime.timedelta(minutes=int(data[6][-2:]))
+                        # print(data[6],"=",int(data[6][-2:]))
+                        # print("models.py line 44\n",datetime.timedelta(minutes=int(data[6][-2:])))
+                        date_start += datetime.timedelta(minutes=int(data[6].split("=")[1]))
                         raw[i] = str(date_start)
             stage = dict(zip(key,raw))
             stage["date"]=stage["DATE"]
@@ -83,7 +85,7 @@ class Quandl:
     
     @staticmethod
     def process_json(stock_info,symbol):
-        if 'data' in stock_info:
+        if 'data' in stock_info and len(stock_info['data']):
             # Yahoo Data Format
             if len(stock_info['data'][0]) < 7:
                 return dict(error=stock_info['data'][0], prices=None)
