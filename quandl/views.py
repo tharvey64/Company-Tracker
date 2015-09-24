@@ -46,19 +46,26 @@ class FullRangeView(View):
         query_dict = get_variables(request.GET)
         if 'error' in query_dict:
             return JsonResponse(dict(error='Missing Input'))
-
-        start_date = datetime.datetime.strptime(query_dict['start_date'], "%Y-%m-%d").date()
+        
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%Y-%m-%d")
+        
         stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
         
-        if stock_history['error']:
-             return JsonResponse(stock_history)
+        daily = Yahoo.get_intra_day_prices(stock_history['symbol'], 1)
 
-        daily = Yahoo.get_intra_day_prices(stock_history['symbol'])
-        if daily['error']:
+        if stock_history['error'] and daily['error']:
+            print("quandl/views.py 57",stock_history['error'])
+            print("quandl/views.py 58", daily['error'])
+            return JsonResponse(dict(error="No Daily or Historical Data", values=None))
+        elif daily['error']:
+            # print("quandl/views.py 58",stock_history)
             close = stock_history['prices'][::-1]
+        elif stock_history['error']:
+            close = daily['prices']
         else:
+            # Adds Last Historical Price Twice
             close = stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices']
-        return JsonResponse(dict(symbol=stock_history['symbol'],values=close))
+        return JsonResponse(dict(error=None, symbol=stock_history['symbol'], values=close))
 
 #######################
 #######################

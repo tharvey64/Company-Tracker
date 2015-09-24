@@ -25,8 +25,8 @@ MyApplication.models = MyApplication.models || {};
 
         if (this.type === "time"){
             // console.log(domain);
-            domain[0].setHours(9);
-            domain[1].setHours(16);
+            domain[0].setHours(8);
+            domain[1].setHours(18);
         }
         else if (this.type === "scale"){
             domain[0] = parseFloat(domain[0] * 0.95);

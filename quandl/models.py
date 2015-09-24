@@ -52,34 +52,44 @@ class Google:
         return dict(error=None,prices=processing)
 
 class Yahoo:
-    url = 'http://chartapi.finance.yahoo.com/instrument/1.0/{TICKER}/chartdata;type=quote;range=1d/csv'
+    # This Should not be 10d It needs to be flexible
+    # see Attached file for other flexiblity issues
+    url = 'http://chartapi.finance.yahoo.com/instrument/1.0/{TICKER}/chartdata;type=quote;range={DAYS}d/csv'
     
     @classmethod
-    def get_intra_day_prices(cls, ticker):
+    def get_intra_day_prices(cls, ticker, days=1):
         # print(cls.url.format(interval_seconds=interval,period_days=period,ticker=ticker)
         base = cls.url
-        m = base.format(TICKER=ticker.upper())
-        response = requests.get(m)
-        return cls.process_csv(response.text, cls.clean_row)
+        url = base.format(TICKER=ticker.upper(),DAYS=days)
+        response = requests.get(url)
+        return cls.process_csv(response.text, cls.clean_row, days)
 
     @staticmethod
-    def process_csv(text, cleaner):
+    def process_csv(text, cleaner, days):
+        # print(text)
+        if len(text) < 100 or 'errorid' in text[60:90]:
+            print("quandl/models.py 71", text)
+            return dict(error=text, prices=None)
+
         data = text.split("\n")[:-1]
-        if len(data) == 6:
-            # prices should be empty list
-            return dict(error='Intraday Data Not Found', prices=None)
-        offset = int(data[7].split(":")[1])
-        keys = data[11].split(":")[1].split(",")
-        price_list = [cleaner(line.split(","), keys, offset) for line in data[17:]]
-        print(price_list[-1])
-        return dict(error=None, prices=price_list)
+        gmtoffset = int(data[7].split(":")[1])
+        csv_offset = 0 if days == 1 else int(days)
+        keys = data[11+csv_offset].split(":")[1].split(",")
+        ranges = data[12+csv_offset:17+csv_offset]
+        print("quandl/models.py 79", ranges)
+        price_list = [cleaner(line.split(","), keys, gmtoffset) for line in data[17+csv_offset:]]
+        
+        if len(price_list):
+            return dict(error=None, prices=price_list)
+        else:
+            return dict(error="No Intraday Data", prices=None)
 
     @staticmethod
-    def clean_row(row_list, keys, offset):
+    def clean_row(row_list, keys, gmtoffset):
         for idx in range(len(row_list)):
             if idx == 0:
                 value = datetime.datetime.fromtimestamp(int(row_list[idx]))
-                value += datetime.timedelta(seconds=offset)
+                value += datetime.timedelta(seconds=gmtoffset)
                 row_list[idx] = str(value)
             else:
                 row_list[idx] = float(row_list[idx])
@@ -91,6 +101,7 @@ class Yahoo:
         row_dict["title"]=row_dict["Timestamp"]
         return row_dict
 
+# Refactor This
 class Quandl:
     api_key = os.environ['QUANDL_KEY']
     base_url = 'https://www.quandl.com/api/v1/datasets/'
@@ -108,7 +119,8 @@ class Quandl:
         else:
             return JsonResponse(dict(error=group))
         code = "{}/{}".format(source_code,code)
-        end_date = datetime.date.today()-datetime.timedelta(days=1)
+        # end_date = today less ten
+        end_date = datetime.date.today()-datetime.timedelta(days=10)
         command = '{db_code}.{format}?auth_token={api_key}&trim_start={start}&end_date={end}'.format(
             db_code=code,
             format=cls.format,
@@ -122,15 +134,22 @@ class Quandl:
         return dict(error=response.status_code)
     
     @staticmethod
-    def process_json(stock_info,symbol):
-        if 'data' in stock_info and len(stock_info['data']):
+    def process_json(stock_info, symbol):
+        if 'data' not in stock_info:
+            print("quandl/models.py 139",stock_info)
+            return dict(error='Historical Data Not Found.', prices=None)
+        elif not len(stock_info['data']):
+            print("quandl/models.py 142",stock_info)
+            return dict(error='Historical Data Not Found.', prices=None, symbol=symbol)
+        else:
             # Yahoo Data Format
             if len(stock_info['data'][0]) < 7:
-                return dict(error=stock_info['data'][0], prices=None)
+                print("_"*50)
+                print("quandl/models.py 147", stock_info)
+                print("_"*50)
+                return dict(error="Data Format Error", prices=None)
             processed_data = [dict(date=day[0]+' 16:00:00', height=day[6], radius=day[5], title=day[0]) for day in stock_info['data']]
-            return dict(error=None,prices=processed_data,symbol=symbol)
-        else:
-            return dict(error='Historical Data Not Found.',prices=None)
+            return dict(error=None, prices=processed_data, symbol=symbol)
         # Use other formats to get data
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #

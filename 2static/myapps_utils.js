@@ -19,6 +19,7 @@ MyApplication.utils = MyApplication.utils || {};
     myapp.buttonDateValidation = function buttonDateValidation(tag){
         var startDate, to_date, $el, $collection;
         startDate = new Date($('input[name="start_date"]').val()) || new Date();
+        startDate.setDate(startDate.getDate()-1);
         $collection = $(tag);
         // var endDate = new Date($('input[name="end date"]').val());
 
@@ -74,6 +75,7 @@ MyApplication.utils = MyApplication.utils || {};
             var dateString = $(el).val().replace(/-/g, "/");
             range.push(new Date(dateString));   
         });
+        console.log(range);
         return range;
     };
 }).apply(MyApplication.utils);
