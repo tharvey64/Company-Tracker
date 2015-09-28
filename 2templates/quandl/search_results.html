@@ -1,6 +1,15 @@
 <script id="search-result" type="x-tmpl-mustache">
-    <div id="searchResultNavigation">
+    <div id="searchResultButtons" class='list-group'>
     {% verbatim %}
+    {{#list}}
+        <button type="button" class="list-group-item btn-block list-group-item-primary companyButton disableOnLoad" value="{{source_code}}/{{code}}" data-from_date="{{from_date}}" data-to_date="{{to_date}}">{{name}}</button>
+    {{/list}}
+    {{^list}}
+        <h4>No Results Found.</h4>
+    {{/list}}
+    
+    </div>
+    <div id="searchResultNavigation">
     {{#previous}}
         <div class="pull-left">
         <form id="previousResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
@@ -19,14 +28,6 @@
         </form>
         </div>
     {{/next}}
-    </div>
-    <div id="searchResultButtons" class='list-group'>
-    {{#list}}
-        <button type="button" class="list-group-item btn-block list-group-item-primary companyButton disableOnLoad" value="{{source_code}}/{{code}}" data-from_date="{{from_date}}" data-to_date="{{to_date}}">{{name}}</button>
-    {{/list}}
-    {{^list}}
-        <h4>No Results Found.</h4>
-    {{/list}}
     {% endverbatim %}
     </div>
 </script>

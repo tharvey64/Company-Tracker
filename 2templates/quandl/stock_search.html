@@ -3,9 +3,10 @@
     <form id="stockForm" class="form companySearch" action="{% url 'markit:search' %}" method="GET">
         <fieldset class="searchFieldset">
             <legend>Stock Look Up</legend>
-            <label for="input_string">Search</label>
+            <label for="stockSearch">Search</label>
             {% verbatim %}
-            <input type="search" class="form-control companySearch" name="input_string" value="{{ticker}}" required>
+            <input id="stockSearch" type="search" class="form-control companySearch" name="input_string" value="{{ticker}}" required>
+            <p class="help-block">Enter Search Term Here</p>
             {% endverbatim %}
         </fieldset>
     </form>

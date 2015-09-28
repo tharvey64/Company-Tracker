@@ -1,7 +1,7 @@
 /*Css ERROR Somewhere in Here*/
 /*Layout Adjustments*/
 .leftContent {
-    height: 32.5%;
+    height: 28%;
     margin: 1%;
     padding: 1%;
     overflow: scroll;
@@ -14,8 +14,12 @@
     border-radius: 1%;
     background-color: #F1B1B1;
 }
+#topBox {
+    height: 40%;
+}
 #middleBox {
     position: relative;
+    overflow: hidden;
 }
 /*End Layout Section*/
 /*Loading Image Options*/
@@ -28,17 +32,21 @@
 #graphBox > img.cover {
     position: absolute;
     top: 25%;
-    left: 40%;
+    left: 35%;
 }
 /*Alignment for search results box*/
 #middleBox > img.cover {
     position: absolute;
-    top: 26%;
-    left: 26%;
+    top: 12%;
+    left: 30%;
 }
 /*End Loading Image Options*/
+.searchFieldset p{
+    margin-bottom: 1%;    
+}
 .searchFieldset legend{
-    margin-bottom: 3%;
+    margin-bottom: 1%;
+    text-align: center;
 }
 #endDateLabel {
     float: right;
@@ -47,12 +55,14 @@
 }
 
 #searchResultNavigation {
+    height: 3em;
     overflow: auto;
-    border-bottom: solid black;
+    border-top: solid black;
     display: block;
+    margin-bottom: 0;
 }
 #searchResultButtons {
-    max-height: 75%;
+    height: 74%;
     text-align: center;
     overflow: scroll;
 }

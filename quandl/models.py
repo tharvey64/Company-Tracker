@@ -68,7 +68,7 @@ class Yahoo:
     def process_csv(text, cleaner, days):
         # print(text)
         if len(text) < 100 or 'errorid' in text[60:90]:
-            print("quandl/models.py 71", text)
+            print("quandl/models.py 71\n", text)
             return dict(error=text, prices=None)
 
         data = text.split("\n")[:-1]
@@ -76,7 +76,8 @@ class Yahoo:
         csv_offset = 0 if days == 1 else int(days)
         keys = data[11+csv_offset].split(":")[1].split(",")
         ranges = data[12+csv_offset:17+csv_offset]
-        print("quandl/models.py 79", ranges)
+        # ranges not available in quandl
+        # print("quandl/models.py 79\n", ranges)
         price_list = [cleaner(line.split(","), keys, gmtoffset) for line in data[17+csv_offset:]]
         
         if len(price_list):
@@ -130,26 +131,36 @@ class Quandl:
         )
         response = requests.get(cls.base_url + command)
         if response.status_code == 200:
-            return cls.process_json(response.json(),symbol)
+            return cls.process_json(response.json(),symbol, cls.clean_row)
         return dict(error=response.status_code)
     
     @staticmethod
-    def process_json(stock_info, symbol):
+    def process_json(stock_info, symbol, cleaner):
         if 'data' not in stock_info:
-            print("quandl/models.py 139",stock_info)
+            print("quandl/models.py 139\n",stock_info)
             return dict(error='Historical Data Not Found.', prices=None)
         elif not len(stock_info['data']):
-            print("quandl/models.py 142",stock_info)
+            print("quandl/models.py 142\n",stock_info)
             return dict(error='Historical Data Not Found.', prices=None, symbol=symbol)
         else:
             # Yahoo Data Format
             if len(stock_info['data'][0]) < 7:
                 print("_"*50)
-                print("quandl/models.py 147", stock_info)
+                print("quandl/models.py 147\n", stock_info)
                 print("_"*50)
                 return dict(error="Data Format Error", prices=None)
             processed_data = [dict(date=day[0]+' 16:00:00', height=day[6], radius=day[5], title=day[0]) for day in stock_info['data']]
+
             return dict(error=None, prices=processed_data, symbol=symbol)
+
+    @staticmethod
+    def clean_row(row, keys):
+        row_dict = dict(zip(row,keys))
+        row_dict['height'] = row_dict['Adjusted Close'] 
+        row_dict['date'] = row_dict['Date']
+        row_dict['raduis'] = row_dict['Volume']
+        row_dict['title'] = row_dict['Date'] 
+        return(row_dict)  
         # Use other formats to get data
     # ----------------------------------------------------#
     #           DB        |         DB          |    DB   #

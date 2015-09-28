@@ -75,7 +75,6 @@ MyApplication.utils = MyApplication.utils || {};
             var dateString = $(el).val().replace(/-/g, "/");
             range.push(new Date(dateString));   
         });
-        console.log(range);
         return range;
     };
 }).apply(MyApplication.utils);

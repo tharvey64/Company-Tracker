@@ -64,7 +64,7 @@ MyApplication.models = MyApplication.models || {};
         var priceSettings = {'context':this, 'type':'scale', 'subType':'linear', 'range':[1,0]};
         this.priceScale = new myapp.Scale(priceSettings);
         // Data 
-        this.dataInterface = MyApplication.models.MyInterface() || {};
+        this.dataInterface = MyApplication.models.Interface() || {};
     }
     myapp.Graph.prototype.sentimentScale = function(){
         // Move this to init and make it an instance of the scale class
@@ -113,7 +113,7 @@ MyApplication.models = MyApplication.models || {};
         var price, sentiment;
         this.createSvg();
         // New Code
-        var groups = this.dataInterface.allSets();
+        var groups = this.dataInterface.allGroups();
         for (var name in groups){ 
             if (name === "price"){
                 price = true;

@@ -54,8 +54,10 @@ class FullRangeView(View):
         daily = Yahoo.get_intra_day_prices(stock_history['symbol'], 1)
 
         if stock_history['error'] and daily['error']:
-            print("quandl/views.py 57",stock_history['error'])
-            print("quandl/views.py 58", daily['error'])
+            print("-"*50,"quandl/views","-"*50)
+            print("quandl/views.py 57\n",stock_history['error'])
+            print("quandl/views.py 58\n", daily['error'])
+            print("^"*50,"quandl/views","^"*50)
             return JsonResponse(dict(error="No Daily or Historical Data", values=None))
         elif daily['error']:
             # print("quandl/views.py 58",stock_history)

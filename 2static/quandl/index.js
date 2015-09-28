@@ -1,12 +1,13 @@
 // REFACTOR BEFORE YOU ADD ANYTHING ELSE
+// Graph Needs An info Bar at the Top That displays information
+// about the current state of the graph
+// Make Tabes in Left Column to Add Twitter Search
+// Make 2 divs in Left Column
 $( document ).ready(function(){
-    // var global = (function () {
-    //     return this || (1, eval)('this');
-    // }());
     var toolkit = MyApplication.utils;
     var models = MyApplication.models;
     toolkit.renderForms();
-    // graphBoxWidth, resizeInterval
+    // graphBoxWidth, resizeTimeout
     var graphRelatedItems = {
         '$graphBox': $('#graphBox')
     };
@@ -15,6 +16,10 @@ $( document ).ready(function(){
         'count': 0,
         'last': 0
     };
+    // Check Company Buttons With New Date
+    $('#topBox').on('input', 'input[type="date"]', function(event){
+        toolkit.buttonDateValidation('.companyButton');
+    });
     // Edit Data Set 
     $('#graphInterfaceLeft').on('change','.graphDataRow',function(event){
     // This Event Should Work For twitter too!!!!!
@@ -157,25 +162,18 @@ $( document ).ready(function(){
             graph.draw(false, toolkit.scrapeDateRange());
         });
     });
-    // Check Company Buttons With New Date
-    $('#topBox').on('input', 'input[type="date"]', function(event){
-        toolkit.buttonDateValidation('.companyButton');
-    });
 
     // I DO NOT LIKE THIS SOLUTION
     // Change This To setTimeout
     // Use Debounce
-    $(window).on('resize', function(event){
-        if(graphRelatedItems['graph'] && !graphRelatedItems['resizeInterval'] && (graphRelatedItems['$graphBox'].css('width') != graphRelatedItems['graphBoxWidth'])){
-            graphRelatedItems['graphBoxWidth'] = graphRelatedItems['$graphBox'].css('width');
-            graphRelatedItems['graph'].draw(true);
-            graphRelatedItems['resizeInterval'] = setInterval(function(){
-                graphRelatedItems['graph'].draw(true);
+    $( window ).on('resize', function(event){
+        var access = graphRelatedItems;
+        if(access.graph && !access.resizeTimeout && (access.$graphBox.css('width') != access.graphBoxWidth)){
+            access.graphBoxWidth = access.$graphBox.css('width');
+            access.graph.draw(true);
+            access.resizeTimeout = setTimeout(function(){
+                access.graph.draw(true);
             }, 600);
-            setTimeout(function(){
-                clearInterval(graphRelatedItems['resizeInterval']);
-                graphRelatedItems['resizeInterval'] = undefined;
-            }, 2000);
         };
     });
 });
