@@ -5,7 +5,7 @@
 // Make 2 divs in Left Column
 $( document ).ready(function(){
     var toolkit = MyApplication.utils;
-    var models = MyApplication.models;
+    var presenter = MyApplication.presenter;
     toolkit.renderForms();
     // graphBoxWidth, resizeTimeout
     var graphRelatedItems = {
@@ -16,12 +16,35 @@ $( document ).ready(function(){
         'count': 0,
         'last': 0
     };
+    var eventElements = {
+        '$dateChange': $('#topBox'),
+        '$dataInterface': $('#graphInterfaceLeft'),
+        '$findCompany': $('#topBox, #middleBox'),
+        '$getData': $('#middleBox')
+    };
     // Check Company Buttons With New Date
-    $('#topBox').on('input', 'input[type="date"]', function(event){
-        toolkit.buttonDateValidation('.companyButton');
+    eventElements.$dateChange.on('input', 'input[type="date"]', function(event){
+        // call scrapeDateRange here
+        var range = toolkit.scrapeDateRange();
+        if (range[0] && range[1]){
+            $('.validDateRequired').prop('disabled',false);
+            var options = {
+                'tag': '.companyButton',
+                'range': range,
+                'valid': true
+            };
+            toolkit.buttonDateValidation(options);
+        }
+        else{
+            // handle invalid date here
+            $('.validDateRequired').prop('disabled',true);
+            var $companyButtons = $('.companyButton');
+            $companyButtons.removeClass('list-group-item-success');
+            $companyButtons.addClass('list-group-item-danger disabled');
+        }
     });
     // Edit Data Set 
-    $('#graphInterfaceLeft').on('change','.graphDataRow',function(event){
+    eventElements.$dataInterface.on('change','.graphDataRow',function(event){
     // This Event Should Work For twitter too!!!!!
         var options, $target;
         $target = $(event.target);
@@ -46,7 +69,7 @@ $( document ).ready(function(){
 
     // This Event Is Expecting One of these Four
     //'input[name="input_string"], #stockForm, #previousResults, #nextResults'
-    $('#topBox, #middleBox').on('input submit', '.companySearch', function(event){
+    eventElements.$findCompany.on('input submit', '.companySearch', function(event){
         event.preventDefault();
         event.stopPropagation();
 
@@ -94,21 +117,30 @@ $( document ).ready(function(){
                     'page': data['current_page'] - 1
                 };
             };
-
             var htmlString = toolkit.renderTemplate('#search-result', data);
             $middleBox.html(htmlString);
             // Check Company Buttons
-            toolkit.buttonDateValidation('.companyButton');
+            // This Is Not Dry
+            var range = toolkit.scrapeDateRange();
+            if (range[0] && range[1]){
+                var options = {
+                    'tag': '.companyButton',
+                    'range': range,
+                    'valid': true
+                };
+                toolkit.buttonDateValidation(options);
+            }
         });
     });
 
-    $('#middleBox').on('click', 'button.companyButton', function(event){
-        var fullCode, startDate, input, $el, $target;
+    eventElements.$getData.on('click', 'button.companyButton', function(event){
+        var fullCode, startDate, hold, input, $el, $target;
         $target = graphRelatedItems['$graphBox'];
         $target.append(loadingImageRendered);
         // Add Tabs
         $el = $(this);
         // GLOBAL
+        var tempData = this.dataset;
         hold = $el.val();
         fullCode = $el.val().split("/");
         startDate = $('input[name="start_date"]').val();
@@ -119,47 +151,45 @@ $( document ).ready(function(){
             'code': fullCode[1]
         };
 
-        $.get('quandl/current/', input,function(data){
-            // Make This Uniform 
-            // If data.close.length == 0 return an error
-            if (data.error || !data.values){
-                $('#loadingImage').remove();
-                $('#bottomBox').html('<h2>No Results Found For '+ data.symbol +'</h2>');
-                // Return to Prevent Drawing of Graph
-                return;
-            };
-            // MOVE THIS CODE TO NEW FILE
-            var options, settings;
-            // var settings = {'container':,'padding':,'startDate':,'endDate':,'qwargSet':};
+        // Add Twitter Here
+        // function needs url, input, Type, Title, userInterface, build
+        var graph, settings, options;
+        graphRelatedItems['graphBoxWidth'] = $target.css('width');
+        if (!graphRelatedItems['graph']) {
             settings = {
                 'container': '#graphBox',
                 'padding': 60,
-                'startDate': new Date(startDate),
             };
-            // Find Another Way to Do This
-            graphRelatedItems['graphBoxWidth'] = $target.css('width');
-
-            if (!graphRelatedItems['graph']) {
-                graphRelatedItems['graph'] = new models.Graph(settings);
-            }
-            var graph = graphRelatedItems['graph'];
-            var newData = {
-                'graph': graph,
-                'type': 'price',
-                'title': 'Stocks', 
-                'userInterface': $('#graphInterfaceLeft'),
-                'build': {
-                    'parseDate': "%Y-%m-%d %X",
-                    'data': data.values,
-                    'title':data.symbol,
-                    'tag': hold,
-                    'fill': '#0000ff',
-                    'show': true
-                }
-            };
-            toolkit.addData(newData);
-            // Draw Should Take Object
-            graph.draw(false, toolkit.scrapeDateRange());
+            graphRelatedItems['graph'] = new presenter.Graph(settings);
+        }
+        graph = graphRelatedItems['graph'];
+        options = {
+            'graph':graphRelatedItems['graph'],
+            'type':'price',
+            'title':'Stocks',
+            '$graphUI': $('#graphInterfaceLeft'),
+            'parseDate':"%Y-%m-%d %X",
+            'tag': hold
+        };
+        $.get('quandl/current/', input, toolkit.buildCallback(options));
+        
+        // options = {
+        //     'graph': graphRelatedItems['graph'],
+        //     'type': 'tweets',
+        //     'title': 'Twitter',
+        //     '$graphUI': $('#graphInterfaceRight'),
+        //     'parseDate': "%Y-%m-%d %H:%M:%S%z",
+        //     'tag': '$' + fullCode[1]
+        // };
+        // $.get('twitter/search/random/', input, toolkit.buildCallback(options));
+        // filter = popular or mixed
+        // search = text
+        input = {
+            'search': '$' + fullCode[1],
+            'filter': 'popular'
+        };
+        $.post('twitter/search/random', input, function(data){
+            console.log(data);
         });
     });
 
