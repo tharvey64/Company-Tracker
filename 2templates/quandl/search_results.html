@@ -2,7 +2,7 @@
     <div id="searchResultButtons" class='list-group'>
     {% verbatim %}
     {{#list}}
-        <button type="button" class="list-group-item btn-block list-group-item-primary companyButton disableOnLoad" value="{{source_code}}/{{code}}" data-from_date="{{from_date}}" data-to_date="{{to_date}}">{{name}}</button>
+        <button type="button" class="validDateRequired list-group-item btn-block list-group-item-primary companyButton disableOnLoad" value="{{source_code}}/{{code}}" data-from_date="{{from_date}}" data-to_date="{{to_date}}" data-db_code="{{source_code}}/{{code}}" data-urlize_name="{{urlize_name}}" data-column_names="{{column_names}}">{{name}}</button>
     {{/list}}
     {{^list}}
         <h4>No Results Found.</h4>
