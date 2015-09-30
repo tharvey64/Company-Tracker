@@ -1,44 +1,49 @@
 MyApplication.utils = MyApplication.utils || {};
-(function(){
-    var myapp = this;
-    myapp.renderTemplate = function renderTemplate(tag, templateData){
+(function(utils){
+    utils.renderTemplate = function renderTemplate(tag, templateData){
         var template = $(tag).html();
         Mustache.parse(template);
         return Mustache.render(template,templateData);
     };
 
-    myapp.renderForms = function renderForms(){
+    utils.renderForms = function renderForms(){
         var htmlString;
-        htmlString = myapp.renderTemplate('#stock-search');
+        htmlString = utils.renderTemplate('#stock-search');
         // $('#topBox').html(htmlString);
         var today = new Date();
-        htmlString += myapp.renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
+        htmlString += utils.renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
         $('#topBox').html(htmlString);
     };
+    // Consider Changing the Way This Are Implemented
+    utils.buttonDateValidation = function buttonDateValidation(options){
+        var dateRange, to_date, validDate, $el, $collection;
+        $collection = $(options.tag);
+        validDate = options.valid;
+        dateRange = options.range;
 
-    myapp.buttonDateValidation = function buttonDateValidation(tag){
-        var startDate, to_date, $el, $collection;
-        startDate = new Date($('input[name="start_date"]').val()) || new Date();
-        startDate.setDate(startDate.getDate()-1);
-        $collection = $(tag);
-        // var endDate = new Date($('input[name="end date"]').val());
+        var startDate, endDate;
 
+        if (validDate) {
+            startDate = dateRange[0];
+            startDate.setDate(startDate.getDate()-1);
+            // var endDate = ;
+        }
         $collection.each(function(index, el){
             $el = $(el);
-            to_date = new Date(el.dataset.to_date);
-            if (to_date.getTime() < startDate.getTime()){
+            to_date = new Date(el.dataset.to_date.replace(/-/g,"/"));
+            if (!validDate || to_date.getTime() < startDate.getTime()){
                 $el.removeClass('list-group-item-success');
                 $el.addClass('list-group-item-danger disabled');
-                $el.attr('disabled','disabled');
+                $el.prop('disabled',true);
             }else{
                 $el.addClass('list-group-item-success');
                 $el.removeClass('list-group-item-danger disabled');
-                $el.removeAttr('disabled');
+                $el.prop('disabled',false);
             };
         });
     };
 
-    myapp.dataDisplay = function dataDisplay(obj_list, title, $target){
+    utils.dataDisplay = function dataDisplay(obj_list, title, $target){
         var templateSchema = {};
         // Change obj_list to the collection obj
         templateSchema['title'] = title;
@@ -53,28 +58,86 @@ MyApplication.utils = MyApplication.utils || {};
             };
             templateSchema['content'].push(current);
         };
-        var rendered = myapp.renderTemplate('#graph-data-table', templateSchema);
+        var rendered = utils.renderTemplate('#graph-data-table', templateSchema);
         $target.html(rendered);
     };
 
-    myapp.addData = function addData(options){
-        var group = options.graph.dataInterface.getCollection(options.type);
+    utils.addData = function addData(options){
+        var graph = options.graph;
+        var type = options.type;
+        var group = graph.dataInterface.getCollection(type);
         if (!group){
-            group = options.graph.dataInterface.createCollection(options.type);
+            group = graph.dataInterface.createCollection(type);
         }
-        var q = options.graph.dataInterface.createQwarg(options.build);
-        options.graph.dataInterface.addQwarg(options.type, q);
-        this.dataDisplay(group.collection, options.title, options["userInterface"]);
+        var q = graph.dataInterface.createQwarg(options.build);
+        graph.dataInterface.addQwarg(type, q);
+        
+        utils.dataDisplay(group.collection, options.title, options.$graphUI);
     };
 
-    myapp.scrapeDateRange = function scrapDateRange(){
+    utils.validateDateFormat = function validateDateFormat(dateString){
+        var checkDate;
+        // var pattern = /^\d{4}\/\d{1,2}\/\d{1,2}$|^\d{1,2}\/\d{1,2}\/\d{4}$/;
+        var pattern = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
+        //Replacing dashes makes dateString more predictable
+        dateString = dateString.replace(/-/g, "/");
+        if (pattern.test(dateString)){
+            checkDate = new Date(dateString);
+            if (checkDate < Date.now()){
+                return true;
+            }
+        }
+        return false;
+    };
+
+    utils.scrapeDateRange = function scrapeDateRange(){
         var dates = $("#leftColumn").find("input.dateRanges");
         var range = [];
         dates.each(function(idx, el){
             // console.log($(el).val());
-            var dateString = $(el).val().replace(/-/g, "/");
-            range.push(new Date(dateString));   
+            var dateString = $(el).val();
+            if (utils.validateDateFormat(dateString)){
+                range.push(new Date(dateString.replace(/-/g, "/")));   
+            }
+            else{
+                range.push(false);
+            }
         });
         return range;
     };
-}).apply(MyApplication.utils);
+
+    utils.buildCallback = function buildCallback(options){
+        var newData;
+        newData = {
+            'graph': options.graph,
+            'type': options.type,
+            'title': options.title, 
+            '$graphUI': options.$graphUI
+        };
+        return function callback(data){
+            
+            if (data.error || !data.values){
+                $('#loadingImage').remove();
+                $('#bottomBox').html('<h2>No Results Found For '+ data.search+'</h2>');
+                // Return to Prevent Drawing of Graph
+                console.log("search",data.search);
+                console.log("type",options.type);
+                console.log("data",data);
+                return;
+            };
+
+            newData['build'] = {
+                'parseDate': options.parseDate,
+                'data': data.values,
+                'title': data.search,
+                'tag': options.tag,
+                'fill': options.fill || '#0000ff',
+                'show': true
+            };
+            utils.addData(newData);
+            // Draw Should Take Object
+            options.graph.draw(false, utils.scrapeDateRange());
+        };
+    };
+
+})(MyApplication.utils);
