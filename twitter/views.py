@@ -6,9 +6,8 @@ from django.views.generic import View
 from django.http import JsonResponse
 from twython import Twython
 from sentiment.alchemyapi import AlchemyAPI
-from sentiment.models import Sentiment
-from twitter.models import Tweet, Keyword, Profile
-from twitter.helper import process_tweets, process_list_tweets, alchemy_text_sentiment
+from twitter.models import Tweet, Keyword, Profile 
+import twitter.helper as help 
 
 def make_twython(profile_token=None, profile_secret=None):
     return Twython(
@@ -64,7 +63,7 @@ class SearchView(View):
             stored_tweets_of_query = []
         # stored_tweets_of_query = filter_tweets_by_keyword(user_query.lower())
         
-        new_tweets = process_tweets(twython_results, stored_tweets_of_query)
+        new_tweets = help.process_tweets_with_sentiment(twython_results, stored_tweets_of_query)
 
         keyword.tweet.add(*new_tweets)
         # Pull Tweet_id out of Tweet object
@@ -72,6 +71,9 @@ class SearchView(View):
             all_tweets = new_tweets + list(stored_tweets_of_query)
         else:
             all_tweets = new_tweets
+        # prefetch sentiment if you can
+        print("twitter.views line 74")
+        print([t.sentiment.all() for t in all_tweets])
         tweet_dataset = [dict(tweet_id=t.tweet_id) for t in all_tweets]
         
         if len(tweet_dataset) is 0:
@@ -108,7 +110,7 @@ class SearchListView(View):
             timeline+=list_of_tweets
             max_id = list_of_tweets[-1]['id']-1
         # --------------------------------------------------------------------      
-        list_dataset = process_list_tweets(user_query,timeline)
+        list_dataset = help.process_list_tweets(user_query,timeline)
         return JsonResponse(dict(tweets=list_dataset,search_type='list'))
 
 # def parse_user_query(query):
