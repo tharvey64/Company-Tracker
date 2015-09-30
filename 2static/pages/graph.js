@@ -1,7 +1,9 @@
-MyApplication.models = MyApplication.models || {};
-(function(){
-    var myapp = this;
-    myapp.Scale = function Scale(settings){
+// Is This The Model or the Presentor
+MyApplication.presenter = MyApplication.presenter || {};
+
+(function(temp1){
+    // Consider Not Exposing This To The Rest Of The App
+    temp1.Scale = function Scale(settings){
         // type = "time"/"scale",subType="scale"/"linear"
         this.type = settings.type;
         this.subType = settings.subType;
@@ -12,10 +14,10 @@ MyApplication.models = MyApplication.models || {};
         this.context = settings.context;
 
     };
-    myapp.Scale.prototype.inScale = function(value){
+    temp1.Scale.prototype.inScale = function(value){
         return (value > this.domain[0]) && (value < this.domain[1]);
     };
-    myapp.Scale.prototype.setDomain = function(domain, undefined){
+    temp1.Scale.prototype.setDomain = function(domain, undefined){
         if (domain === undefined && this.domain === undefined){
             return false
         }
@@ -24,7 +26,6 @@ MyApplication.models = MyApplication.models || {};
         }
 
         if (this.type === "time"){
-            // console.log(domain);
             domain[0].setHours(8);
             domain[1].setHours(18);
         }
@@ -38,18 +39,18 @@ MyApplication.models = MyApplication.models || {};
         this.domain = domain;
         return true;
     };
-    myapp.Scale.prototype.getRange = function(settings){
+    temp1.Scale.prototype.getRange = function(settings){
         var paddingKey = settings.paddingKey || "padding";
         var axisKey = settings.axisKey;
-        var temp = [this.context.display[paddingKey], this.context.display[axisKey]-this.context.display[paddingKey]];
-        return [temp[this.range[0]], temp[this.range[1]]]
+        var defaultRange = [this.context.display[paddingKey], this.context.display[axisKey]-this.context.display[paddingKey]];
+        return [defaultRange[this.range[0]], defaultRange[this.range[1]]]
     };
-    myapp.Scale.prototype.getScale = function(settings){
+    temp1.Scale.prototype.getScale = function(settings){
         var currentRange = this.getRange(settings);
         return d3[this.type][this.subType]().range(currentRange).domain(this.domain);
     };
 
-    myapp.Graph = function Graph(settings){
+    temp1.Graph = function Graph(settings){
         // Page Settings
         this.display = {
             'container': settings.container,
@@ -59,18 +60,18 @@ MyApplication.models = MyApplication.models || {};
         };
         // Date Scale
         var dateSettings = {'context':this, 'type':'time', 'subType':'scale','range':[0,1]};
-        this.dateScale = new myapp.Scale(dateSettings);
+        this.dateScale = new temp1.Scale(dateSettings);
         // Price Scale
         var priceSettings = {'context':this, 'type':'scale', 'subType':'linear', 'range':[1,0]};
-        this.priceScale = new myapp.Scale(priceSettings);
+        this.priceScale = new temp1.Scale(priceSettings);
         // Data 
         this.dataInterface = MyApplication.models.Interface() || {};
-    }
-    myapp.Graph.prototype.sentimentScale = function(){
+    };
+    temp1.Graph.prototype.sentimentScale = function(){
         // Move this to init and make it an instance of the scale class
         return d3.scale.linear().domain([-1,1]).range([this.display['height'] - this.display['padding'], this.display['padding']]);
-    }
-    myapp.Graph.prototype.drawXAxis = function(translateString){
+    };
+    temp1.Graph.prototype.drawXAxis = function(translateString){
         // Make Sure These are Drawn Once And Only Once
         var xAxis = d3.svg.axis();
         xAxis.scale(this.dateScale.getScale({'axisKey':'width'})).orient("bottom");
@@ -86,8 +87,8 @@ MyApplication.models = MyApplication.models || {};
             .attr("transform", function(){
                 return "rotate(-65)";
             });
-    }
-    myapp.Graph.prototype.drawYAxis = function(currentScale,translateString){
+    };
+    temp1.Graph.prototype.drawYAxis = function(currentScale,translateString){
         var yAxis = d3.svg.axis();
         yAxis.scale(currentScale).orient("left");
 
@@ -95,8 +96,8 @@ MyApplication.models = MyApplication.models || {};
             .attr("class", "axis")
             .attr("transform", translateString)
             .call(yAxis);
-    }
-    myapp.Graph.prototype.createSvg = function(){
+    };
+    temp1.Graph.prototype.createSvg = function(){
         $(this.display['container']).empty();
         // $(".tooltip").remove();
         this.display['height'] = parseInt($(this.display['container']).css("height"));
@@ -108,8 +109,8 @@ MyApplication.models = MyApplication.models || {};
             .attr("height",this.display['height']);
 
         return d3.select("svg");
-    }
-    myapp.Graph.prototype.draw = function(resize, dateRange){
+    };
+    temp1.Graph.prototype.draw = function(resize, dateRange){
         var price, sentiment;
         this.createSvg();
         // New Code
@@ -148,8 +149,8 @@ MyApplication.models = MyApplication.models || {};
             //     this.plotTweets(something here);
             // }
         };
-    }
-    myapp.Graph.prototype.plotTweets = function(qwarg){
+    };
+    temp1.Graph.prototype.plotTweets = function(qwarg){
         $(".tooltip").remove();
         var yScale;
         // radius scale not added
@@ -197,8 +198,8 @@ MyApplication.models = MyApplication.models || {};
                     return "none";
                 }
             });
-    }
-    myapp.Graph.prototype.plotPrices = function(qwarg){
+    };
+    temp1.Graph.prototype.plotPrices = function(qwarg){
         // Clear
         var yScale = this.priceScale.getScale({'axisKey':'height'});
         // ???? Don't Need This
@@ -209,7 +210,6 @@ MyApplication.models = MyApplication.models || {};
         var checkDate = this.dateScale.inScale;
         var dateFormat = d3.time.format(qwarg.parseDate);
         var svg = d3.select("svg");
-
         var line = d3.svg.line()
             .interpolate("linear")
             .x(function(d){return xScale(dateFormat.parse(d.date));})
@@ -228,11 +228,11 @@ MyApplication.models = MyApplication.models || {};
                 .duration(0)
                 .ease("linear")
                 .attr("stroke-dashoffset", 0);
-    }
-    myapp.Graph.prototype.clear = function(setString){
+    };
+    temp1.Graph.prototype.clear = function(setString){
         // This does not do anything to the Path
         // $(".tooltip").remove();
         $(setString).remove();
         // $("circle").tooltips();
-    }
-}).apply(MyApplication.models);
+    };
+})(MyApplication.presenter);
