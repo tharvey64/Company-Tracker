@@ -5,7 +5,6 @@ from django.shortcuts import redirect
 from django.views.generic import View
 from django.http import JsonResponse
 from twython import Twython
-from sentiment.alchemyapi import AlchemyAPI
 from twitter.models import Tweet, Keyword, Profile 
 import twitter.helper as help 
 
@@ -37,54 +36,49 @@ class CallbackView(View):
         return redirect('/users/register')
 
 class SearchView(View):
-    alchemyapi = AlchemyAPI()
 
     def post(self, request):
         user_query = request.POST.get('search')  
         if not user_query:
             return JsonResponse(dict(error="Please enter a search value"))
-        
         twitter = make_twython()
         max_id = None
         twython_results = []
         for i in range(4):
-            list_of_tweets = twitter.search(q=user_query, 
+            tweets = twitter.search(
+                                q=user_query, 
                                 result_type=request.POST['filter'], 
-                                lang='en',max_id=max_id)
-            # print(list_of_tweets)
-            if len(list_of_tweets['statuses']) == 0:
+                                lang='en',max_id=max_id
+                            )
+            if len(tweets['statuses']) == 0:
                 break
-            twython_results+=list_of_tweets['statuses']
-            max_id = list_of_tweets['statuses'][-1]['id']-1
+            twython_results+=tweets['statuses']
+            max_id = tweets['statuses'][-1]['id']-1
         keyword, created = Keyword.objects.get_or_create(search=user_query.lower())
         if not created:
             stored_tweets_of_query = keyword.tweet.all()#tweets in the database
         else:
             stored_tweets_of_query = []
-        # stored_tweets_of_query = filter_tweets_by_keyword(user_query.lower())
-        
         new_tweets = help.process_tweets_with_sentiment(twython_results, stored_tweets_of_query)
 
         keyword.tweet.add(*new_tweets)
-        # Pull Tweet_id out of Tweet object
-        if stored_tweets_of_query:
-            all_tweets = new_tweets + list(stored_tweets_of_query)
-        else:
-            all_tweets = new_tweets
+        all_tweets = keyword.tweet.all().prefetch_related('sentiment').values('text','tweet_id','favorites','tweet_date','sentiment__value','sentiment__score')
         # prefetch sentiment if you can
-        print("twitter.views line 74")
-        print([t.sentiment.all() for t in all_tweets])
-        tweet_dataset = [dict(tweet_id=t.tweet_id) for t in all_tweets]
+        tweet_dataset = list(all_tweets)
+        # put this key assignment in a function
+        for tweet in tweet_dataset:
+            tweet['date'] = tweet['tweet_date'].strftime("%Y-%m-%d %H:%M:%S%z")
+            tweet['height'] = tweet['sentiment__score']
+            tweet['radius'] = tweet['favorites']
+            tweet['title'] = tweet['text']
         
         if len(tweet_dataset) is 0:
             data = dict(error='Please simplify your search')
         else:
-            data = dict(tweets=tweet_dataset, search_type='popular')
+            data = dict(error=None,values=tweet_dataset,search=user_query,search_type='popular')
         return JsonResponse(data)
 
 class SearchListView(View):
-    # Do This SomeWhere Else
-    alchemyapi = AlchemyAPI()
     # Split This Into Different Views
     def post(self, request):
         user_query = request.POST.get('search') 
@@ -104,11 +98,11 @@ class SearchListView(View):
         # This Should be a View
         # Add more option so users can look back through the timeline
         for i in range(2):
-            list_of_tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200,max_id=max_id)
-            if len(list_of_tweets) == 0:
+            tweets = twitter.get_list_statuses(slug=list_name, owner_screen_name=request.user.username, count=200,max_id=max_id)
+            if len(tweets) == 0:
                 break
-            timeline+=list_of_tweets
-            max_id = list_of_tweets[-1]['id']-1
+            timeline+=tweets
+            max_id = tweets[-1]['id']-1
         # --------------------------------------------------------------------      
         list_dataset = help.process_list_tweets(user_query,timeline)
         return JsonResponse(dict(tweets=list_dataset,search_type='list'))

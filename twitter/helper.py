@@ -80,7 +80,7 @@ def evaluate_sentiment(analysis, content):
         value=docSentiment['type'],
         content_object=content
     )
-    print("twitter.helper line 83", docSentiment)
+    # print("twitter.helper line 83", docSentiment)
     return True
 
 def process_tweets(twitter_results, db_results):
@@ -108,7 +108,6 @@ def process_tweets_with_sentiment(twitter_results, db_results):
             # custom db search here
             tweet = stored_tweet(Tweet.objects, response)
             if not tweet:
-                # print("twitter.helper line 114")
                 tweet = make_tweet(response)
 
                 if not evaluate_sentiment(alchemy, tweet):
