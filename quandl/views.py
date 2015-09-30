@@ -67,7 +67,7 @@ class FullRangeView(View):
         else:
             # Adds Last Historical Price Twice
             close = stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices']
-        return JsonResponse(dict(error=None, symbol=stock_history['symbol'], values=close))
+        return JsonResponse(dict(error=None, search=stock_history['symbol'], values=close))
 
 #######################
 #######################
