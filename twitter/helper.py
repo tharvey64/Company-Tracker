@@ -1,5 +1,7 @@
 import datetime
+from django.contrib.contenttypes.models import ContentType
 from twitter.models import Tweet,Keyword
+from sentiment.models import Sentiment
 from sentiment.alchemyapi import AlchemyAPI
 
 def check_tweet_text(text, query):
@@ -69,10 +71,22 @@ def make_tweet(current_tweet):
     create_keywords(keywords, tweet_obj)
     return tweet_obj
 
+def evaluate_sentiment(analysis, content):
+    docSentiment = alchemy_text_sentiment(analysis, content.text)
+    if not docSentiment:
+        return False
+    Sentiment.objects.create(
+        score=docSentiment.get('score', 0),
+        value=docSentiment['type'],
+        content_object=content
+    )
+    print("twitter.helper line 83", docSentiment)
+    return True
+
 def process_tweets(twitter_results, db_results):
     new_tweets = []
     for response in twitter_results: #iterating through each tweet
-        if db_results and stored_tweet(db_results,response):
+        if db_results and stored_tweet(db_results, response):
             continue
         else:
             # custom db search here
@@ -83,3 +97,25 @@ def process_tweets(twitter_results, db_results):
                 # can't i use the list i am iterating over
                 new_tweets.append(tweet)
     return new_tweets
+
+def process_tweets_with_sentiment(twitter_results, db_results):
+    alchemy = AlchemyAPI()
+    new_tweets = []
+    for response in twitter_results: #iterating through each tweet
+        if db_results and stored_tweet(db_results, response):
+            continue
+        else:
+            # custom db search here
+            tweet = stored_tweet(Tweet.objects, response)
+            if not tweet:
+                # print("twitter.helper line 114")
+                tweet = make_tweet(response)
+
+                if not evaluate_sentiment(alchemy, tweet):
+                    print("twitter.helper line 118",tweet.text)
+                    continue
+            if tweet:
+                # can't i use the list i am iterating over
+                new_tweets.append(tweet)
+    return new_tweets
+
