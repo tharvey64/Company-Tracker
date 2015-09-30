@@ -12,9 +12,9 @@
         {{#content}}
           <tr class="graphDataRow" data-name="{{tag}}">
             <td>{{name}}</td>
-            <td><input type="color" value={{color}}></td>
-            <td><input type="checkbox" {{#visible}}checked="checked"{{/visible}}></td>
-            <td><input type="radio"></td>
+            <td><input class="validDateRequired" type="color" value={{color}}></td>
+            <td><input class="validDateRequired" type="checkbox" {{#visible}}checked="checked"{{/visible}}></td>
+            <td><input class="validDateRequired" type="radio"></td>
           </tr>
         {{/content}}
       </tbody>
