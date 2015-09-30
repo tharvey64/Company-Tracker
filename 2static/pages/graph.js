@@ -55,8 +55,8 @@ MyApplication.presenter = MyApplication.presenter || {};
         this.display = {
             'container': settings.container,
             'padding': settings.padding || 70,
-            'height': settings.containerHeight,
-            'width': settings.containerWidth
+            // 'height': settings.containerHeight,
+            // 'width': settings.containerWidth
         };
         // Date Scale
         var dateSettings = {'context':this, 'type':'time', 'subType':'scale','range':[0,1]};
@@ -100,8 +100,9 @@ MyApplication.presenter = MyApplication.presenter || {};
     temp1.Graph.prototype.createSvg = function(){
         $(this.display['container']).empty();
         // $(".tooltip").remove();
-        this.display['height'] = parseInt($(this.display['container']).css("height"));
-        this.display['width'] = parseInt($(this.display['container']).css("width"));
+        var $container = $(this.display['container']);
+        this.display['height'] = parseFloat($container.css("height"));
+        this.display['width'] = parseFloat($container.css("width"));
 
         d3.select(this.display['container'])
             .append("svg")
@@ -136,62 +137,57 @@ MyApplication.presenter = MyApplication.presenter || {};
         this.drawXAxis("translate(0," + (this.display['height'] - this.display['padding']) +")");
         // Plotting Data
         // New Code
+        var current;
         for (var name in groups){
             if (name === "price"){
-                var current = groups[name];
+                current = groups[name];
                 for(var idx = current.collection.length; idx--;){
                     if (!current.collection[idx].show) continue;
                     this.plotPrices(current.collection[idx]);  
                 }
             }
-            // Inactive
-            // else if (name === "sentiment"){
-            //     this.plotTweets(something here);
-            // }
+            else if (name === "sentiment"){
+                current = groups[name];
+                for(var idx = current.collection.length; idx--;){
+                    if (!current.collection[idx].show) continue;
+                    this.plotTweets(current.collection[idx]);
+                };
+            };
         };
     };
     temp1.Graph.prototype.plotTweets = function(qwarg){
         $(".tooltip").remove();
-        var yScale;
+        var yScale = this.sentimentScale();
         // radius scale not added
-        var rScale = qwarg.radiusScale();
+        var radius_range = d3.extent(qwarg.data, function(d){
+            return d.radius;
+        });
+        var rScale = d3.scale.linear().range([5,50]).domain(radius_range);
         // clear
         var xScale = this.dateScale.getScale({'axisKey':'width'});
         var dateFormat = d3.time.format(qwarg.parseDate);
-        var checkDate = this.dateScale.inScale;
+        var checkDate = this.dateScale;
         var svg = d3.select("svg");
-        // Not Sure If The Below Expression Does Anything
-        if (!svg[0][0]) throw "No SVG";
-        if (qwarg.type == "price"){
-            yScale = this.priceScale.getScale({'axisKey':'height'});
-        }
-        else if (qwarg.type == "sentiment"){
-            yScale = this.sentimentScale();
-        }
-        else{
-            return "Missing Qwarg Type";
-        };
-        
-        svg.selectAll("circle" + (qwarg.tag ? "." + qwarg.tag:""))
+        // does not bind tag or title to this circle
+        svg.selectAll("circle")
             .data(qwarg.data)
             .enter()
             .append("circle")
-            .attr("class", qwarg.tag)
             .attr("cx", function(d){
-                return xScale(dateFormat(d.date));
+                return xScale(dateFormat.parse(d.date));
             })
             .attr("cy", function(d){
                 return yScale(parseFloat(d.height));
             })
             .attr("r", function(d){
-                return rScale(d.radius);
+                return rScale(parseInt(d.radius));
             })
             .attr("title", function(d){
                 return d.title;
             })
             .style("fill", qwarg.fill)
             .style("display", function(d){
-                if (checkDate(dateFormat(d.date))){
+                if (checkDate.inScale(dateFormat.parse(d.date))){
                     return "initial";
                 }
                 else{
