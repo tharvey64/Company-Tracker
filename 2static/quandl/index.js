@@ -134,14 +134,14 @@ $( document ).ready(function(){
     });
 
     eventElements.$getData.on('click', 'button.companyButton', function(event){
-        var fullCode, startDate, hold, input, $el, $target;
+        var fullCode, startDate, elementValue, input, $el, $target;
         $target = graphRelatedItems['$graphBox'];
         $target.append(loadingImageRendered);
         // Add Tabs
         $el = $(this);
         // GLOBAL
         var tempData = this.dataset;
-        hold = $el.val();
+        elementValue = $el.val();
         fullCode = $el.val().split("/");
         startDate = $('input[name="start_date"]').val();
         input = {
@@ -151,8 +151,6 @@ $( document ).ready(function(){
             'code': fullCode[1]
         };
 
-        // Add Twitter Here
-        // function needs url, input, Type, Title, userInterface, build
         var graph, settings, options;
         graphRelatedItems['graphBoxWidth'] = $target.css('width');
         if (!graphRelatedItems['graph']) {
@@ -161,7 +159,7 @@ $( document ).ready(function(){
                 'padding': 60,
             };
             graphRelatedItems['graph'] = new presenter.Graph(settings);
-        }
+        };
         graph = graphRelatedItems['graph'];
         options = {
             'graph':graphRelatedItems['graph'],
@@ -169,28 +167,26 @@ $( document ).ready(function(){
             'title':'Stocks',
             '$graphUI': $('#graphInterfaceLeft'),
             'parseDate':"%Y-%m-%d %X",
-            'tag': hold
+            'tag': elementValue
         };
         $.get('quandl/current/', input, toolkit.buildCallback(options));
         
-        // options = {
-        //     'graph': graphRelatedItems['graph'],
-        //     'type': 'tweets',
-        //     'title': 'Twitter',
-        //     '$graphUI': $('#graphInterfaceRight'),
-        //     'parseDate': "%Y-%m-%d %H:%M:%S%z",
-        //     'tag': '$' + fullCode[1]
-        // };
-        // $.get('twitter/search/random/', input, toolkit.buildCallback(options));
-        // filter = popular or mixed
-        // search = text
         input = {
             'search': '$' + fullCode[1],
             'filter': 'popular'
         };
-        $.post('twitter/search/random', input, function(data){
-            console.log(data);
-        });
+        options = {
+            'graph': graphRelatedItems['graph'],
+            'type': 'sentiment',
+            'title': 'Twitter',
+            '$graphUI': $('#graphInterfaceRight'),
+            'parseDate': "%Y-%m-%d %X%Z",
+            'tag': '$' + fullCode[1]
+        };
+        $.post('twitter/search/random', input, toolkit.buildCallback(options));
+        // $.post('twitter/search/random', input, function(data){
+        //     console.log(data);
+        // });
     });
 
     // I DO NOT LIKE THIS SOLUTION
@@ -203,6 +199,7 @@ $( document ).ready(function(){
             access.graph.draw(true);
             access.resizeTimeout = setTimeout(function(){
                 access.graph.draw(true);
+                access.resizeTimeout = undefined;
             }, 600);
         };
     });
