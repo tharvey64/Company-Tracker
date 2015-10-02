@@ -1,20 +1,11 @@
 MyApplication.utils = MyApplication.utils || {};
 (function(utils){
-    utils.renderTemplate = function renderTemplate(tag, templateData){
-        var template = $(tag).html();
+    utils.renderTemplate = function renderTemplate(options){
+        var template = $(options.tag).html();
         Mustache.parse(template);
-        return Mustache.render(template,templateData);
+        return Mustache.render(template, options.data);
     };
-
-    utils.renderForms = function renderForms(){
-        var htmlString;
-        htmlString = utils.renderTemplate('#stock-search');
-        // $('#topBox').html(htmlString);
-        var today = new Date();
-        htmlString += utils.renderTemplate('#date-range', {'today': today.toJSON().substring(0,10)});
-        $('#topBox').html(htmlString);
-    };
-    // Consider Changing the Way This Are Implemented
+    // Consider Changing the Way These Are Implemented
     utils.buttonDateValidation = function buttonDateValidation(options){
         var dateRange, to_date, validDate, $el, $collection;
         $collection = $(options.tag);
@@ -43,22 +34,25 @@ MyApplication.utils = MyApplication.utils || {};
         });
     };
 
-    utils.dataDisplay = function dataDisplay(obj_list, title, $target){
+    // Html Location Referenced
+    utils.dataDisplay = function dataDisplay(dataGroup, title, $target){
         var templateSchema = {};
-        // Change obj_list to the collection obj
+        var collection = dataGroup.collection;
         templateSchema['title'] = title;
-        templateSchema['listId'] = title.toLowerCase() + 'Table';  
+        templateSchema['tableId'] = title.toLowerCase() + 'Table';  
         templateSchema['content'] = [];
-        for (var idx = obj_list.length; idx--;){
+
+        for (var idx = collection.length; idx--;){
             var current = {
-                'color': obj_list[idx]['fill'],
-                'name': obj_list[idx]['title'],
-                'tag': obj_list[idx]['tag'],
-                'visible': obj_list[idx]['show']
+                'color': collection[idx]['fill'],
+                'name': collection[idx]['title'],
+                'tag': collection[idx]['tag'],
+                'visible': collection[idx]['show']
             };
             templateSchema['content'].push(current);
         };
-        var rendered = utils.renderTemplate('#graph-data-table', templateSchema);
+        var rendered = utils.renderTemplate({'tag':'#graph-data-table', 'data':templateSchema});
+        $target.data('type', dataGroup.type);
         $target.html(rendered);
     };
 
@@ -69,15 +63,14 @@ MyApplication.utils = MyApplication.utils || {};
         if (!group){
             group = graph.dataInterface.createCollection(type);
         }
-        var q = graph.dataInterface.createQwarg(options.build);
-        graph.dataInterface.addQwarg(type, q);
+        var qwarg = graph.dataInterface.createQwarg(options.build);
+        graph.dataInterface.addQwarg(type, qwarg);
         
-        utils.dataDisplay(group.collection, options.title, options.$graphUI);
+        utils.dataDisplay(group, options.title, options.$graphUI);
     };
 
     utils.validateDateFormat = function validateDateFormat(dateString){
         var checkDate;
-        // var pattern = /^\d{4}\/\d{1,2}\/\d{1,2}$|^\d{1,2}\/\d{1,2}\/\d{4}$/;
         var pattern = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
         //Replacing dashes makes dateString more predictable
         dateString = dateString.replace(/-/g, "/");
@@ -89,12 +82,11 @@ MyApplication.utils = MyApplication.utils || {};
         }
         return false;
     };
-
-    utils.scrapeDateRange = function scrapeDateRange(){
+    // Html Location Referenced
+    utils.scrapeDateRange = function scrapeDateRange(){ 
         var dates = $("#leftColumn").find("input.dateRanges");
         var range = [];
         dates.each(function(idx, el){
-            // console.log($(el).val());
             var dateString = $(el).val();
             if (utils.validateDateFormat(dateString)){
                 range.push(new Date(dateString.replace(/-/g, "/")));   
@@ -105,7 +97,7 @@ MyApplication.utils = MyApplication.utils || {};
         });
         return range;
     };
-
+    // Html Location Referenced
     utils.buildCallback = function buildCallback(options){
         var newData;
         newData = {
@@ -117,12 +109,13 @@ MyApplication.utils = MyApplication.utils || {};
         return function callback(data){
             
             if (data.error || !data.values){
+                // Pass These Elements To The Function
                 $('#loadingImage').remove();
                 $('#bottomBox').html('<h2>No Results Found For '+ data.search+'</h2>');
                 // Return to Prevent Drawing of Graph
                 console.log("search",data.search);
-                console.log("type",options.type);
-                console.log("data",data);
+                console.log("type", options.type);
+                console.log("data", data);
                 return;
             };
 
