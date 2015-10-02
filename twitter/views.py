@@ -73,7 +73,7 @@ class SearchView(View):
             tweet['title'] = tweet['text']
         
         if len(tweet_dataset) is 0:
-            data = dict(error='Please simplify your search')
+            data = dict(error='Please simplify your search',search=user_query)
         else:
             data = dict(error=None,values=tweet_dataset,search=user_query,search_type='popular')
         return JsonResponse(data)
