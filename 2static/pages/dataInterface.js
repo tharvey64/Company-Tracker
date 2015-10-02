@@ -8,6 +8,7 @@ MyApplication.models = MyApplication.models || {};
         // These will be data within DataGroup
         function Qwarg(options){
             // add min/max that updates on init or data update
+            // What are tag and title
             this.tag = options.tag;
             this.title = options.title;
             this.data = options.data;
@@ -36,12 +37,14 @@ MyApplication.models = MyApplication.models || {};
 
         function DataGroup(options){
             // :parameters:
-            // type = price or sentiment (Expand To Ratios Later)
-            // add property that specifies what graph method 
-            // to use when plotting this DataGroup
+            // type = price or sentiment
             this.type = options.type;
+            // What is title? Not Implemented
             this.title = options.title;
             this.collection = options.collection || [];
+            // (Expand Type To Ratios Later)
+            // Add property that specifies what graph method 
+            // to use when plotting this DataGroup
         };
         DataGroup.prototype.searchCollection = function(tag){
             for (var idx = this.collection.length; idx--;){
@@ -58,7 +61,7 @@ MyApplication.models = MyApplication.models || {};
                 return true;
             }
             else if (qwarg.tag){
-                this.collection[check] = qwarg;
+                this.collection[check].data = qwarg.data;
                 return true;
             }
             return false;
