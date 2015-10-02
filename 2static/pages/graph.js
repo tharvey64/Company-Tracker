@@ -2,6 +2,7 @@
 MyApplication.presenter = MyApplication.presenter || {};
 
 (function(temp1){
+    // Move sentiment scale increments to right side
     // Consider Not Exposing This To The Rest Of The App
     temp1.Scale = function Scale(settings){
         // type = "time"/"scale",subType="scale"/"linear"
@@ -12,7 +13,6 @@ MyApplication.presenter = MyApplication.presenter || {};
         this.range = settings.range;
         // Remove Context
         this.context = settings.context;
-
     };
     temp1.Scale.prototype.inScale = function(value){
         return (value > this.domain[0]) && (value < this.domain[1]);
@@ -26,12 +26,16 @@ MyApplication.presenter = MyApplication.presenter || {};
         }
 
         if (this.type === "time"){
-            domain[0].setHours(8);
-            domain[1].setHours(18);
+            domain[0].setHours(9);
+            // domain[1].setHours(17);
+            // Do This Somewhere Else
+            domain[1] = new Date();
+            domain[1].setHours(domain[1].getHours()+1);
         }
         else if (this.type === "scale"){
-            domain[0] = parseFloat(domain[0] * 0.95);
-            domain[1] = parseFloat(domain[1] * 1.05);
+            var cushion = (domain[1] - domain[0]) * 0.1;
+            domain[0] = parseFloat(domain[0] - cushion);
+            domain[1] = parseFloat(domain[1] + cushion);
         }
         else{
             return false;
@@ -54,7 +58,7 @@ MyApplication.presenter = MyApplication.presenter || {};
         // Page Settings
         this.display = {
             'container': settings.container,
-            'padding': settings.padding || 70,
+            'padding': settings.padding || 100,
             // 'height': settings.containerHeight,
             // 'width': settings.containerWidth
         };
@@ -74,8 +78,7 @@ MyApplication.presenter = MyApplication.presenter || {};
     temp1.Graph.prototype.drawXAxis = function(translateString){
         // Make Sure These are Drawn Once And Only Once
         var xAxis = d3.svg.axis();
-        xAxis.scale(this.dateScale.getScale({'axisKey':'width'})).orient("bottom");
-
+        xAxis.scale(this.dateScale.getScale({'axisKey':'width'})).orient("bottom"); 
         d3.select("svg").append("g")
         .attr("class", "axis")
         .attr("transform", translateString)
@@ -88,19 +91,78 @@ MyApplication.presenter = MyApplication.presenter || {};
                 return "rotate(-65)";
             });
     };
-    temp1.Graph.prototype.drawYAxis = function(currentScale,translateString){
+    temp1.Graph.prototype.drawYAxis = function(options){
         var yAxis = d3.svg.axis();
-        yAxis.scale(currentScale).orient("left");
-
-        d3.select("svg").append("g")
+        yAxis.scale(options.scale).orient(options.orient);
+        var svg = d3.select("svg");
+        svg.append("g")
             .attr("class", "axis")
-            .attr("transform", translateString)
+            .attr("transform", options.translateString)
             .call(yAxis);
     };
+    temp1.Graph.prototype.axisLabel = function(options){
+        options.svg.append("text")
+            .attr("transform", options.transform)
+            .attr("y", options.y)
+            .attr("x", options.x)
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text(options.content);
+    };
+    temp1.Graph.prototype.drawAxisLabels = function(flags){
+        var margin = this.display.padding;
+        var width = parseInt($(this.display.container).css("width"));
+        var height = parseInt($(this.display.container).css("height"));
+        var labels = [];
+        if (flags.sentiment){
+            this.drawYAxis({
+                'orient':'right',
+                'scale':this.sentimentScale(), 
+                'translateString':"translate(" + (this.display['width']-this.display['padding']) + ",0)"
+            });
+            labels.push({
+                'svg': flags.svg,
+                'transform':'rotate(90)',
+                'y':(margin/3)-width,
+                'x':(height/2),
+                'content':'Sentiment'
+            });
+        };
+        if (flags.price){
+            this.drawYAxis({
+                'orient':'left',
+                'scale':this.priceScale.getScale({'axisKey':'height'}), 
+                'translateString':"translate(" + this.display['padding'] +",0)"
+            });
+            labels.push({
+                'svg': flags.svg,
+                'transform':'rotate(-90)',
+                'y':margin/3,
+                'x':0-(height/2),
+                'content':'Closing Price'
+            });
+        };
+        if (flags.sentiment || flags.price){
+            this.drawXAxis("translate(0," + (this.display['height'] - this.display['padding']) +")");
+            labels.push({
+                'svg': flags.svg,
+                'y':height-(margin/2),
+                'x':(width/2)-(margin/2),
+                'content':'Date'
+            });
+            labels.push({
+                'svg': flags.svg,
+                'y':(margin/2),
+                'x':(width/2)-(margin/2),
+                'content':'The Mutha Fuckin Graph'
+            });
+        };
+        for (var idx = labels.length; idx--;) this.axisLabel(labels[idx]);
+    };
     temp1.Graph.prototype.createSvg = function(){
-        $(this.display['container']).empty();
-        // $(".tooltip").remove();
         var $container = $(this.display['container']);
+        $container.empty();
+        // $(".tooltip").remove();
         this.display['height'] = parseFloat($container.css("height"));
         this.display['width'] = parseFloat($container.css("width"));
 
@@ -112,48 +174,39 @@ MyApplication.presenter = MyApplication.presenter || {};
         return d3.select("svg");
     };
     temp1.Graph.prototype.draw = function(resize, dateRange){
-        var price, sentiment;
-        this.createSvg();
-        // New Code
+        // Clean This Up
+        var price, sentiment, domain, labelOptions, current;
         var groups = this.dataInterface.allGroups();
+
+        var svg = this.createSvg();
+        this.dateScale.setDomain(dateRange);
         for (var name in groups){ 
             if (name === "price"){
-                price = true;
-                var domain = groups[name].getCollectionRange('height');
+                domain = groups[name].getCollectionRange('height');
+                if (domain.length !== 2 || !domain[0]) continue;
                 this.priceScale.setDomain(domain);
-                // console.log(this.priceScale);
-            }
-            else if (name === "sentiment"){
-                sentiment = true;
-            }
-        };
-        // Draw y-Axis
-        if (sentiment) this.drawYAxis(this.sentimentScale(), "translate(" + (this.display['width']-this.display['padding']) + ",0)");
-        
-        if (price) this.drawYAxis(this.priceScale.getScale({'axisKey':'height'}), "translate(" + this.display['padding'] +",0)");
-        // Sets Domain Values For dateScale
-        this.dateScale.setDomain(dateRange);
-        // Draw x-Axis
-        this.drawXAxis("translate(0," + (this.display['height'] - this.display['padding']) +")");
-        // Plotting Data
-        // New Code
-        var current;
-        for (var name in groups){
-            if (name === "price"){
                 current = groups[name];
                 for(var idx = current.collection.length; idx--;){
                     if (!current.collection[idx].show) continue;
-                    this.plotPrices(current.collection[idx]);  
-                }
+                    this.plotPrices(current.collection[idx]);
+                    price = true;  
+                };
             }
             else if (name === "sentiment"){
                 current = groups[name];
                 for(var idx = current.collection.length; idx--;){
                     if (!current.collection[idx].show) continue;
                     this.plotTweets(current.collection[idx]);
+                    sentiment = true;
+                    // this.plotPrices(current.collection[idx],"sentiment");
                 };
             };
         };
+        this.drawAxisLabels({
+            'svg':svg,
+            'price':price,
+            'sentiment':sentiment
+        });
     };
     temp1.Graph.prototype.plotTweets = function(qwarg){
         $(".tooltip").remove();
@@ -162,7 +215,7 @@ MyApplication.presenter = MyApplication.presenter || {};
         var radius_range = d3.extent(qwarg.data, function(d){
             return d.radius;
         });
-        var rScale = d3.scale.linear().range([5,50]).domain(radius_range);
+        var rScale = d3.scale.linear().range([10,75]).domain(radius_range);
         // clear
         var xScale = this.dateScale.getScale({'axisKey':'width'});
         var dateFormat = d3.time.format(qwarg.parseDate);
@@ -195,21 +248,21 @@ MyApplication.presenter = MyApplication.presenter || {};
                 }
             });
     };
-    temp1.Graph.prototype.plotPrices = function(qwarg){
+    temp1.Graph.prototype.plotPrices = function(qwarg, note){
         // Clear
         var yScale = this.priceScale.getScale({'axisKey':'height'});
-        // ???? Don't Need This
-        // var rScale = qwarg.radiusScale();
-        // Clear
+        if (note){
+            yScale = this.sentimentScale();
+        }
         var xScale = this.dateScale.getScale({'axisKey':'width'});
         // Clear
         var checkDate = this.dateScale.inScale;
         var dateFormat = d3.time.format(qwarg.parseDate);
         var svg = d3.select("svg");
         var line = d3.svg.line()
-            .interpolate("linear")
             .x(function(d){return xScale(dateFormat.parse(d.date));})
-            .y(function(d){return yScale(parseFloat(d.height));});
+            .y(function(d){return yScale(parseFloat(d.height));})
+            .interpolate("basis");
 
         var path = svg.append("path")
             .attr("d", line(qwarg.data))
@@ -222,7 +275,6 @@ MyApplication.presenter = MyApplication.presenter || {};
             .attr("stroke-dashoffset", totalLength)
             .transition()
                 .duration(0)
-                .ease("linear")
                 .attr("stroke-dashoffset", 0);
     };
     temp1.Graph.prototype.clear = function(setString){
