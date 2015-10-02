@@ -6,19 +6,31 @@
 $( document ).ready(function(){
     var toolkit = MyApplication.utils;
     var presenter = MyApplication.presenter;
-    toolkit.renderForms();
+    // Set Up Page
+    (function($){
+        var templateOptions, htmlString;
+        templateOptions = {'tag': '#stock-search'};
+        htmlString = toolkit.renderTemplate(templateOptions);
+        templateOptions = {
+            'tag': '#date-range-form',
+            'data': {'today':(new Date()).toJSON().substring(0,10)}
+        };
+        htmlString += toolkit.renderTemplate(templateOptions);
+        $("#topBox").html(htmlString);
+    })(jQuery);
+    
     // graphBoxWidth, resizeTimeout
     var graphRelatedItems = {
         '$graphBox': $('#graphBox')
     };
-    var loadingImageRendered = toolkit.renderTemplate('#loading-image');
+    var loadingImageRendered = toolkit.renderTemplate({'tag':'#loading-image'});
     var stockSearchAjaxTracker = {
         'count': 0,
         'last': 0
     };
     var eventElements = {
         '$dateChange': $('#topBox'),
-        '$dataInterface': $('#graphInterfaceLeft'),
+        '$dataInterface': $('#graphInterfaceRight,#graphInterfaceLeft'),
         '$findCompany': $('#topBox, #middleBox'),
         '$getData': $('#middleBox')
     };
@@ -45,25 +57,22 @@ $( document ).ready(function(){
     });
     // Edit Data Set 
     eventElements.$dataInterface.on('change','.graphDataRow',function(event){
-    // This Event Should Work For twitter too!!!!!
-        var options, $target;
+        var options, $target, $parent, type;
         $target = $(event.target);
+        $parent = $(event.delegateTarget);
+        type = $parent.data('type');
         options = {
             'show' : {'change':$target.attr('type')==='checkbox', 'value': $target.is(':checked')},
             'fill': {'change':$target.attr('type')==='color', 'value':$target.val()},
             'remove': {'change':$target.attr('type')==='radio', 'value':true}
         };
-        // "price should be a variable"
-        graphRelatedItems['graph'].dataInterface.updateQwarg("price", this.dataset.name, options);
+
+        graphRelatedItems['graph'].dataInterface.updateQwarg(type, this.dataset.name, options);
         graphRelatedItems['graph'].draw(false, toolkit.scrapeDateRange());
         if (options['remove'].change){
-            var group = graphRelatedItems['graph'].dataInterface.getCollection("price");
-            // Not Flexible!!!!!
-            // Try closest
-            var $parent = $(event.delegateTarget);
+            var group = graphRelatedItems['graph'].dataInterface.getCollection(type);
             var title = $parent.children('h4').html();
-            // Draw Should look at date range
-            toolkit.dataDisplay(group.collection, title, $parent);
+            toolkit.dataDisplay(group, title, $parent);
         };
     });
 
@@ -72,7 +81,6 @@ $( document ).ready(function(){
     eventElements.$findCompany.on('input submit', '.companySearch', function(event){
         event.preventDefault();
         event.stopPropagation();
-
         var url, search, serialized, $el, $middleBox;
         
         $el = $(this);
@@ -117,7 +125,7 @@ $( document ).ready(function(){
                     'page': data['current_page'] - 1
                 };
             };
-            var htmlString = toolkit.renderTemplate('#search-result', data);
+            var htmlString = toolkit.renderTemplate({'tag':'#search-result', 'data':data});
             $middleBox.html(htmlString);
             // Check Company Buttons
             // This Is Not Dry
@@ -155,8 +163,7 @@ $( document ).ready(function(){
         graphRelatedItems['graphBoxWidth'] = $target.css('width');
         if (!graphRelatedItems['graph']) {
             settings = {
-                'container': '#graphBox',
-                'padding': 60,
+                'container': '#graphBox'
             };
             graphRelatedItems['graph'] = new presenter.Graph(settings);
         };
