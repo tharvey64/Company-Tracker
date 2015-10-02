@@ -107,10 +107,10 @@
     overflow: auto;
     background-color: red;
 }
-#stocksTable{
+.graphDataTable{
     background-color: white;
 }
-#stocksTable > tbody{
+.graphDataTable > tbody{
     overflow: scroll;
 }
 /*Make This More Specific*/
