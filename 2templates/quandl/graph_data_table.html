@@ -1,0 +1,24 @@
+<script id="graph-data-table" type="x-tmpl-mustache">
+  {% verbatim %}
+  <h4 class="graphInterfaceTitle">{{title}}</h4>
+  <div class="graphInterfaceContainer">
+    <table id="{{tableId}}" class="table table-bordered graphDataTable">
+      <thead>
+        <tr>
+          <th>Name</th><th>Color</th><th>Visible</th><th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#content}}
+          <tr class="graphDataRow" data-name="{{tag}}">
+            <td>{{name}}</td>
+            <td><input class="validDateRequired" type="color" value={{color}}></td>
+            <td><input class="validDateRequired" type="checkbox" {{#visible}}checked="checked"{{/visible}}></td>
+            <td><input class="validDateRequired" type="radio"></td>
+          </tr>
+        {{/content}}
+      </tbody>
+    </table>
+  </div>
+  {% endverbatim %}
+</script>

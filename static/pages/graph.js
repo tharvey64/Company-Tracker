@@ -9,7 +9,6 @@ function Qwarg(qwargType, qwargData, qwargClassString){
     this.radiusScale = function(){
         var scale = d3.scale.linear();
         if (!this.radiusRange ||  !(this.radiusRange instanceof Array) || (this.radiusRange.length != 2)){
-            console.log(this.radiusRange);
             throw "Invalid value for radiusRange. Must Be [min,max]"
         }
         else if (this.radiusRange[0] == this.radiusRange[1]){
@@ -288,7 +287,7 @@ $(document).ready(function(){
     $("#fillSelector").on("submit", "#color-form",function(event){
         event.preventDefault();
         var color = $('#colorSelection').val()
-        $('path').css('stroke', color);
+        $('path').attr('stroke', color);
     });
     $('#footer').on("click", '#colorTweetBut', function(event){
         event.preventDefault();
@@ -306,6 +305,6 @@ $(document).ready(function(){
         }
     });
     $("body").on("click", "#backButton", function(event){
-        graph = new Graph();
+        graph = new Graph("#graph");
     });
 });

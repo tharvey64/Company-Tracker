@@ -3,17 +3,17 @@
     <ul class="company-list">
         {{#result}}
         <li>
-        <form id="{{Exchange}}_{{Symbol}}" {% endverbatim %} action="{% url 'quandl:full-range' %}" method="GET">
+        <form id="{{urlize_name}}" {% endverbatim %} action="{% url 'quandl:full-range' %}" method="GET">
             {% csrf_token %}
             {% verbatim %}
             <input type="hidden" name="start date" value="{{startDate}}">
-            <input type="hidden" name="symbol" value="{{Symbol}}">
-            <input type="hidden" name="exchange" value="{{Exchange}}">
-            <button class='companyForm btn btn-Primary'form="{{Exchange}}_{{Symbol}}" type="submit">
+            <input type="hidden" name="source_code" value="{{source_code}}">
+            <input type="hidden" name="code" value="{{code}}">
+            <input type="hidden" name="company_name" value="{{urlize_name}}">
+            <button class='companyForm btn btn-Primary'form="{{urlize_name}}" type="submit">
                 <ul class="company-info">
-                    <li><p><strong>Name: </strong>{{Name}}</p></li>
-                    <li><p><strong>Symbol: </strong>{{Symbol}}</p></li>
-                    <li><p><strong>Exchange: </strong>{{Exchange}}</p></li>
+                    <li><p><strong>Name: </strong>{{name}}</p></li>
+                    <li><p><strong>Code: </strong>{{code}}</p></li>
                 </ul>
             </button>
         </form>

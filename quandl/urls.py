@@ -5,5 +5,4 @@ urlpatterns = patterns('',
         url(r'^stock_history/$', view.QuandlHistoryView.as_view(), name='history'),
         url(r'^today/$', view.IntraDayView.as_view(), name='intra-day'),
         url(r'^current/$', view.FullRangeView.as_view(), name='full-range'),
-        # url(r'^add_company/(?P<symbol>[a-zA-Z\s]+)?$', view.CreateCompanyView.as_view(), name='company-create'),
 )

@@ -1,0 +1,33 @@
+<script id="search-result" type="x-tmpl-mustache">
+    <div id="searchResultButtons" class='list-group'>
+    {% verbatim %}
+    {{#list}}
+        <button type="button" class="validDateRequired list-group-item btn-block list-group-item-primary companyButton disableOnLoad" value="{{source_code}}/{{code}}" data-from_date="{{from_date}}" data-to_date="{{to_date}}" data-db_code="{{source_code}}/{{code}}" data-urlize_name="{{urlize_name}}" data-column_names="{{column_names}}">{{name}}</button>
+    {{/list}}
+    {{^list}}
+        <h4>No Results Found.</h4>
+    {{/list}}
+    
+    </div>
+    <div id="searchResultNavigation">
+    {{#previous}}
+        <div class="pull-left">
+        <form id="previousResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+            <input type="hidden" name="input_string" value="{{search}}" required>
+            <input type="hidden" name="page_number" value="{{page}}">
+            <button type="submit" class="btn btn-default disableOnLoad" for="previousResults">Previous</button>
+        </form>
+        </div>
+    {{/previous}}
+    {{#next}}
+        <div class="pull-right">
+        <form id="nextResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+            <input type="hidden" name="input_string" value="{{search}}" required>
+            <input type="hidden" name="page_number" value="{{page}}">
+            <button type="submit" class="btn btn-default disableOnLoad" for="nextResults">Next</button>
+        </form>
+        </div>
+    {{/next}}
+    {% endverbatim %}
+    </div>
+</script>

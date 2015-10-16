@@ -1,7 +1,8 @@
 function renderForms(){
     var dateTemplate = $("#date-form").html();
     Mustache.parse(dateTemplate);
-    var info = Mustache.render(dateTemplate);
+    var today = new Date();
+    var info = Mustache.render(dateTemplate,{'today': today.toJSON().substring(0,10)});
     $("#tab1").html(info);
 
     var searchTemplate = $("#search-form").html();
@@ -31,8 +32,7 @@ $(document).ready(function(){
     $("#tab1").on("submit", "#stockForm",function(event){
         event.preventDefault();
         var symbol = $("input[name='company_symbol']").val(),
-        date = [$("#month_start").val(),$("#day_start").val(),$("#year_start").val()].join("-");
-
+        date = $("input[name='start date']").val();
         $.getJSON("/markit/search/",{'input_string': symbol},function(data){
             // console.log(data);
             var resultLength = data.list.length
@@ -67,7 +67,7 @@ $(document).ready(function(){
                 company.fill = "red";
                 company.radiusRange = [5,5];
                 company.show = true;
-                var start = d3.time.format("%B-%e-%Y").parse(date);
+                var start = d3.time.format("%Y-%m-%d").parse(date);
                 $("#graph").trigger("drawGraph",[start, company]);
 
                 $("#graph, #footer, #selectorButton, #fillSelector").css("display", "block"); 

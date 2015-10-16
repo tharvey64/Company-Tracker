@@ -1,0 +1,26 @@
+<script id="date-range-form" type="x-tmpl-mustache">
+    <form id="dateRangeForm" class="form" method="GET">
+        {% verbatim %} 
+        <fieldset class="searchFieldset">
+        <legend>Date Range</legend>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="startDate">Start Date</label>
+                </div>
+                <div class="col-md-6">
+                    <label id="endDateLabel" for="endDate">End Date</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <input class="dateRanges form-control" id="startDate" type="date" name="start_date" max={{today}} value={{today}}>
+                    <span class="input-group-addon">-</span>
+                    <input class="dateRanges form-control" id="endDate" type="date" name="end_date" max={{today}} value={{today}} disabled="disabled">
+                </div>
+            </div>
+        </div>
+        </fieldset>
+        {% endverbatim %}
+    </form>
+</script>

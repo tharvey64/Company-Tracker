@@ -2,69 +2,85 @@ import datetime
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic.base import View
-from quandl.models import Quandl,Google
+from quandl.models import Quandl,Google,Yahoo
 from markit.models import Markit
 
-# Change This View To Get Historic Only
+def get_variables(query_dict):
+    variables = dict(code=query_dict.get('code'),
+            source_code=query_dict.get('source_code'),
+            start_date=query_dict.get('start_date'),
+            company_name=query_dict.get('company_name'))
+    if not all(variables.values()):
+        variables['error'] = 'Missing Input'
+    return variables
+
 class QuandlHistoryView(View):
 
     def get(self, request):
-        exchange = request.GET.get('exchange',False)
-        symbol = request.GET.get('symbol',False)
-        date_string = request.GET.get('start date',False)
-        if not (exchange and symbol and date_string):
-            data = dict(error='Missing Input')
-            return JsonResponse(data)
-        start_date = datetime.datetime.strptime(date_string, "%B-%d-%Y").date()
-        stock_history = Quandl.get_dataset(exchange,symbol,str(start_date))
-        # stock_history['data']
-        # ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-        # Date = 'YYYY-MM-DD' << month and Day are zero padded
-        # print(stock_history)
-        if stock_history and 'data' in stock_history:
-            processed_data = [dict(date=day[0]+' 16:00:00', height=day[4], radius=day[5], title=day[0]) for day in stock_history['data']]
-            data = dict(symbol=symbol,close=processed_data[::-1])
+        # Could Try all(request.GET.values())
+        query_dict = get_variables(request.GET)
+        if 'error' in query_dict:
+            return JsonResponse(dict(error='Missing Input'))
+
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%Y-%m-%d").date()
+        stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
+        if stock_history['error']:
+            return JsonResponse(stock_history)
         else:
-            data = dict(error='Stock Data Not Found')
-        return JsonResponse(data)
+            return JsonResponse(dict(symbol=stock_history['symbol'],values=processed_data[::-1]))
 
 # Todays Prices Only
 class IntraDayView(View):
 
     def get(self,request):
-        ticker = request.GET.get("ticker",False)
-        prices = Google.get_intra_day_prices(60,1,ticker)
-        # no client yet
-        return JsonResponse(prices)
+        ticker = request.GET.get("ticker")
+        # Find New Source
+        prices = Yahoo.get_intra_day_prices(ticker)
+        return JsonResponse(dict(error=prices['error'],values=prices['prices']))
 
 # start date to current minute prices
 class FullRangeView(View):
-    def get(self, request):
-        exchange = request.GET.get('exchange',False)
-        symbol = request.GET.get('symbol',False)
-        date_string = request.GET.get('start date',False)
-        if not (exchange and symbol and date_string):
-            data = dict(error='Missing Input')
-            return JsonResponse(data)
-        start_date = datetime.datetime.strptime(date_string, "%B-%d-%Y").date()
-        stock_history = Quandl.get_dataset(exchange,symbol,str(start_date))
-        if stock_history and 'data' in stock_history:
-            # historic
-            processed_data = [dict(date=day[0]+' 16:00:00', height=day[4], radius=day[5], title=day[0]) for day in stock_history['data']]
-            # current day
-            daily = Google.get_intra_day_prices(60,1,symbol)
-            data = dict(symbol=symbol,close=processed_data[::-1]+[daily['prices'][0]]+daily['prices'])
-        else:
-            data = dict(error='Stock Data Not Found')
-        return JsonResponse(data)
 
-# INTRA DAY DATA
-# 
-# http://www.google.com/finance/getprices?i=[INTERVAL]&p=[PERIOD]&f=d,o,h,l,c,v&df=cpct&q=[TICKER]
-# 
-# f=d,o,h,l,c,v
-# 
-#  d=dateTime,o=open,h=high,l=low,c=close,v=volume
-# [INTERVAL] = Interval or frequency in seconds
-# [PERIOD] = the historical data period
-# [TICKER] = Stock Ticker
+    def get(self, request):
+        # Could Try all(request.GET.values())
+        query_dict = get_variables(request.GET)
+        if 'error' in query_dict:
+            return JsonResponse(dict(error='Missing Input'))
+        
+        start_date = datetime.datetime.strptime(query_dict['start_date'], "%Y-%m-%d")
+        
+        stock_history = Quandl.get_dataset(query_dict['source_code'],query_dict['code'],str(start_date))
+        
+        daily = Yahoo.get_intra_day_prices(stock_history['symbol'], 1)
+
+        if stock_history['error'] and daily['error']:
+            print("-"*50,"quandl/views","-"*50)
+            print("quandl/views.py 57\n",stock_history['error'])
+            print("quandl/views.py 58\n", daily['error'])
+            print("^"*50,"quandl/views","^"*50)
+            return JsonResponse(dict(error="No Daily or Historical Data", values=None))
+        elif daily['error']:
+            # print("quandl/views.py 58",stock_history)
+            close = stock_history['prices'][::-1]
+        elif stock_history['error']:
+            close = daily['prices']
+        else:
+            # Adds Last Historical Price Twice
+            close = stock_history['prices'][::-1]+[daily['prices'][0]]+daily['prices']
+        return JsonResponse(dict(error=None, search=stock_history['symbol'], values=close))
+
+#######################
+#######################
+# XX CLEAN UP CSS
+# PRELOAD STOCK SEARCH WITH RESULTS
+# ADD CELERY AND RABBIT MQ TO PING TWITTER FOR TWEETS
+# DOWNLOAD THE QUANDL LIBRARY
+# DELETE MARKIT APP RENAME QUANDL APP
+#######################
+#######################
+# GET DIFF FROM PREVIOUS PRICE AND % CHANGE FROM PREVIOUS TRY TO PLOT CHANGES IN MOMENTUM 
+# DIFF, RDIFF, MOVING AVG
+# These 6 lines Check Input NOT DRY
+# THESE SHOULD ALL GO IN AS DIFFERENT HEIGHTS
+# THIS WILL BE THE FIRST IMPLEMENTATION OF THE GRAPH OPTIONS
+# PERCENT CHANGE BETWEEN 1 AND -1

@@ -1,0 +1,130 @@
+/*Css ERROR Somewhere in Here*/
+/*Layout Adjustments*/
+.leftContent {
+    height: 28%;
+    margin: 1%;
+    padding: 1%;
+    overflow: scroll;
+    background-color: #E2E2E2;
+    border: solid black;
+}
+.rightContent {
+    height: 100%;
+    padding: 2%;
+    border-radius: 1%;
+    background-color: #F1B1B1;
+}
+#topBox {
+    height: 40%;
+}
+#middleBox {
+    position: relative;
+    overflow: hidden;
+}
+/*End Layout Section*/
+/*Loading Image Options*/
+.loading {
+    background-image: url('/2static/images/default.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+/*Alignment for graph box*/
+#graphBox > img.cover {
+    position: absolute;
+    top: 25%;
+    left: 35%;
+}
+/*Alignment for search results box*/
+#middleBox > img.cover {
+    position: absolute;
+    top: 12%;
+    left: 30%;
+}
+/*End Loading Image Options*/
+.searchFieldset p{
+    margin-bottom: 1%;    
+}
+.searchFieldset legend{
+    margin-bottom: 1%;
+    text-align: center;
+}
+#endDateLabel {
+    float: right;
+    margin-right: 1%;
+    margin-bottom: 0;
+}
+
+#searchResultNavigation {
+    height: 3em;
+    overflow: auto;
+    border-top: solid black;
+    display: block;
+    margin-bottom: 0;
+}
+#searchResultButtons {
+    height: 74%;
+    text-align: center;
+    overflow: scroll;
+}
+/*Right Side Of Page*/
+#graphBox {
+    height: 70%;
+    /*background-color: #F1B1B1;*/
+    background-color: grey;
+}
+#graphInterface {
+    height: 30%;
+    background-color: #F1B1B1;
+    border: solid;
+    box-shadow: -0.5em 0.5em 0.5em black;
+    border-radius: 2%;
+    overflow: auto;
+}
+/*Individual Graph Divs*/
+#graphInterface > div {
+    height: 100%;
+    width: 32.5%;
+    padding-right: 0.4%;
+    display: inline-block;
+    border-right: solid;
+
+}
+#graphInterface > div:first-child {
+    padding-left: 0.4%;
+}
+#graphInterface > div:last-child {
+    padding-right: 0;
+    border-right: none;
+}
+/*Graph Interface*/
+.graphInterfaceTitle{
+    height: 10%;
+    text-align: center;
+}
+.graphInterfaceContainer {
+    height:75%;
+    width: 100%;
+    overflow: auto;
+    background-color: red;
+}
+.graphDataTable{
+    background-color: white;
+}
+.graphDataTable > tbody{
+    overflow: scroll;
+}
+/*Make This More Specific*/
+th,td{
+    text-align: center!important;
+}
+/*Graph CSS*/
+.axis path,.axis line {
+    fill: none;
+    stroke: black;
+    /*shape-rendering: crispEdges; */
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 0.75em;
+}

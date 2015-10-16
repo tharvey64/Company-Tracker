@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <script src="{% static 'pages/django_ajax.js' %}"></script>
+        {% block scripts %}{% endblock scripts %}
+        <link rel="icon" type="img/ico" href="{% static 'images/Drawing.png' %}">
+        <!-- BootStrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">  
+        <!-- Google Fonts -->
+        <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=News+Cycle|Libre+Baskerville'>
+        <!-- Base CSS -->
+        <link rel="stylesheet" type='text/css' href="{% static 'base.css' %}">
+        {% block cssLink %}{% endblock cssLink %}
+        <title>Layout Test</title>
+    </head>
+    <body>
+        <div class="container-fluid" id="rootContainer">
+            <div class="page-header col-xs-12" id="outerHeader">
+                <div class="header-body" id="innerHeader">
+                    {% block header %}{% endblock header %}
+                </div>
+            </div>
+            <div id="page-content">
+
+                <div class="column pull-left col-xs-3" id="leftColumn">
+                    <div class="leftContent" id="topBox">
+                        {% block topBox %}{% endblock topBox %}
+                    </div>
+                    <div class="leftContent" id="middleBox">
+                        {% block middleBox %}{% endblock middleBox %}
+                    </div>
+                    <div class="leftContent" id="bottomBox">
+                        {% block bottomBox %}{% endblock bottomBox %}
+                    </div>
+                </div>
+                <div class="column pull-right col-xs-9" id="rightColumn">
+                    <div class="rightContent">
+                        {% block rightContent %}{% endblock rightContent %}
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+    </body>
+</html>
