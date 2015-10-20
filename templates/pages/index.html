@@ -6,16 +6,16 @@
     <script src="{% static 'pages/dataInterface.js' %}"></script>
     <script src="{% static 'pages/graph.js' %}"></script>
     <script src="{% static 'myapps_utils.js' %}"></script>
-    <script src="{% static 'quandl/index.js' %}"></script>
-    {% include "quandl/stock_search.html" %}
-    {% include "quandl/search_results.html" %}
-    {% include "quandl/date_range_form.html" %}
-    {% include "quandl/graph_data_table.html" %}
-    {% include "quandl/loading_image.html" %}
+    <script src="{% static 'stocks/index.js' %}"></script>
+    {% include "stocks/stock_search.html" %}
+    {% include "stocks/search_results.html" %}
+    {% include "stocks/date_range_form.html" %}
+    {% include "stocks/graph_data_table.html" %}
+    {% include "stocks/loading_image.html" %}
 {% endblock %}
 
 {% block cssLink %}
-    <link rel="stylesheet" type='text/css' href="{% static 'quandl/index.css' %}">
+    <link rel="stylesheet" type='text/css' href="{% static 'stocks/index.css' %}">
 {% endblock cssLink %}
 
 {% block header %}

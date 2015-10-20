@@ -38,10 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'quandl',
-    'markit',
-    'twitter',
-    'article_feeds',
+    'stocks',
     'sentiment',
     'users',
     'pages'

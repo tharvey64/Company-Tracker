@@ -12,7 +12,7 @@
     <div id="searchResultNavigation">
     {{#previous}}
         <div class="pull-left">
-        <form id="previousResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+        <form id="previousResults" class="companySearch" action="{% endverbatim %}{% url 'stocks:search' %}{% verbatim %}" method="GET">
             <input type="hidden" name="input_string" value="{{search}}" required>
             <input type="hidden" name="page_number" value="{{page}}">
             <button type="submit" class="btn btn-default disableOnLoad" for="previousResults">Previous</button>
@@ -21,7 +21,7 @@
     {{/previous}}
     {{#next}}
         <div class="pull-right">
-        <form id="nextResults" class="companySearch" action="{% endverbatim %}{% url 'markit:search' %}{% verbatim %}" method="GET">
+        <form id="nextResults" class="companySearch" action="{% endverbatim %}{% url 'stocks:search' %}{% verbatim %}" method="GET">
             <input type="hidden" name="input_string" value="{{search}}" required>
             <input type="hidden" name="page_number" value="{{page}}">
             <button type="submit" class="btn btn-default disableOnLoad" for="nextResults">Next</button>

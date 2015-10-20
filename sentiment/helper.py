@@ -1,9 +1,9 @@
 import datetime
 from django.contrib.contenttypes.models import ContentType
-from twitter.models import Tweet,Keyword
-from sentiment.models import Sentiment
+from sentiment.models import Tweet,Keyword,Sentiment
 from sentiment.alchemyapi import AlchemyAPI
 
+# REFACTOR THIS
 def check_tweet_text(text, query):
     if query.lower() not in text.lower():
         return False

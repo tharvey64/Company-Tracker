@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
-from twitter.models import Profile
+from sentiment.models import Profile
 # Create your views here.
 
 class RegisterView(View):

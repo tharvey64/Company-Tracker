@@ -2,8 +2,7 @@ import datetime
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic.base import View
-from quandl.models import Quandl,Google,Yahoo
-from markit.models import Markit
+from .models import Quandl,Google,Yahoo,Markit
 
 def get_variables(query_dict):
     variables = dict(code=query_dict.get('code'),
@@ -13,6 +12,14 @@ def get_variables(query_dict):
     if not all(variables.values()):
         variables['error'] = 'Missing Input'
     return variables
+
+class CompanySearch(View):
+
+    def get(self, request):
+        page_number = request.GET.get('page_number', 1)
+        search_result = Markit.find_company(request.GET.get('input_string'),page_number)
+        search_result['ajaxCount'] = request.GET.get('ajaxCount')
+        return JsonResponse(search_result)
 
 class QuandlHistoryView(View):
 
