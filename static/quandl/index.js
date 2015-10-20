@@ -16,7 +16,7 @@ $( document ).ready(function(){
             'data': {'today':(new Date()).toJSON().substring(0,10)}
         };
         htmlString += toolkit.renderTemplate(templateOptions);
-        $("#topBox").html(htmlString);
+        $("#topBox").html("<div>"+htmlString+"</div>");
     })(jQuery);
     
     // graphBoxWidth, resizeTimeout
@@ -36,7 +36,6 @@ $( document ).ready(function(){
     };
     // Check Company Buttons With New Date
     eventElements.$dateChange.on('input', 'input[type="date"]', function(event){
-        // call scrapeDateRange here
         var range = toolkit.scrapeDateRange();
         if (range[0] && range[1]){
             $('.validDateRequired').prop('disabled',false);
@@ -49,6 +48,7 @@ $( document ).ready(function(){
         }
         else{
             // handle invalid date here
+            // Needs Message
             $('.validDateRequired').prop('disabled',true);
             var $companyButtons = $('.companyButton');
             $companyButtons.removeClass('list-group-item-success');

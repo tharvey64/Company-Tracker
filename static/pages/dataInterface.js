@@ -1,5 +1,5 @@
-// Refactor Graph.js First
 MyApplication.models = MyApplication.models || {};
+
 (function(models){
     models.Interface = function Interface(exposed, container){
         exposed = exposed || {};
@@ -111,7 +111,7 @@ MyApplication.models = MyApplication.models || {};
         };
         exposed['getKeys'] = function(){
             keys = [];
-            for(prop in container){
+            for(var prop in container){
                 keys.push(prop);
             }
             return keys;
@@ -143,6 +143,7 @@ MyApplication.models = MyApplication.models || {};
         //     // Updates all qwargs in a collection
         //     // this.createCollection(type)
         // };
+        // Can this be done better
         exposed['updateQwarg'] = function(type, tag, options){
             var target, group, location;
             target = getQwarg(type, tag);

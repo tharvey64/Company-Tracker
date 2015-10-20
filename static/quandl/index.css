@@ -48,11 +48,6 @@
     margin-bottom: 1%;
     text-align: center;
 }
-#endDateLabel {
-    float: right;
-    margin-right: 1%;
-    margin-bottom: 0;
-}
 
 #searchResultNavigation {
     height: 3em;
