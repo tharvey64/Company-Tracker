@@ -103,7 +103,7 @@
     background-color: red;
 }
 .graphDataTable{
-    background-color: white;
+    background-color: magenta;
 }
 .graphDataTable > tbody{
     overflow: scroll;

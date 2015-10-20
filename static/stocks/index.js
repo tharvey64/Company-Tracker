@@ -176,7 +176,7 @@ $( document ).ready(function(){
             'parseDate':"%Y-%m-%d %X",
             'tag': elementValue
         };
-        $.get('quandl/current/', input, toolkit.buildCallback(options));
+        $.get('stocks/current/', input, toolkit.buildCallback(options));
         
         input = {
             'search': '$' + fullCode[1],
@@ -190,7 +190,7 @@ $( document ).ready(function(){
             'parseDate': "%Y-%m-%d %X%Z",
             'tag': '$' + fullCode[1]
         };
-        $.post('twitter/search/random', input, toolkit.buildCallback(options));
+        $.post('sentiment/search/random', input, toolkit.buildCallback(options));
         // $.post('twitter/search/random', input, function(data){
         //     console.log(data);
         // });
